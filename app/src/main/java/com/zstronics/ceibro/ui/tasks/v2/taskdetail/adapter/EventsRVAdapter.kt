@@ -116,6 +116,8 @@ class EventsRVAdapter constructor(
             binding.viewMoreLessLayout.visibility = View.GONE
             binding.viewMoreBtn.visibility = View.GONE
             binding.viewLessBtn.visibility = View.GONE
+//            binding.otherEventLayout.visibility = View.GONE
+//            binding.myMsgLayout.visibility = View.GONE
 
 
             val creatorName =
@@ -247,7 +249,6 @@ class EventsRVAdapter constructor(
                         }
                     }
                     binding.otherEventText.text = eventText
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
                     if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
                         val marginEndOrStartInPixels =
@@ -301,8 +302,10 @@ class EventsRVAdapter constructor(
                             }
                         }, 15)
 
+                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.VISIBLE
                     } else {
+                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.GONE
                     }
 
@@ -405,10 +408,10 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.CancelTask.eventValue -> {
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.myMsgLayout.visibility = View.GONE
 
                     binding.otherEventText.text = "Task canceled by ${creatorName.toCamelCase()}"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
 //                    binding.onlyImagesRV.visibility = View.GONE
 //                    binding.imagesWithCommentRV.visibility = View.GONE
@@ -423,10 +426,10 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.UnCancelTask.eventValue -> {
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.myMsgLayout.visibility = View.GONE
 
                     binding.otherEventText.text = "Task un-canceled by ${creatorName.toCamelCase()}"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
 //                    binding.onlyImagesRV.visibility = View.GONE
 //                    binding.imagesWithCommentRV.visibility = View.GONE
@@ -438,10 +441,10 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.JoinedTask.eventValue -> {
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.myMsgLayout.visibility = View.GONE
 
                     binding.otherEventText.text = "${creatorName.toCamelCase()} joined the task"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
 //                    binding.onlyImagesRV.visibility = View.GONE
 //                    binding.imagesWithCommentRV.visibility = View.GONE
@@ -456,19 +459,17 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.ReOpen.eventValue -> {
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.myMsgLayout.visibility = View.GONE
 
                     binding.otherEventText.text = "${creatorName.toCamelCase()} re-opened the task"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
                 }
 
                 TaskDetailEvents.DoneTask.eventValue -> {
-                    binding.myMsgLayout.visibility = View.GONE
-
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.otherEventText.text =
                         "${creatorName.toCamelCase()} marked the task as done"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
                     if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
                         val marginEndOrStartInPixels =
@@ -522,8 +523,10 @@ class EventsRVAdapter constructor(
                             }
                         }, 15)
 
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.VISIBLE
                     } else {
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.GONE
                     }
 
@@ -531,9 +534,9 @@ class EventsRVAdapter constructor(
 
                 TaskDetailEvents.APPROVED.eventValue -> {
 
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.otherEventText.text =
                         "${creatorName.toCamelCase()} approved the task"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
                     if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
                         val marginEndOrStartInPixels =
@@ -587,17 +590,19 @@ class EventsRVAdapter constructor(
                             }
                         }, 15)
 
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.VISIBLE
                     } else {
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.GONE
                     }
                 }
 
                 TaskDetailEvents.REJECT_REOPEN.eventValue -> {
 
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.otherEventText.text =
                         "${creatorName.toCamelCase()} rejected and reopened the task"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
                     if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
                         val marginEndOrStartInPixels =
@@ -651,17 +656,19 @@ class EventsRVAdapter constructor(
                             }
                         }, 15)
 
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.VISIBLE
                     } else {
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.GONE
                     }
                 }
 
                 TaskDetailEvents.REJECT_CLOSE.eventValue -> {
 
+                    binding.otherEventLayout.visibility = View.VISIBLE
                     binding.otherEventText.text =
                         "${creatorName.toCamelCase()} rejected and closed the task"
-                    binding.otherEventLayout.visibility = View.VISIBLE
 
                     if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
                         val marginEndOrStartInPixels =
@@ -715,8 +722,10 @@ class EventsRVAdapter constructor(
                             }
                         }, 15)
 
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.VISIBLE
                     } else {
+//                        binding.otherEventLayout.visibility = View.VISIBLE
                         binding.myMsgLayout.visibility = View.GONE
                     }
                 }

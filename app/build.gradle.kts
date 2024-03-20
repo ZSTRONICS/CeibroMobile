@@ -68,12 +68,12 @@ dependencies {
 
     // Room components
     implementation("android.arch.persistence.room:runtime:1.1.1")
-    annotationProcessor("android.arch.persistence.room:compiler:1.1.1")
-    implementation("androidx.room:room-ktx:2.5.0")
-    implementation("androidx.room:room-runtime:2.5.0")
-    implementation("androidx.room:room-common:2.5.0")
-    implementation("androidx.room:room-paging:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
+    kapt("android.arch.persistence.room:compiler:1.1.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-paging:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 
     implementation("io.socket:socket.io-client:2.0.0"){
         exclude("org.json","json")

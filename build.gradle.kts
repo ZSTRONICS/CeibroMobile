@@ -17,6 +17,7 @@ buildscript {
         classpath(BuildClassesConfig.KOTLIN_GRADLE_PLUGIN)
         classpath(BuildClassesConfig.NAVIGATION_SAFE_ARGS)
         classpath(BuildClassesConfig.HILT_GRADLE_PLUGIN)
+        classpath("com.squareup:javapoet:1.13.0")
     }
 }
 

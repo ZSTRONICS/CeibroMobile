@@ -32,7 +32,7 @@ class TaskV3ClosedFragment :
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: TaskV3ClosedVM by viewModels()
-    private lateinit var parentViewModel: TasksParentTabV3VM
+    private var parentViewModel: TasksParentTabV3VM? = null
     override val layoutResId: Int = R.layout.fragment_task_v3_closed
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
@@ -66,22 +66,22 @@ class TaskV3ClosedFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-        parentViewModel.closedAllTasks.observe(viewLifecycleOwner) {
-            if (parentViewModel.applyFilter.value == true) {
-                parentViewModel._applyFilter.value = true
+        parentViewModel?.closedAllTasks?.observe(viewLifecycleOwner) {
+            if (parentViewModel!!.applyFilter.value == true) {
+                parentViewModel!!._applyFilter.value = true
             } else {
-                if (parentViewModel.isFirstStartOfClosedFragment) {
-                    if (parentViewModel.selectedTaskTypeClosedState.value.equals(
+                if (parentViewModel!!.isFirstStartOfClosedFragment) {
+                    if (parentViewModel!!.selectedTaskTypeClosedState.value.equals(
                             TaskRootStateTags.All.tagValue,
                             true
                         )
                     ) {
-                        parentViewModel.isFirstStartOfClosedFragment = false
-                        parentViewModel.filteredClosedTasks = it
+                        parentViewModel!!.isFirstStartOfClosedFragment = false
+                        parentViewModel!!.filteredClosedTasks = it
                         if (!it.isNullOrEmpty()) {
                             adapter.setList(
                                 it,
-                                parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                                parentViewModel!!.selectedTaskTypeClosedState.value ?: ""
                             )
                             mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                             mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
@@ -89,10 +89,10 @@ class TaskV3ClosedFragment :
                         } else {
                             adapter.setList(
                                 listOf(),
-                                parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                                parentViewModel!!.selectedTaskTypeClosedState.value ?: ""
                             )
                             mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                            if (parentViewModel.isSearchingTasks) {
+                            if (parentViewModel!!.isSearchingTasks) {
                                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                                 mViewDataBinding.searchWithNoResultLayout.visibility =
                                     View.VISIBLE
@@ -103,26 +103,26 @@ class TaskV3ClosedFragment :
                         }
                     }
                 } else {
-                    val type = parentViewModel.selectedTaskTypeClosedState.value
-                    parentViewModel._selectedTaskTypeClosedState.value = type
+                    val type = parentViewModel!!.selectedTaskTypeClosedState.value
+                    parentViewModel!!._selectedTaskTypeClosedState.value = type
                 }
             }
         }
 
-        parentViewModel.setFilteredDataToCloseAdapter.observe(viewLifecycleOwner) { list ->
+        parentViewModel?.setFilteredDataToCloseAdapter?.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
 
-                adapter.setList(list, parentViewModel.selectedTaskTypeClosedState.value ?: "")
+                adapter.setList(list, parentViewModel!!.selectedTaskTypeClosedState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
             } else {
                 adapter.setList(
                     listOf(),
-                    parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                    parentViewModel!!.selectedTaskTypeClosedState.value ?: ""
                 )
                 mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
+                if (parentViewModel!!.isSearchingTasks) {
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
                 } else {
@@ -133,74 +133,74 @@ class TaskV3ClosedFragment :
         }
 
 
-        parentViewModel.lastSortingType.observe(viewLifecycleOwner) { sortingType ->
-            if (parentViewModel.isFirstStartOfClosedFragment.not()) {
-                val list: MutableList<CeibroTaskV2> = parentViewModel.filteredClosedTasks
-                parentViewModel.viewModelScope.launch {
+        parentViewModel?.lastSortingType?.observe(viewLifecycleOwner) { sortingType ->
+            if (parentViewModel!!.isFirstStartOfClosedFragment.not()) {
+                val list: MutableList<CeibroTaskV2> = parentViewModel!!.filteredClosedTasks
+                parentViewModel!!.viewModelScope.launch {
                     viewModel.loading(true, "")
-                    val sortedList = async { parentViewModel.sortList(list) }.await()
+                    val sortedList = async { parentViewModel!!.sortList(list) }.await()
                     val orderedList =
-                        async { parentViewModel.applySortingOrder(sortedList) }.await()
+                        async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                    parentViewModel.filteredClosedTasks = orderedList
+                    parentViewModel!!.filteredClosedTasks = orderedList
 
-                    parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                     viewModel.loading(false, "")
                 }
             }
         }
 
-        parentViewModel.selectedTaskTypeClosedState.observe(viewLifecycleOwner) { taskType ->
-            parentViewModel.isFirstStartOfClosedFragment = false
+        parentViewModel?.selectedTaskTypeClosedState?.observe(viewLifecycleOwner) { taskType ->
+            parentViewModel!!.isFirstStartOfClosedFragment = false
             var list: MutableList<CeibroTaskV2> = mutableListOf()
 
             if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalClosedAllTasks
+                list = parentViewModel!!.originalClosedAllTasks
 
             } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalClosedToMeTasks
+                list = parentViewModel!!.originalClosedToMeTasks
 
             } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalClosedFromMeTasks
+                list = parentViewModel!!.originalClosedFromMeTasks
             }
 
-            parentViewModel.viewModelScope.launch {
-                val sortedList = async { parentViewModel.sortList(list) }.await()
+            parentViewModel!!.viewModelScope.launch {
+                val sortedList = async { parentViewModel!!.sortList(list) }.await()
                 val orderedList =
-                    async { parentViewModel.applySortingOrder(sortedList) }.await()
+                    async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                parentViewModel.filteredClosedTasks = orderedList
+                parentViewModel!!.filteredClosedTasks = orderedList
 
-                parentViewModel.filterTasksList(parentViewModel.searchedText)
+                parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
             }
         }
 
-        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
-            if (parentViewModel.isFirstStartOfClosedFragment.not()) {
+        parentViewModel?.applyFilter?.observe(viewLifecycleOwner) {
+            if (parentViewModel!!.isFirstStartOfClosedFragment.not()) {
                 if (it == true) {
 
-                    val taskType = parentViewModel.selectedTaskTypeClosedState.value
+                    val taskType = parentViewModel!!.selectedTaskTypeClosedState.value
 
                     var list: MutableList<CeibroTaskV2> = mutableListOf()
 
                     if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                        list = parentViewModel.originalClosedAllTasks
+                        list = parentViewModel!!.originalClosedAllTasks
 
                     } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                        list = parentViewModel.originalClosedToMeTasks
+                        list = parentViewModel!!.originalClosedToMeTasks
 
                     } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                        list = parentViewModel.originalClosedFromMeTasks
+                        list = parentViewModel!!.originalClosedFromMeTasks
                     }
 
-                    parentViewModel.viewModelScope.launch {
-                        val sortedList = async { parentViewModel.sortList(list) }.await()
+                    parentViewModel!!.viewModelScope.launch {
+                        val sortedList = async { parentViewModel!!.sortList(list) }.await()
                         val orderedList =
-                            async { parentViewModel.applySortingOrder(sortedList) }.await()
+                            async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                        parentViewModel.filteredClosedTasks = orderedList
+                        parentViewModel!!.filteredClosedTasks = orderedList
 
-                        parentViewModel.filterTasksList(parentViewModel.searchedText)
+                        parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                     }
 
                 }
@@ -220,7 +220,7 @@ class TaskV3ClosedFragment :
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
                     CeibroApplication.CookiesManager.taskDetailRootState =
-                        parentViewModel.selectedTaskTypeClosedState.value
+                        parentViewModel?.selectedTaskTypeClosedState?.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
@@ -239,9 +239,9 @@ class TaskV3ClosedFragment :
             { v: View, position: Int, data: CeibroTaskV2 ->
                 createPopupWindow(v, data) { menuTag ->
                     if (menuTag.equals("hideTask", true)) {
-                        parentViewModel.showHideTaskDialog(requireContext(), data)
+                        parentViewModel?.showHideTaskDialog(requireContext(), data)
                     } else if (menuTag.equals("reOpenTask", true)) {
-                        parentViewModel.showReOpenTaskDialog(requireContext(), data)
+                        parentViewModel?.showReOpenTaskDialog(requireContext(), data)
                     }
                 }
             }

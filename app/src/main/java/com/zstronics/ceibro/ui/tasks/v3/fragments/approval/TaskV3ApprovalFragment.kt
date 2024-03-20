@@ -31,7 +31,7 @@ class TaskV3ApprovalFragment :
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: TaskV3ApprovalVM by viewModels()
-    private lateinit var parentViewModel: TasksParentTabV3VM
+    private var parentViewModel: TasksParentTabV3VM? = null
     override val layoutResId: Int = R.layout.fragment_task_v3_approval
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
@@ -64,23 +64,24 @@ class TaskV3ApprovalFragment :
 
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
-        parentViewModel.approvalAllTasks.observe(viewLifecycleOwner) {
-            if (parentViewModel.applyFilter.value == true) {
-                parentViewModel._applyFilter.value = true
+
+        parentViewModel?.approvalAllTasks?.observe(viewLifecycleOwner) {
+            if (parentViewModel!!.applyFilter.value == true) {
+                parentViewModel!!._applyFilter.value = true
             } else {
-                if (parentViewModel.isFirstStartOfApprovalFragment) {
-                    if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
+                if (parentViewModel!!.isFirstStartOfApprovalFragment) {
+                    if (parentViewModel!!.selectedTaskTypeApprovalState.value.equals(
                             TaskRootStateTags.All.tagValue,
                             true
                         )
                     ) {
-                        parentViewModel.isFirstStartOfApprovalFragment = false
-                        parentViewModel.filteredApprovalTasks = it
+                        parentViewModel!!.isFirstStartOfApprovalFragment = false
+                        parentViewModel!!.filteredApprovalTasks = it
 
                         if (!it.isNullOrEmpty()) {
                             adapter.setList(
                                 it,
-                                parentViewModel.selectedTaskTypeApprovalState.value ?: ""
+                                parentViewModel!!.selectedTaskTypeApprovalState.value ?: ""
                             )
                             mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                             mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
@@ -88,10 +89,10 @@ class TaskV3ApprovalFragment :
                         } else {
                             adapter.setList(
                                 listOf(),
-                                parentViewModel.selectedTaskTypeApprovalState.value ?: ""
+                                parentViewModel!!.selectedTaskTypeApprovalState.value ?: ""
                             )
                             mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                            if (parentViewModel.isSearchingTasks) {
+                            if (parentViewModel!!.isSearchingTasks) {
                                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                                 mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
                             } else {
@@ -101,26 +102,26 @@ class TaskV3ApprovalFragment :
                         }
                     }
                 } else {
-                    val type = parentViewModel.selectedTaskTypeApprovalState.value
-                    parentViewModel._selectedTaskTypeApprovalState.value = type
+                    val type = parentViewModel!!.selectedTaskTypeApprovalState.value
+                    parentViewModel!!._selectedTaskTypeApprovalState.value = type
                 }
             }
         }
 
-        parentViewModel.setFilteredDataToApprovalAdapter.observe(viewLifecycleOwner) { list ->
+        parentViewModel?.setFilteredDataToApprovalAdapter?.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
 
-                adapter.setList(list, parentViewModel.selectedTaskTypeApprovalState.value ?: "")
+                adapter.setList(list, parentViewModel!!.selectedTaskTypeApprovalState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
             } else {
                 adapter.setList(
                     listOf(),
-                    parentViewModel.selectedTaskTypeApprovalState.value ?: ""
+                    parentViewModel!!.selectedTaskTypeApprovalState.value ?: ""
                 )
                 mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
+                if (parentViewModel!!.isSearchingTasks) {
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
                 } else {
@@ -130,75 +131,75 @@ class TaskV3ApprovalFragment :
             }
         }
 
-        parentViewModel.lastSortingType.observe(viewLifecycleOwner) { sortingType ->
-            if (parentViewModel.isFirstStartOfApprovalFragment.not()) {
-                val list: MutableList<CeibroTaskV2> = parentViewModel.filteredApprovalTasks
-                parentViewModel.viewModelScope.launch {
+        parentViewModel?.lastSortingType?.observe(viewLifecycleOwner) { sortingType ->
+            if (parentViewModel!!.isFirstStartOfApprovalFragment.not()) {
+                val list: MutableList<CeibroTaskV2> = parentViewModel!!.filteredApprovalTasks
+                parentViewModel!!.viewModelScope.launch {
                     viewModel.loading(true, "")
-                    val sortedList = async { parentViewModel.sortList(list) }.await()
+                    val sortedList = async { parentViewModel!!.sortList(list) }.await()
                     val orderedList =
-                        async { parentViewModel.applySortingOrder(sortedList) }.await()
+                        async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                    parentViewModel.filteredApprovalTasks = orderedList
+                    parentViewModel!!.filteredApprovalTasks = orderedList
 
-                    parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                     viewModel.loading(false, "")
                 }
             }
         }
 
-        parentViewModel.selectedTaskTypeApprovalState.observe(viewLifecycleOwner) { taskType ->
-            parentViewModel.isFirstStartOfApprovalFragment = false
+        parentViewModel?.selectedTaskTypeApprovalState?.observe(viewLifecycleOwner) { taskType ->
+            parentViewModel!!.isFirstStartOfApprovalFragment = false
             var list: MutableList<CeibroTaskV2> = mutableListOf()
 
             if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalApprovalAllTasks
+                list = parentViewModel!!.originalApprovalAllTasks
 
             } else if (taskType.equals(TaskRootStateTags.InReview.tagValue, true)) {
-                list = parentViewModel.originalApprovalInReviewTasks
+                list = parentViewModel!!.originalApprovalInReviewTasks
 
             } else if (taskType.equals(TaskRootStateTags.ToReview.tagValue, true)) {
-                list = parentViewModel.originalApprovalToReviewTasks
+                list = parentViewModel!!.originalApprovalToReviewTasks
             }
 
-            parentViewModel.viewModelScope.launch {
-                val sortedList = async { parentViewModel.sortList(list) }.await()
-                val orderedList = async { parentViewModel.applySortingOrder(sortedList) }.await()
+            parentViewModel!!.viewModelScope.launch {
+                val sortedList = async { parentViewModel!!.sortList(list) }.await()
+                val orderedList = async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                parentViewModel.filteredApprovalTasks = orderedList
+                parentViewModel!!.filteredApprovalTasks = orderedList
 
-                parentViewModel.filterTasksList(parentViewModel.searchedText)
+                parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
             }
 
         }
 
 
-        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
-            if (parentViewModel.isFirstStartOfApprovalFragment.not()) {
+        parentViewModel?.applyFilter?.observe(viewLifecycleOwner) {
+            if (parentViewModel!!.isFirstStartOfApprovalFragment.not()) {
                 if (it == true) {
 
-                    val taskType = parentViewModel.selectedTaskTypeApprovalState.value
+                    val taskType = parentViewModel!!.selectedTaskTypeApprovalState.value
 
                     var list: MutableList<CeibroTaskV2> = mutableListOf()
 
                     if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                        list = parentViewModel.originalApprovalAllTasks
+                        list = parentViewModel!!.originalApprovalAllTasks
 
                     } else if (taskType.equals(TaskRootStateTags.InReview.tagValue, true)) {
-                        list = parentViewModel.originalApprovalInReviewTasks
+                        list = parentViewModel!!.originalApprovalInReviewTasks
 
                     } else if (taskType.equals(TaskRootStateTags.ToReview.tagValue, true)) {
-                        list = parentViewModel.originalApprovalToReviewTasks
+                        list = parentViewModel!!.originalApprovalToReviewTasks
                     }
 
-                    parentViewModel.viewModelScope.launch {
-                        val sortedList = async { parentViewModel.sortList(list) }.await()
+                    parentViewModel!!.viewModelScope.launch {
+                        val sortedList = async { parentViewModel!!.sortList(list) }.await()
                         val orderedList =
-                            async { parentViewModel.applySortingOrder(sortedList) }.await()
+                            async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                        parentViewModel.filteredApprovalTasks = orderedList
+                        parentViewModel!!.filteredApprovalTasks = orderedList
 
-                        parentViewModel.filterTasksList(parentViewModel.searchedText)
+                        parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                     }
 
                 }
@@ -218,7 +219,7 @@ class TaskV3ApprovalFragment :
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
                     CeibroApplication.CookiesManager.taskDetailRootState =
-                        parentViewModel.selectedTaskTypeApprovalState.value
+                        parentViewModel?.selectedTaskTypeApprovalState?.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))

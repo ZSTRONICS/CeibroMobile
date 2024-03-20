@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -16,16 +19,26 @@ import java.io.IOException
 import java.io.InputStream
 import javax.inject.Inject
 
-@AndroidEntryPoint
+@AndroidEntryPoint        //Entry point will not be used for BroadcastReceiver as HILT has an issue on it
 class DownloadCompleteReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var downloadedDrawingV2Dao: DownloadedDrawingV2Dao
 
+//    private fun providesAppDatabase(context: Context): CeibroDatabase {
+//        return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
+//            .addCallback(object : RoomDatabase.Callback() {
+//            })
+//            .fallbackToDestructiveMigration().build()
+//    }
+
+
     @SuppressLint("Range")
     override fun onReceive(context: Context?, intent: Intent?) {
         println("downloadId: intent.action ${intent?.action} ")
 
+//        val room = context?.let { providesAppDatabase(it) }
+//        val downloadedDrawingV2Dao = room?.getDownloadDrawingDao()
 
         try {
             val downloadId1 = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)

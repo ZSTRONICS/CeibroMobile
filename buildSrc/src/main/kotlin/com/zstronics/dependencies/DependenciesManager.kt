@@ -79,11 +79,12 @@ object DependenciesManager {
         add(HiltDaggerDependencies.DAGGER_HILT)
         add(HiltDaggerDependencies.HILT_FRAGMENT)
         add(HiltDaggerDependencies.HILT_WORKER)
+//        add(HiltDaggerDependencies.HILT_LIFECYCLE_VM)
 //       add(HiltDaggerDependencies.HILT_VM)
     }
     val hiltKapt = arrayListOf<String>().apply {
         add(HiltDaggerDependencies.DAGGER_COMPILER)
-//        add(HiltDaggerDependencies.HILT_COMPILER)
+        add(HiltDaggerDependencies.HILT_COMPILER)
     }
 
     val testingImplementation = arrayListOf<String>().apply {

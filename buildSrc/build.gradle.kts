@@ -1,6 +1,6 @@
 object Dependencies {
-    const val AndroidBuildTools = "com.android.tools.build:gradle:8.1.1"
-    const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10"
+    const val AndroidBuildTools = "com.android.tools.build:gradle:8.3.1"
+    const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20"
 //    const val detektGradlePlugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.14.1"
 }
 
@@ -20,4 +20,5 @@ repositories {
 dependencies {
     implementation(Dependencies.AndroidBuildTools)
     implementation(Dependencies.kotlinGradlePlugin)
+    implementation("com.squareup:javapoet:1.13.0")  //Library required by updated HILT library
 }

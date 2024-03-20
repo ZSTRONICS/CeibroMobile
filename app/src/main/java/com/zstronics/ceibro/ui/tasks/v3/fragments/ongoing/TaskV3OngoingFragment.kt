@@ -32,7 +32,7 @@ class TaskV3OngoingFragment :
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: TaskV3OngoingVM by viewModels()
-    private lateinit var parentViewModel: TasksParentTabV3VM
+    private var parentViewModel: TasksParentTabV3VM? = null
     override val layoutResId: Int = R.layout.fragment_task_v3_ongoing
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
@@ -67,22 +67,22 @@ class TaskV3OngoingFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-        parentViewModel.ongoingAllTasks.observe(viewLifecycleOwner) {
-            if (parentViewModel.applyFilter.value == true) {
-                parentViewModel._applyFilter.value = true
+        parentViewModel?.ongoingAllTasks?.observe(viewLifecycleOwner) {
+            if (parentViewModel!!.applyFilter.value == true) {
+                parentViewModel!!._applyFilter.value = true
             } else {
-                if (parentViewModel.isFirstStartOfOngoingFragment) {
-                    if (parentViewModel.selectedTaskTypeOngoingState.value.equals(
+                if (parentViewModel!!.isFirstStartOfOngoingFragment) {
+                    if (parentViewModel!!.selectedTaskTypeOngoingState.value.equals(
                             TaskRootStateTags.All.tagValue,
                             true
                         )
                     ) {
-                        parentViewModel.isFirstStartOfOngoingFragment = false
-                        parentViewModel.filteredOngoingTasks = it
+                        parentViewModel!!.isFirstStartOfOngoingFragment = false
+                        parentViewModel!!.filteredOngoingTasks = it
                         if (!it.isNullOrEmpty()) {
                             adapter.setList(
                                 it,
-                                parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                                parentViewModel!!.selectedTaskTypeOngoingState.value ?: ""
                             )
                             mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                             mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
@@ -90,10 +90,10 @@ class TaskV3OngoingFragment :
                         } else {
                             adapter.setList(
                                 listOf(),
-                                parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                                parentViewModel!!.selectedTaskTypeOngoingState.value ?: ""
                             )
                             mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                            if (parentViewModel.isSearchingTasks) {
+                            if (parentViewModel!!.isSearchingTasks) {
                                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                                 mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
                             } else {
@@ -103,27 +103,27 @@ class TaskV3OngoingFragment :
                         }
                     }
                 } else {
-                    val type = parentViewModel.selectedTaskTypeOngoingState.value
-                    parentViewModel._selectedTaskTypeOngoingState.value = type
+                    val type = parentViewModel!!.selectedTaskTypeOngoingState.value
+                    parentViewModel!!._selectedTaskTypeOngoingState.value = type
                 }
             }
         }
 
 
-        parentViewModel.setFilteredDataToOngoingAdapter.observe(viewLifecycleOwner) { list ->
+        parentViewModel?.setFilteredDataToOngoingAdapter?.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
 
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                adapter.setList(list, parentViewModel!!.selectedTaskTypeOngoingState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
             } else {
                 adapter.setList(
                     listOf(),
-                    parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                    parentViewModel!!.selectedTaskTypeOngoingState.value ?: ""
                 )
                 mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
+                if (parentViewModel!!.isSearchingTasks) {
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
                 } else {
@@ -133,75 +133,75 @@ class TaskV3OngoingFragment :
             }
         }
 
-        parentViewModel.lastSortingType.observe(viewLifecycleOwner) { sortingType ->
-            if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
-                val list: MutableList<CeibroTaskV2> = parentViewModel.filteredOngoingTasks
-                parentViewModel.viewModelScope.launch {
+        parentViewModel?.lastSortingType?.observe(viewLifecycleOwner) { sortingType ->
+            if (parentViewModel!!.isFirstStartOfOngoingFragment.not()) {
+                val list: MutableList<CeibroTaskV2> = parentViewModel!!.filteredOngoingTasks
+                parentViewModel!!.viewModelScope.launch {
                     viewModel.loading(true, "")
-                    val sortedList = async { parentViewModel.sortList(list) }.await()
+                    val sortedList = async { parentViewModel!!.sortList(list) }.await()
                     val orderedList =
-                        async { parentViewModel.applySortingOrder(sortedList) }.await()
+                        async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                    parentViewModel.filteredOngoingTasks = orderedList
+                    parentViewModel!!.filteredOngoingTasks = orderedList
 
-                    parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                     viewModel.loading(false, "")
                 }
             }
         }
 
 
-        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
-            if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
+        parentViewModel?.selectedTaskTypeOngoingState?.observe(viewLifecycleOwner) { taskType ->
+            if (parentViewModel!!.isFirstStartOfOngoingFragment.not()) {
                 var list: MutableList<CeibroTaskV2> = mutableListOf()
 
                 if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                    list = parentViewModel.originalOngoingAllTasks
+                    list = parentViewModel!!.originalOngoingAllTasks
 
                 } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                    list = parentViewModel.originalOngoingFromMeTasks
+                    list = parentViewModel!!.originalOngoingFromMeTasks
 
                 } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                    list = parentViewModel.originalOngoingToMeTasks
+                    list = parentViewModel!!.originalOngoingToMeTasks
                 }
 
-                parentViewModel.viewModelScope.launch {
-                    val sortedList = async { parentViewModel.sortList(list) }.await()
+                parentViewModel!!.viewModelScope.launch {
+                    val sortedList = async { parentViewModel!!.sortList(list) }.await()
                     val orderedList =
-                        async { parentViewModel.applySortingOrder(sortedList) }.await()
+                        async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                    parentViewModel.filteredOngoingTasks = orderedList
+                    parentViewModel!!.filteredOngoingTasks = orderedList
 
-                    parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                 }
             }
         }
 
-        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+        parentViewModel?.applyFilter?.observe(viewLifecycleOwner) {
             if (it == true) {
-                if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
-                    val taskType = parentViewModel.selectedTaskTypeOngoingState.value
+                if (parentViewModel!!.isFirstStartOfOngoingFragment.not()) {
+                    val taskType = parentViewModel!!.selectedTaskTypeOngoingState.value
 
                     var list: MutableList<CeibroTaskV2> = mutableListOf()
 
                     if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                        list = parentViewModel.originalOngoingAllTasks
+                        list = parentViewModel!!.originalOngoingAllTasks
 
                     } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                        list = parentViewModel.originalOngoingFromMeTasks
+                        list = parentViewModel!!.originalOngoingFromMeTasks
 
                     } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                        list = parentViewModel.originalOngoingToMeTasks
+                        list = parentViewModel!!.originalOngoingToMeTasks
                     }
 
-                    parentViewModel.viewModelScope.launch {
-                        val sortedList = async { parentViewModel.sortList(list) }.await()
+                    parentViewModel!!.viewModelScope.launch {
+                        val sortedList = async { parentViewModel!!.sortList(list) }.await()
                         val orderedList =
-                            async { parentViewModel.applySortingOrder(sortedList) }.await()
+                            async { parentViewModel!!.applySortingOrder(sortedList) }.await()
 
-                        parentViewModel.filteredOngoingTasks = orderedList
+                        parentViewModel!!.filteredOngoingTasks = orderedList
 
-                        parentViewModel.filterTasksList(parentViewModel.searchedText)
+                        parentViewModel!!.filterTasksList(parentViewModel!!.searchedText)
                     }
                 }
             }
@@ -219,7 +219,7 @@ class TaskV3OngoingFragment :
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
                     CeibroApplication.CookiesManager.taskDetailRootState =
-                        parentViewModel.selectedTaskTypeOngoingState.value
+                        parentViewModel?.selectedTaskTypeOngoingState?.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
@@ -239,11 +239,11 @@ class TaskV3OngoingFragment :
                 try {
                     createPopupWindow(v, data) { menuTag ->
                         if (menuTag.equals("hideTask", true)) {
-                            parentViewModel.showHideTaskDialog(requireContext(), data)
+                            parentViewModel?.showHideTaskDialog(requireContext(), data)
                         } else if (menuTag.equals("cancelTask", true)) {
 
 
-                            parentViewModel.showCancelTaskDialog(requireContext(), data)
+                            parentViewModel?.showCancelTaskDialog(requireContext(), data)
                         }
                     }
                 } catch (error: Exception) {

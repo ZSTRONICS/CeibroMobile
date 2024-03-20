@@ -142,7 +142,9 @@ object HiltDaggerDependencies {
     const val DAGGER_COMPILER =
         "com.google.dagger:hilt-android-compiler:${HiltDaggerVersion.HILT_DI}"
     const val HILT_FRAGMENT = "androidx.hilt:hilt-navigation-fragment:${HiltDaggerVersion.HILT_VM}"
+    const val HILT_LIFECYCLE_VM = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     const val HILT_WORKER = "androidx.hilt:hilt-work:${HiltDaggerVersion.HILT_VM}"
+    const val HILT_COMPILER = "androidx.hilt:hilt-compiler:${HiltDaggerVersion.HILT_VM}"
 }
 
 object TestDependencies {

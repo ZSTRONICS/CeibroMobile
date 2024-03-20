@@ -17,9 +17,9 @@
     }
 
     object LifeCycle_KTX {
-        const val CORE_KTX = "1.5.0"
+        const val CORE_KTX = "1.12.0"
         const val Collection_KTX = "1.1.0"
-        const val LIFECYCLE = "2.5.1"
+        const val LIFECYCLE = "2.6.2"
         const val LIFECYCL_EEXTENSIONS = "2.2.0"
     }
 
@@ -50,7 +50,7 @@
     }
 
     object KotlinVersions {
-        const val STANDARD_LIBRARY = "1.8.10"
+        const val STANDARD_LIBRARY = "1.9.20"
         const val COROUTINE_VERSION = "1.4.1"
     }
 
@@ -75,8 +75,8 @@
 
     object BuildPluginsVersions {
         const val KOTLIN = KotlinVersions.STANDARD_LIBRARY
-        const val BUILDGRADLE = "8.1.1"
-        const val HILT = "2.38.1"
+        const val BUILDGRADLE = "8.3.1"
+        const val HILT = "2.50"
         const val NAVIGATION = "2.7.2"
     }
 
