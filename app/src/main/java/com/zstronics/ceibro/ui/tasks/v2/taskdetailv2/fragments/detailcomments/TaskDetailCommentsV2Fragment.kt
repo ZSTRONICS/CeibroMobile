@@ -198,7 +198,7 @@ class TaskDetailCommentsV2Fragment :
     )
 
 
-    private lateinit var eventsAdapter: EventsRVAdapter
+    private lateinit var eventsAdapter: EventsMultiViewRVAdapter
 
     @Inject
     lateinit var onlyImageAdapter: CeibroOnlyImageRVAdapter
@@ -212,7 +212,7 @@ class TaskDetailCommentsV2Fragment :
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-        eventsAdapter = EventsRVAdapter(
+        eventsAdapter = EventsMultiViewRVAdapter(
             networkConnectivityObserver,
             requireContext(),
             viewModel.downloadedDrawingV2Dao

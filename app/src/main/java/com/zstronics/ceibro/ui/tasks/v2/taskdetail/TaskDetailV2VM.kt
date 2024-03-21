@@ -49,9 +49,9 @@ class TaskDetailV2VM @Inject constructor(
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
     val user = sessionManager.getUser().value
 
-    val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
-    val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
-    val originalTask: MutableLiveData<CeibroTaskV2> = MutableLiveData()
+    val _taskDetail: MutableLiveData<CeibroTaskV2?> = MutableLiveData()
+    val taskDetail: LiveData<CeibroTaskV2?> = _taskDetail
+    val originalTask: MutableLiveData<CeibroTaskV2?> = MutableLiveData()
 
     private val _onlyImages: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val onlyImages: MutableLiveData<ArrayList<TaskFiles>> = _onlyImages

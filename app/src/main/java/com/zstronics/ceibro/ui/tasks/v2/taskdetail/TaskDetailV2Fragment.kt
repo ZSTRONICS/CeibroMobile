@@ -420,7 +420,7 @@ class TaskDetailV2Fragment :
         }
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
-            if (item.hasPinData) {
+            if (item?.hasPinData == true) {
                 mViewDataBinding.drawingOpenBtn.visibility = View.VISIBLE
             } else {
                 mViewDataBinding.drawingOpenBtn.visibility = View.GONE
@@ -428,7 +428,9 @@ class TaskDetailV2Fragment :
 
             if (taskSeenRequest) {
                 taskSeenRequest = false
-                detailAdapter.updateTaskData(item, viewModel.descriptionExpanded)
+                if (item != null) {
+                    detailAdapter.updateTaskData(item, viewModel.descriptionExpanded)
+                }
             }
 
             if (item != null) {

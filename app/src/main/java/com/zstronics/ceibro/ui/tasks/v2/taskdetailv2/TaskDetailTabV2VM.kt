@@ -54,9 +54,9 @@ class TaskDetailTabV2VM @Inject constructor(
 
     val user = sessionManager.getUser().value
 
-    val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
-    val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
-    val originalTask: MutableLiveData<CeibroTaskV2> = MutableLiveData()
+    val _taskDetail: MutableLiveData<CeibroTaskV2?> = MutableLiveData()
+    val taskDetail: LiveData<CeibroTaskV2?> = _taskDetail
+    val originalTask: MutableLiveData<CeibroTaskV2?> = MutableLiveData()
 
     val _taskEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
     val taskEvents: MutableLiveData<MutableList<Events>> = _taskEvents

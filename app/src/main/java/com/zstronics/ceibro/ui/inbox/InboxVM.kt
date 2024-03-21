@@ -142,7 +142,10 @@ class InboxVM @Inject constructor(
 
             if (latestSortingType.equals("SortByActivity", true)) {
                 val allTasks = allInboxTasks
-                allTasks.sortByDescending { it.createdAt }
+
+                synchronized(allTasks){
+                    allTasks.sortByDescending { it.createdAt }
+                }
                 originalInboxTasks = allTasks
                 _inboxTasks.postValue(allTasks)
                 isUserSearching = false
