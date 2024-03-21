@@ -84,7 +84,8 @@ class ConnectionAdapterSectionRecycler constructor(
 
     fun setData(oldSelectedContacts: ArrayList<String>) {
         oldContacts.clear()
-        oldContacts = oldSelectedContacts
+        oldContacts.addAll(oldSelectedContacts)
+        oldContacts.size
         notifyDataSetChanged()
     }
 

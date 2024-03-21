@@ -104,9 +104,8 @@ class ForwardFragment :
                             false
                         ), 1
                     )
-                    adapter = adapter.apply {
-                        setData(viewModel.oldSelectedContacts)
-                    }
+                    adapter.setData(viewModel.oldSelectedContacts)
+
                     adapter.notifyDataChanged(sectionList)
 
                 }
@@ -131,9 +130,8 @@ class ForwardFragment :
                             getString(R.string.recent_connections), false
                         ), 0
                     )
-                    adapter = adapter.apply {
-                        setData(viewModel.oldSelectedContacts)
-                    }
+                    adapter.setData(viewModel.oldSelectedContacts)
+
                     adapter.notifyDataChanged(sectionList)
                 }
             }

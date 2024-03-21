@@ -218,14 +218,6 @@ class TaskDetailTabV2Fragment :
 
                 mViewDataBinding.viewPager.setCurrentItem(1, true)
                 return
-
-                val bundle = Bundle()
-                val taskData = viewModel.taskDetail.value
-                bundle.putBoolean("doneCommentsRequired", taskData?.doneCommentsRequired ?: false)
-                bundle.putBoolean("doneImageRequired", taskData?.doneImageRequired ?: false)
-                bundle.putString("taskId", taskData?.id)
-                bundle.putString("action", TaskDetailEvents.Comment.eventValue)
-                navigateForResult(R.id.commentFragment, COMMENT_REQUEST_CODE, bundle)
             }
 
             R.id.doneBtn -> {
@@ -254,12 +246,24 @@ class TaskDetailTabV2Fragment :
                 val taskData = viewModel.taskDetail.value
                 val assignTo = taskData?.assignedToState?.map { it.phoneNumber }
                 val invited = taskData?.invitedNumbers?.map { it.phoneNumber }
+                val viewers = taskData?.viewer?.let { taskData.viewer.map { it.phoneNumber } }
+                val confirmer = taskData?.confirmer?.phoneNumber
                 val combinedList = arrayListOf<String>()
                 if (assignTo != null) {
                     combinedList.addAll(assignTo)
                 }
                 if (invited != null) {
                     combinedList.addAll(invited)
+                }
+
+                viewers?.forEach { listOfViewer ->
+                    listOfViewer?.let { viewerItem ->
+                        combinedList.add(viewerItem)
+                    }
+                }
+
+                if (confirmer != null) {
+                    combinedList.add(confirmer)
                 }
 
                 val bundle = Bundle()
