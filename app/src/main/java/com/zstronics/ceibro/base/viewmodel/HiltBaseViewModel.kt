@@ -1508,6 +1508,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
+                        EventBus.getDefault().post(LocalEvents.UpdateTaskInDetails(task))
                     }
                     if (eventData.pinData != null) {
                         drawingPinsDao.insertSinglePinData(eventData.pinData)

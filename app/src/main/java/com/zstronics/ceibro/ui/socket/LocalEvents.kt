@@ -121,6 +121,7 @@ object LocalEvents {
     class RefreshAllEvents
     class RefreshTaskFiles
     class TaskFailedToDone
+    data class UpdateTaskInDetails(val task: CeibroTaskV2?)
     data class TaskSeenEvent(val task: CeibroTaskV2?)
     data class TaskDoneEvent(val task: CeibroTaskV2?, val taskEvent: Events)
     data class TaskEvent(val events: Events)

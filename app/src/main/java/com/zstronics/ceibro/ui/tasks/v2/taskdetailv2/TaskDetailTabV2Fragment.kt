@@ -905,6 +905,21 @@ class TaskDetailTabV2Fragment :
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateTaskInDetails(event: LocalEvents.UpdateTaskInDetails?) {
+        val task = event?.task
+        if (task != null) {
+            viewModel.taskDetail.value?.let { taskDetail ->
+                if (task.id == taskDetail.id) {
+                    task.let { it1 ->
+                        viewModel.originalTask.postValue(it1)
+                        viewModel._taskDetail.postValue(it1)
+                    }
+                }
+            }
+        }
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskDoneEvent(event: LocalEvents.TaskDoneEvent?) {
