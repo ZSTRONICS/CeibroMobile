@@ -38,7 +38,7 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.PinnedEventsRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailcomments.EventsMultiViewRVAdapter
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
@@ -73,6 +73,7 @@ class TaskDetailParentV2Fragment :
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
+
 
     override fun onClick(id: Int) {
         when (id) {
@@ -131,7 +132,7 @@ class TaskDetailParentV2Fragment :
 
     lateinit var filesAdapter: FilesRVAdapter
 
-    private lateinit var pinnedEventsAdapter: PinnedEventsRVAdapter
+    private lateinit var pinnedEventsAdapter: EventsMultiViewRVAdapter
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,7 +147,7 @@ class TaskDetailParentV2Fragment :
                 viewModel.downloadedDrawingV2Dao
             )
 
-        pinnedEventsAdapter = PinnedEventsRVAdapter(
+        pinnedEventsAdapter = EventsMultiViewRVAdapter(
             networkConnectivityObserver,
             requireContext(),
             viewModel.downloadedDrawingV2Dao
@@ -846,6 +847,7 @@ class TaskDetailParentV2Fragment :
                         }
                         itemClickListener?.invoke(tag)
                     }
+                    EventBus.getDefault().post(LocalEvents.UpdateFileDownloadProgress())
                 }, 1000)
             }
         } ?: kotlin.run {
@@ -866,6 +868,7 @@ class TaskDetailParentV2Fragment :
                             }
                             itemClickListener?.invoke(tag)
                         }
+                        EventBus.getDefault().post(LocalEvents.UpdateFileDownloadProgress())
                     }, 1000)
                 }
             }
@@ -999,14 +1002,16 @@ class TaskDetailParentV2Fragment :
         super.onAttach(context)
         try {
             EventBus.getDefault().register(this)
-        } catch (_:Exception) { }
+        } catch (_: Exception) {
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         try {
             EventBus.getDefault().unregister(this)
-        } catch (_:Exception) { }
+        } catch (_: Exception) {
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1154,4 +1159,15 @@ class TaskDetailParentV2Fragment :
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
+
+        onlyImageAdapter.notifyDataSetChanged()
+        imageWithCommentAdapter.notifyDataSetChanged()
+        onlyDrawingAdapter.notifyDataSetChanged()
+        filesAdapter.notifyDataSetChanged()
+        pinnedEventsAdapter.notifyDataSetChanged()
+
+    }
 }

@@ -10,7 +10,6 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
@@ -29,8 +28,6 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.databinding.FragmentTaskDetailFilesV2Binding
@@ -532,6 +529,7 @@ class TaskDetailFilesV2Fragment :
                         }
                         itemClickListener?.invoke(tag)
                     }
+                    EventBus.getDefault().post(LocalEvents.UpdateFileDownloadProgress())
                 }, 1000)
             }
         } ?: kotlin.run {
@@ -552,6 +550,7 @@ class TaskDetailFilesV2Fragment :
                             }
                             itemClickListener?.invoke(tag)
                         }
+                        EventBus.getDefault().post(LocalEvents.UpdateFileDownloadProgress())
                     }, 1000)
                 }
             }
@@ -784,14 +783,16 @@ class TaskDetailFilesV2Fragment :
         super.onAttach(context)
         try {
             EventBus.getDefault().register(this)
-        } catch (_:Exception) { }
+        } catch (_: Exception) {
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         try {
             EventBus.getDefault().unregister(this)
-        } catch (_:Exception) { }
+        } catch (_: Exception) {
+        }
     }
 
 
@@ -809,5 +810,12 @@ class TaskDetailFilesV2Fragment :
             viewModel.isResumedCalled = true
             viewModel.refreshFiles()
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
+        detailFilesAdapter.notifyDataSetChanged()
+
     }
 }

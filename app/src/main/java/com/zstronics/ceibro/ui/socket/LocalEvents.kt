@@ -137,4 +137,5 @@ object LocalEvents {
 
     data class RefreshDrawingPins(val pinData: CeibroDrawingPins?)
     data class UpdateDrawingPins(val pinData: CeibroDrawingPins?)
+    class UpdateFileDownloadProgress
 }

@@ -410,6 +410,13 @@ class PinnedEventsRVAdapter constructor(
 //                    binding.onlyComment.visibility = View.VISIBLE
                 }
 
+                TaskDetailEvents.ReOpen.eventValue -> {
+                    binding.myMsgLayout.visibility = View.GONE
+                    binding.otherEventText.text = "${creatorName.toCamelCase()} re-opened the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
+
+                }
+
                 TaskDetailEvents.DoneTask.eventValue -> {
                     binding.myMsgLayout.visibility = View.GONE
 
@@ -457,6 +464,186 @@ class PinnedEventsRVAdapter constructor(
 //                            binding.viewLessBtn.visibility = View.GONE
 //                        }
 //                    }, 10)
+                }
+
+                TaskDetailEvents.APPROVED.eventValue -> {
+
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} approved the task"
+
+                    if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
+                        val marginEndOrStartInPixels =
+                            context.resources.getDimensionPixelSize(R.dimen.comment_card_margin)
+                        val marginWithZeroPixels =
+                            context.resources.getDimensionPixelSize(R.dimen.comment_card_no_margin)
+
+                        val layoutParams =
+                            binding.myMsgLayout.layoutParams as ConstraintLayout.LayoutParams
+
+                        if (item.initiator.id == loggedInUserId) {
+                            layoutParams.marginStart = marginEndOrStartInPixels
+                            layoutParams.marginEnd = marginWithZeroPixels
+                        } else {
+                            layoutParams.marginStart = marginWithZeroPixels
+                            layoutParams.marginEnd = marginEndOrStartInPixels
+                        }
+                        binding.myMsgLayout.layoutParams = layoutParams
+
+                        if (item.isPinned == true) {
+                            binding.eventPinImg.visibility = View.VISIBLE
+                        } else {
+                            binding.eventPinImg.visibility = View.GONE
+                        }
+
+                        binding.onlyImagesRV.visibility = View.GONE
+                        binding.imagesWithCommentRV.visibility = View.GONE
+                        binding.filesRV.visibility = View.GONE
+
+
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.visibility = View.GONE
+                        }
+
+                        if (item.commentData.files.isNotEmpty()) {
+                            separateFiles(item.commentData.files)
+                        }
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            if (binding.onlyComment.lineCount > 6) {
+                                binding.viewMoreLessLayout.visibility = View.VISIBLE
+                                binding.viewMoreBtn.visibility = View.VISIBLE
+                                binding.viewLessBtn.visibility = View.GONE
+                            } else {
+                                binding.viewMoreLessLayout.visibility = View.GONE
+                                binding.viewMoreBtn.visibility = View.GONE
+                                binding.viewLessBtn.visibility = View.GONE
+                            }
+                        }, 15)
+
+                    }
+                }
+
+                TaskDetailEvents.REJECT_REOPEN.eventValue -> {
+
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} rejected and reopened the task"
+
+                    if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
+                        val marginEndOrStartInPixels =
+                            context.resources.getDimensionPixelSize(R.dimen.comment_card_margin)
+                        val marginWithZeroPixels =
+                            context.resources.getDimensionPixelSize(R.dimen.comment_card_no_margin)
+
+                        val layoutParams =
+                            binding.myMsgLayout.layoutParams as ConstraintLayout.LayoutParams
+
+                        if (item.initiator.id == loggedInUserId) {
+                            layoutParams.marginStart = marginEndOrStartInPixels
+                            layoutParams.marginEnd = marginWithZeroPixels
+                        } else {
+                            layoutParams.marginStart = marginWithZeroPixels
+                            layoutParams.marginEnd = marginEndOrStartInPixels
+                        }
+                        binding.myMsgLayout.layoutParams = layoutParams
+
+                        if (item.isPinned == true) {
+                            binding.eventPinImg.visibility = View.VISIBLE
+                        } else {
+                            binding.eventPinImg.visibility = View.GONE
+                        }
+
+                        binding.onlyImagesRV.visibility = View.GONE
+                        binding.imagesWithCommentRV.visibility = View.GONE
+                        binding.filesRV.visibility = View.GONE
+
+
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.visibility = View.GONE
+                        }
+
+                        if (item.commentData.files.isNotEmpty()) {
+                            separateFiles(item.commentData.files)
+                        }
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            if (binding.onlyComment.lineCount > 6) {
+                                binding.viewMoreLessLayout.visibility = View.VISIBLE
+                                binding.viewMoreBtn.visibility = View.VISIBLE
+                                binding.viewLessBtn.visibility = View.GONE
+                            } else {
+                                binding.viewMoreLessLayout.visibility = View.GONE
+                                binding.viewMoreBtn.visibility = View.GONE
+                                binding.viewLessBtn.visibility = View.GONE
+                            }
+                        }, 15)
+
+                    }
+                }
+
+                TaskDetailEvents.REJECT_CLOSE.eventValue -> {
+
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} rejected and closed the task"
+
+                    if (item.commentData != null && (!item.commentData.message.isNullOrEmpty() || item.commentData.files.isNotEmpty())) {
+                        val marginEndOrStartInPixels =
+                            context.resources.getDimensionPixelSize(R.dimen.comment_card_margin)
+                        val marginWithZeroPixels =
+                            context.resources.getDimensionPixelSize(R.dimen.comment_card_no_margin)
+
+                        val layoutParams =
+                            binding.myMsgLayout.layoutParams as ConstraintLayout.LayoutParams
+
+                        if (item.initiator.id == loggedInUserId) {
+                            layoutParams.marginStart = marginEndOrStartInPixels
+                            layoutParams.marginEnd = marginWithZeroPixels
+                        } else {
+                            layoutParams.marginStart = marginWithZeroPixels
+                            layoutParams.marginEnd = marginEndOrStartInPixels
+                        }
+                        binding.myMsgLayout.layoutParams = layoutParams
+
+                        if (item.isPinned == true) {
+                            binding.eventPinImg.visibility = View.VISIBLE
+                        } else {
+                            binding.eventPinImg.visibility = View.GONE
+                        }
+
+                        binding.onlyImagesRV.visibility = View.GONE
+                        binding.imagesWithCommentRV.visibility = View.GONE
+                        binding.filesRV.visibility = View.GONE
+
+
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.visibility = View.GONE
+                        }
+
+                        if (item.commentData.files.isNotEmpty()) {
+                            separateFiles(item.commentData.files)
+                        }
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            if (binding.onlyComment.lineCount > 6) {
+                                binding.viewMoreLessLayout.visibility = View.VISIBLE
+                                binding.viewMoreBtn.visibility = View.VISIBLE
+                                binding.viewLessBtn.visibility = View.GONE
+                            } else {
+                                binding.viewMoreLessLayout.visibility = View.GONE
+                                binding.viewMoreBtn.visibility = View.GONE
+                                binding.viewLessBtn.visibility = View.GONE
+                            }
+                        }, 15)
+
+                    }
                 }
             }
 

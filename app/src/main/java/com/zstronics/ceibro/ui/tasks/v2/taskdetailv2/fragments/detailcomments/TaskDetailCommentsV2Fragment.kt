@@ -26,7 +26,6 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -36,7 +35,6 @@ import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
@@ -436,14 +434,16 @@ class TaskDetailCommentsV2Fragment :
         super.onAttach(context)
         try {
             EventBus.getDefault().register(this)
-        } catch (_:Exception) { }
+        } catch (_: Exception) {
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         try {
             EventBus.getDefault().unregister(this)
-        } catch (_:Exception) { }
+        } catch (_: Exception) {
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -832,7 +832,7 @@ class TaskDetailCommentsV2Fragment :
         manager?.let {
             downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
                 Handler(Looper.getMainLooper()).postDelayed({
-                    getDownloadProgress(context, downloadId) {tag->
+                    getDownloadProgress(context, downloadId) { tag ->
                         GlobalScope.launch(Dispatchers.Main) {
                             if (tag == "retry" || tag == "failed") {
                                 downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
@@ -843,6 +843,7 @@ class TaskDetailCommentsV2Fragment :
                         }
                         itemClickListener?.invoke(tag)
                     }
+                    EventBus.getDefault().post(LocalEvents.UpdateFileDownloadProgress())
                 }, 1000)
             }
         } ?: kotlin.run {
@@ -852,7 +853,7 @@ class TaskDetailCommentsV2Fragment :
             manager?.let {
                 downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
                     Handler(Looper.getMainLooper()).postDelayed({
-                        getDownloadProgress(context, downloadId) {tag->
+                        getDownloadProgress(context, downloadId) { tag ->
                             GlobalScope.launch(Dispatchers.Main) {
                                 if (tag == "retry" || tag == "failed") {
                                     downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
@@ -863,6 +864,7 @@ class TaskDetailCommentsV2Fragment :
                             }
                             itemClickListener?.invoke(tag)
                         }
+                        EventBus.getDefault().post(LocalEvents.UpdateFileDownloadProgress())
                     }, 1000)
                 }
             }
@@ -1196,4 +1198,12 @@ class TaskDetailCommentsV2Fragment :
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
+        onlyImageAdapter.notifyDataSetChanged()
+        filesAdapter.notifyDataSetChanged()
+        eventsAdapter.notifyDataSetChanged()
+
+    }
 }
