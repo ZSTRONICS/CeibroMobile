@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -241,8 +242,6 @@ class TaskV3OngoingFragment :
                         if (menuTag.equals("hideTask", true)) {
                             parentViewModel?.showHideTaskDialog(requireContext(), data)
                         } else if (menuTag.equals("cancelTask", true)) {
-
-
                             parentViewModel?.showCancelTaskDialog(requireContext(), data)
                         }
                     }
@@ -301,12 +300,12 @@ class TaskV3OngoingFragment :
 
         if (positionOfIcon > height) {
             if (data.isCreator) {
-                popupWindow.showAsDropDown(v, 0, -280)
+                popupWindow.showAsDropDown(v, -135, -280)
             } else {
-                popupWindow.showAsDropDown(v, 0, -175)
+                popupWindow.showAsDropDown(v, -135, -175)
             }
         } else {
-            popupWindow.showAsDropDown(v, 5, -10)
+            popupWindow.showAsDropDown(v, -135, -10)
         }
 
 
