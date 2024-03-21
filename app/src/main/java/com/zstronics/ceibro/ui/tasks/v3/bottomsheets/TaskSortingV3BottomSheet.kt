@@ -149,6 +149,7 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.newTaskSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
+            dismiss()
             onChangeSortingType?.invoke(lastSortingType)
         }
 
@@ -169,6 +170,7 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.newTaskSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
+            dismiss()
             onChangeSortingType?.invoke(lastSortingType)
         }
 
@@ -190,6 +192,7 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
+            dismiss()
             onChangeSortingType?.invoke(lastSortingType)
         }
 
@@ -211,6 +214,7 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.newTaskSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
+            dismiss()
             onChangeSortingType?.invoke(lastSortingType)
         }
 
@@ -232,6 +236,7 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.newTaskSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
+            dismiss()
             onChangeSortingType?.invoke(lastSortingType)
         }
 
