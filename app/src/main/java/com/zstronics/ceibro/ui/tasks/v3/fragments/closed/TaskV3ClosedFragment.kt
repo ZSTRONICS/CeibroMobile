@@ -157,11 +157,21 @@ class TaskV3ClosedFragment :
             if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
                 list = parentViewModel!!.originalClosedAllTasks
 
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel!!.originalClosedToMeTasks
+            } else if (taskType.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                list = parentViewModel!!.originalClosedAllTasks.filter { allTasksList -> !allTasksList.isTaskViewer }.toMutableList()
 
             } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                 list = parentViewModel!!.originalClosedFromMeTasks
+
+            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                list = parentViewModel!!.originalClosedToMeTasks
+
+            } else if (taskType.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                list = parentViewModel!!.originalClosedAllTasks.filter { allTasksList -> allTasksList.isTaskViewer }.toMutableList()
+
+            } else if (taskType.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                list = parentViewModel!!.originalClosedAllTasks.filter { allTasksList -> allTasksList.isTaskConfirmer }.toMutableList()
+
             }
 
             parentViewModel!!.viewModelScope.launch {
@@ -186,11 +196,21 @@ class TaskV3ClosedFragment :
                     if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
                         list = parentViewModel!!.originalClosedAllTasks
 
-                    } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                        list = parentViewModel!!.originalClosedToMeTasks
+                    } else if (taskType.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                        list = parentViewModel!!.originalClosedAllTasks.filter { allTasksList -> !allTasksList.isTaskViewer }.toMutableList()
 
                     } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                         list = parentViewModel!!.originalClosedFromMeTasks
+
+                    } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                        list = parentViewModel!!.originalClosedToMeTasks
+
+                    } else if (taskType.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                        list = parentViewModel!!.originalClosedAllTasks.filter { allTasksList -> allTasksList.isTaskViewer }.toMutableList()
+
+                    } else if (taskType.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                        list = parentViewModel!!.originalClosedAllTasks.filter { allTasksList -> allTasksList.isTaskConfirmer }.toMutableList()
+
                     }
 
                     parentViewModel!!.viewModelScope.launch {

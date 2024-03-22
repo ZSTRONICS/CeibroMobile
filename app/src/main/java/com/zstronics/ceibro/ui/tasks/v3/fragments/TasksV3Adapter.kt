@@ -88,17 +88,17 @@ class TasksV3Adapter @Inject constructor() :
                     }
 
                     val taskState =
-                        if (selectedState.equals(TaskRootStateTags.All.tagValue, true)) {
-                            if (item.isAssignedToMe) {
-                                item.userSubState
-                            } else if (item.isCreator || item.isTaskViewer || item.isTaskConfirmer) {
-                                item.creatorState
-                            } else {
-                                item.userSubState
-                            }
-                        } else if (selectedState.equals(TaskRootStateTags.ToMe.tagValue, true) || selectedState.equals(TaskRootStateTags.InReview.tagValue, true)) {
+                        if (item.isAssignedToMe) {
                             item.userSubState
-                        } else if (selectedState.equals(TaskRootStateTags.FromMe.tagValue, true) || selectedState.equals(TaskRootStateTags.ToReview.tagValue, true)) {
+                        } else if (item.isCreator || item.isTaskViewer || item.isTaskConfirmer) {
+                            item.creatorState
+                        } else if (selectedState.equals(TaskRootStateTags.ToMe.tagValue, true)
+                            || selectedState.equals(TaskRootStateTags.InReview.tagValue, true)
+                        ) {
+                            item.userSubState
+                        } else if (selectedState.equals(TaskRootStateTags.FromMe.tagValue, true)
+                            || selectedState.equals(TaskRootStateTags.ToReview.tagValue, true)
+                        ) {
                             item.creatorState
                         } else {
                             "Unknown"
@@ -197,7 +197,7 @@ class TasksV3Adapter @Inject constructor() :
                     }
 
 //                    if (item.isTaskInApproval) {
-                        taskMenuBtn.visibility = View.VISIBLE
+                    taskMenuBtn.visibility = View.VISIBLE
 //                    } else {
 //                        taskMenuBtn.visibility = View.GONE
 //                    }

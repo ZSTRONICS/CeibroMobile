@@ -159,11 +159,21 @@ class TaskV3OngoingFragment :
                 if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
                     list = parentViewModel!!.originalOngoingAllTasks
 
+                } else if (taskType.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                    list = parentViewModel!!.originalOngoingAllTasks.filter { allTasksList -> !allTasksList.isTaskViewer }.toMutableList()
+
                 } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                     list = parentViewModel!!.originalOngoingFromMeTasks
 
                 } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
                     list = parentViewModel!!.originalOngoingToMeTasks
+
+                } else if (taskType.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                    list = parentViewModel!!.originalOngoingAllTasks.filter { allTasksList -> allTasksList.isTaskViewer }.toMutableList()
+
+                } else if (taskType.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                    list = parentViewModel!!.originalOngoingAllTasks.filter { allTasksList -> allTasksList.isTaskConfirmer }.toMutableList()
+
                 }
 
                 parentViewModel!!.viewModelScope.launch {
@@ -188,11 +198,21 @@ class TaskV3OngoingFragment :
                     if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
                         list = parentViewModel!!.originalOngoingAllTasks
 
+                    } else if (taskType.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                        list = parentViewModel!!.originalOngoingAllTasks.filter { allTasksList -> !allTasksList.isTaskViewer }.toMutableList()
+
                     } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                         list = parentViewModel!!.originalOngoingFromMeTasks
 
                     } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
                         list = parentViewModel!!.originalOngoingToMeTasks
+
+                    } else if (taskType.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                        list = parentViewModel!!.originalOngoingAllTasks.filter { allTasksList -> allTasksList.isTaskViewer }.toMutableList()
+
+                    } else if (taskType.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                        list = parentViewModel!!.originalOngoingAllTasks.filter { allTasksList -> allTasksList.isTaskConfirmer }.toMutableList()
+
                     }
 
                     parentViewModel!!.viewModelScope.launch {

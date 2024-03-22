@@ -1,0 +1,92 @@
+package com.zstronics.ceibro.ui.tasks.v3.bottomsheets
+
+
+import android.app.Dialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.databinding.FragmentTaskTypeBinding
+import com.zstronics.ceibro.databinding.FragmentTaskTypeParentBinding
+
+class TaskTypeParentBottomSheet(val type: String, val callback: (String) -> Unit) :
+    BottomSheetDialogFragment() {
+    lateinit var binding: FragmentTaskTypeParentBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_task_type_parent,
+            container,
+            false
+        )
+        //set to adjust screen height automatically, when soft keyboard appears on screen
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        return binding.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (type.equals(TaskRootStateTags.All.tagValue, true)) {
+            binding.rbAll.isChecked = true
+        } else if (type.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+            binding.rbAllWithoutViewOnly.isChecked = true
+        } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+            binding.rbFromMe.isChecked = true
+        } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+            binding.rbToMe.isChecked = true
+        } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+            binding.rbViewOnly.isChecked = true
+        } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
+            binding.rbApprover.isChecked = true
+        }
+        binding.rbAll.setOnClick {
+            callback.invoke(TaskRootStateTags.All.tagValue)
+            dismiss()
+        }
+        binding.rbAllWithoutViewOnly.setOnClick {
+            callback.invoke(TaskRootStateTags.AllWithoutViewOnly.tagValue)
+            dismiss()
+        }
+        binding.rbFromMe.setOnClick {
+            callback.invoke(TaskRootStateTags.FromMe.tagValue)
+            dismiss()
+        }
+        binding.rbToMe.setOnClick {
+            callback.invoke(TaskRootStateTags.ToMe.tagValue)
+            dismiss()
+        }
+        binding.rbViewOnly.setOnClick {
+            callback.invoke(TaskRootStateTags.ViewOnly.tagValue)
+            dismiss()
+        }
+        binding.rbApprover.setOnClick {
+            callback.invoke(TaskRootStateTags.Approver.tagValue)
+            dismiss()
+        }
+
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        if (dialog is BottomSheetDialog) {
+            dialog.behavior.skipCollapsed = false
+            dialog.behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+        return dialog
+    }
+}

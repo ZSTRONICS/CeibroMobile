@@ -30,6 +30,7 @@ import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskSortingV3BottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeParentBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -76,10 +77,16 @@ class TasksParentTabV3Fragment :
                         viewModel._selectedTaskTypeOngoingState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             viewModel.typeToShowOngoing = "All"
+                        } else if (type.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "All - Without Viewer"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                             viewModel.typeToShowOngoing = "From Me"
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "To Me "
+                            viewModel.typeToShowOngoing = "To Me"
+                        } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "View Only"
+                        } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "Approver"
                         }
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
                     }
@@ -92,10 +99,16 @@ class TasksParentTabV3Fragment :
                         viewModel._selectedTaskTypeClosedState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             viewModel.typeToShowClosed = "All"
+                        } else if (type.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                            viewModel.typeToShowClosed = "All - Without Viewer"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                             viewModel.typeToShowClosed = "From Me"
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
                             viewModel.typeToShowClosed = "To Me "
+                        } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                            viewModel.typeToShowClosed = "View Only"
+                        } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                            viewModel.typeToShowClosed = "Approver"
                         }
                         mViewDataBinding.closedTypeText.text = viewModel.typeToShowClosed
                     }
@@ -348,12 +361,12 @@ class TasksParentTabV3Fragment :
 
 
     private fun chooseTaskType(type: String, callback: (String) -> Unit) {
-        val sheet = TaskTypeBottomSheet(type) {
+        val sheet = TaskTypeParentBottomSheet(type) {
             callback.invoke(it)
         }
 
         sheet.isCancelable = true
-        sheet.show(childFragmentManager, "TaskTypeBottomSheet")
+        sheet.show(childFragmentManager, "TaskTypeParentBottomSheet")
     }
 
     private fun chooseApprovalType(type: String, callback: (String) -> Unit) {

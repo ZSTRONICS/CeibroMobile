@@ -699,4 +699,7 @@
     <string name="canceled_tasks">Canceled tasks</string>
     <string name="re_open">Re-open</string>
     <string name="view_tasks_without_search">View tasks without search</string>
+    <string name="approver">Approver</string>
+    <string name="view_only">View Only</string>
+    <string name="all_without_view_only">All - without view only</string>
 </resources>

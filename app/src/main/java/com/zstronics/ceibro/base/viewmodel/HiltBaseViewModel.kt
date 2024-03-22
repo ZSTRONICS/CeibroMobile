@@ -2247,7 +2247,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
                     val task = taskDao.getTaskByID(eventData.taskId)
-                    val inboxTask = inboxV2Dao.getInboxTaskData(eventData.taskId)
+//                    val inboxTask = inboxV2Dao.getInboxTaskData(eventData.taskId)
 
                     if (task != null) {
                         task.seenBy = eventData.taskData.seenBy
@@ -2304,38 +2304,38 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                     updateAllTasksLists(taskDao)
 
-                    if (inboxTask != null) {
-                        inboxTask.actionBy = eventData.initiator
-                        inboxTask.createdAt = eventData.createdAt
-                        inboxTask.actionType = SocketHandler.TaskEvent.IB_TASK_DONE.name
-                        inboxTask.taskState = eventData.newTaskData.creatorState
-                        inboxTask.isSeen = false
-                        inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
-
-                        if (eventData.commentData != null) {
-                            val newActionFiles = if (eventData.commentData.files.isNotEmpty()) {
-                                eventData.commentData.files.map {
-                                    ActionFilesData(
-                                        fileUrl = it.fileUrl
-                                    )
-                                }
-                            } else {
-                                mutableListOf()
-                            }
-                            inboxTask.actionFiles = newActionFiles.toMutableList()
-                            inboxTask.actionDescription = eventData.commentData.message ?: ""
-                        } else {
-                            inboxTask.actionFiles = mutableListOf()
-                            inboxTask.actionDescription = ""
-                        }
-
-                        inboxV2Dao.insertInboxItem(inboxTask)
-
-//                        val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
-//                        CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
-
-                        EventBus.getDefault().post(LocalEvents.RefreshInboxSingleEvent(inboxTask))
-                    }
+//                    if (inboxTask != null) {
+//                        inboxTask.actionBy = eventData.initiator
+//                        inboxTask.createdAt = eventData.createdAt
+//                        inboxTask.actionType = SocketHandler.TaskEvent.IB_TASK_DONE.name
+//                        inboxTask.taskState = eventData.newTaskData.creatorState
+//                        inboxTask.isSeen = false
+//                        inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
+//
+//                        if (eventData.commentData != null) {
+//                            val newActionFiles = if (eventData.commentData.files.isNotEmpty()) {
+//                                eventData.commentData.files.map {
+//                                    ActionFilesData(
+//                                        fileUrl = it.fileUrl
+//                                    )
+//                                }
+//                            } else {
+//                                mutableListOf()
+//                            }
+//                            inboxTask.actionFiles = newActionFiles.toMutableList()
+//                            inboxTask.actionDescription = eventData.commentData.message ?: ""
+//                        } else {
+//                            inboxTask.actionFiles = mutableListOf()
+//                            inboxTask.actionDescription = ""
+//                        }
+//
+//                        inboxV2Dao.insertInboxItem(inboxTask)
+//
+////                        val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
+////                        CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+//
+//                        EventBus.getDefault().post(LocalEvents.RefreshInboxSingleEvent(inboxTask))
+//                    }
 
                 }.join()
 
