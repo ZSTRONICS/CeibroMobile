@@ -358,7 +358,7 @@ class TaskDetailFilesAdapter constructor(
                                                 "downloaded",
                                                 true
                                             ) || it.equals("downloading", true)
-                                            notifyItemChanged(position)
+                                          //  notifyItemChanged(position)
                                         }
                                     } else {
 

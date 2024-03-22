@@ -1158,11 +1158,11 @@ class TaskDetailParentV2Fragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
 
-        onlyImageAdapter.notifyDataSetChanged()
-        imageWithCommentAdapter.notifyDataSetChanged()
-        onlyDrawingAdapter.notifyDataSetChanged()
-        filesAdapter.notifyDataSetChanged()
-        pinnedEventsAdapter.notifyDataSetChanged()
+//        onlyImageAdapter.notifyDataSetChanged()
+//        imageWithCommentAdapter.notifyDataSetChanged()
+//        onlyDrawingAdapter.notifyDataSetChanged()
+//        filesAdapter.notifyDataSetChanged()
+//        pinnedEventsAdapter.notifyDataSetChanged()
 
     }
 }

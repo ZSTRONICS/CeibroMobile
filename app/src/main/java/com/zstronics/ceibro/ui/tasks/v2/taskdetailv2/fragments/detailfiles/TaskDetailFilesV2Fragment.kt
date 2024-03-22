@@ -814,7 +814,7 @@ class TaskDetailFilesV2Fragment :
     @SuppressLint("NotifyDataSetChanged")
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
-        detailFilesAdapter.notifyDataSetChanged()
+      //  detailFilesAdapter.notifyDataSetChanged()
 
     }
 }
