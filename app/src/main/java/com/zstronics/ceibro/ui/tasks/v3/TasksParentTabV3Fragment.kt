@@ -412,7 +412,7 @@ class TasksParentTabV3Fragment :
             //     changeSortingText(latestSortingType)
         }
 
-        sheet.isCancelable = false
+        sheet.isCancelable = true
         sheet.show(childFragmentManager, "TaskSortingV3BottomSheet")
     }
 

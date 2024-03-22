@@ -2,16 +2,19 @@ package com.zstronics.ceibro.ui.profile.editprofile
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.github.drjacky.imagepicker.ImagePicker
@@ -28,15 +31,17 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentEditProfileBinding
-import com.zstronics.ceibro.ui.dashboard.FeedbackDialogSheet
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import com.zstronics.ceibro.ui.profile.ImagePickerOrCaptureDialogSheet
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.internal.immutableListOf
+
 
 @AndroidEntryPoint
 class EditProfileFragment :
     BaseNavViewModelFragment<FragmentEditProfileBinding, IEditProfile.State, EditProfileVM>() {
+
+    private val CAMERA_PERMISSION_REQUEST_CODE = 100
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -57,9 +62,12 @@ class EditProfileFragment :
                 if (isPermissionGranted(Manifest.permission.CAMERA)) {
                     choosePhoto()
                 } else {
-                    shortToastNow(getString(R.string.files_access_denied))
+//                    navigateToAppSettings(requireContext())
+                     requestCameraPermission()
+//                    shortToastNow(getString(R.string.files_access_denied))
                 }
             }
+
             R.id.saveProfileBtn -> {
                 viewModel.updateProfile(
                     viewState.userFirstName.value.toString().trim(),
@@ -72,9 +80,11 @@ class EditProfileFragment :
                     finish()
                 }
             }
+
             R.id.changePasswordBtn -> {
                 showChangePasswordBottomSheet()
             }
+
             R.id.changePhoneNumberBtn -> {
                 showChangePhoneNumberBottomSheet()
             }
@@ -194,9 +204,11 @@ class EditProfileFragment :
         override fun afterTextChanged(s: Editable?) {
             // This method is called to notify you that the text has been changed and processed
         }
+
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             // This method is called to notify you that the text is about to change
         }
+
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val firstName = viewState.userFirstName.value.toString().trim()
             val surname = viewState.userSurname.value.toString().trim()
@@ -319,4 +331,55 @@ class EditProfileFragment :
 
         }
     }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                choosePhoto()
+            } else {
+                handleDeniedPermissions(permissions,grantResults)
+            }
+        }
+    }
+
+    private fun handleDeniedPermissions(permissions: Array<out String>, grantResults: IntArray) {
+        for (i in permissions.indices) {
+            val permission = permissions[i]
+            val result = grantResults[i]
+
+            if (result == PackageManager.PERMISSION_DENIED) {
+                if (shouldShowRequestPermissionRationale(permission)) {
+                    showToast("Permission denied: $permission")
+                } else {
+                    showToast("Permission denied: $permission. Please enable it in the app settings.")
+                    navigateToAppSettings(context)
+                    return
+                }
+            }
+        }
+    }
+
+    private fun navigateToAppSettings(context: Context?) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", context?.packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+
+
+    private fun requestCameraPermission() {
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_REQUEST_CODE
+        )
+    }
+
+
 }

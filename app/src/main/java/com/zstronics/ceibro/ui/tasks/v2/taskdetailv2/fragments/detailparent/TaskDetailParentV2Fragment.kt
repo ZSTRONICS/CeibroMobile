@@ -782,8 +782,7 @@ class TaskDetailParentV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        ActivityCompat.requestPermissions(
-            requireActivity(), permissions,
+        requestPermissions(permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }

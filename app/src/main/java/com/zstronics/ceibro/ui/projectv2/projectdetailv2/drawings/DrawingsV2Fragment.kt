@@ -490,7 +490,7 @@ class DrawingsV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        ActivityCompat.requestPermissions(requireActivity(), permissions, permissionRequestCode)
+        requestPermissions(permissions, permissionRequestCode)
     }
 
     override fun onRequestPermissionsResult(
