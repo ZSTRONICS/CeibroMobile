@@ -89,10 +89,10 @@ class TasksV3Adapter @Inject constructor() :
 
                     val taskState =
                         if (selectedState.equals(TaskRootStateTags.All.tagValue, true)) {
-                            if (item.isCreator || item.isTaskViewer) {
-                                item.creatorState
-                            } else if (item.isAssignedToMe) {
+                            if (item.isAssignedToMe) {
                                 item.userSubState
+                            } else if (item.isCreator || item.isTaskViewer || item.isTaskConfirmer) {
+                                item.creatorState
                             } else {
                                 item.userSubState
                             }

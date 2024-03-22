@@ -416,15 +416,11 @@ class TaskDetailParentV2Fragment :
         val context = binding.taskDetailStatusName.context
         var state = ""
         state =
-            if (task.isCreator || task.isTaskViewer) {
+            if (task.isAssignedToMe) {
+                task.userSubState
+            } else if (task.isCreator || task.isTaskViewer || task.isTaskConfirmer) {
                 task.creatorState
-            } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(
-                    TaskStatus.CANCELED.name,
-                    true
-                )
-            ) {
-                task.creatorState
-            } else {
+            }  else {
                 task.userSubState
             }
         val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
