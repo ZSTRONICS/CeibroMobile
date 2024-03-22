@@ -306,9 +306,9 @@ class TaskV3ApprovalFragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -135, -390)
+            popupWindow.showAsDropDown(v, -290, -390)
         } else {
-            popupWindow.showAsDropDown(v, -135, -10)
+            popupWindow.showAsDropDown(v, -290, -10)
         }
 
 

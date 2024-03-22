@@ -276,9 +276,9 @@ class TaskV3HiddenOngoingFragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -135, -170)
+            popupWindow.showAsDropDown(v, -174, -170)
         } else {
-            popupWindow.showAsDropDown(v, -135, -10)
+            popupWindow.showAsDropDown(v, -174, -10)
         }
 
 
