@@ -191,7 +191,7 @@ class NotificationHelper(context: Context) {
             } else if (notificationType.equals("comment", true)) {
 
                 val currentFragmentID = CeibroApplication.CookiesManager.navigationGraphStartDestination
-                if (currentFragmentID == R.id.taskDetailV2Fragment) {
+                if (currentFragmentID == R.id.taskDetailTabV2Fragment) {
                     val detailViewTask: CeibroTaskV2? = CeibroApplication.CookiesManager.taskDataForDetails
                     if (task.taskId == detailViewTask?.id) {
                         //Do nothing, because user is already in detail view of same task whose comment notification has came
@@ -392,7 +392,8 @@ class NotificationHelper(context: Context) {
 
         intentReply.action = "ACTION_CLOSE_NOTIFICATION"
         intentReply.putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-        intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.commentFragment)
+//        intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.commentFragment)
+        intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailTabV2Fragment)
         intentReply.putExtra("notificationTaskData", taskData)
         intentReply.putExtra(TYPE_EXTRA, 1)
         intentReply.putExtra("notificationId", singleNotificationId)
@@ -438,11 +439,11 @@ class NotificationHelper(context: Context) {
         val bundle = Bundle()
 //        bundle.putParcelable("notificationTaskData", taskData)
 //        bundle.putInt(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-//        bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailV2Fragment)
+//        bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailTabV2Fragment)
 //        bundle.putInt("notificationId", singleNotificationId)
 
         intentReply.putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-        intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailV2Fragment)
+        intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailTabV2Fragment)
         intentReply.putExtra("notificationTaskData", taskData)
         intentReply.putExtra(TYPE_EXTRA, 3)
         intentReply.putExtra("notificationId", singleNotificationId)

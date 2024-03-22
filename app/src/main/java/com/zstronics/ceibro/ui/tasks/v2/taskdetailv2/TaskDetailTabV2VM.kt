@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetailv2
 
-import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,7 +15,6 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
-import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -26,15 +24,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Re
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -250,19 +243,19 @@ class TaskDetailTabV2VM @Inject constructor(
 //            if (allFiles.isNotEmpty()) {
 //                callBack.invoke(allFiles)
 //            } else {
-                when (val response = remoteTask.getTaskFilesByTaskId(taskId)) {
-                    is ApiResponse.Success -> {
-                        val allTaskFiles = response.data.allTaskFiles
-                        if (allTaskFiles.isNotEmpty()) {
-                            detailFilesV2Dao.insertAllFiles(allTaskFiles)
-                        }
-                        callBack.invoke(allTaskFiles)
+            when (val response = remoteTask.getTaskFilesByTaskId(taskId)) {
+                is ApiResponse.Success -> {
+                    val allTaskFiles = response.data.allTaskFiles
+                    if (allTaskFiles.isNotEmpty()) {
+                        detailFilesV2Dao.insertAllFiles(allTaskFiles)
                     }
-
-                    is ApiResponse.Error -> {
-                        alert(response.error.message)
-                    }
+                    callBack.invoke(allTaskFiles)
                 }
+
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
 //            }
         }
     }

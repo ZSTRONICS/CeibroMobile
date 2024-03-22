@@ -67,7 +67,8 @@ class NotificationActivity : AppCompatActivity() {
 
         if (sessionManager.isLoggedIn()) {
             val currentFragmentID = CeibroApplication.CookiesManager.navigationGraphStartDestination
-            if (extrasType == 3 && currentFragmentID == R.id.taskDetailV2Fragment) {      // type 3 is when user taps open button in notification
+            println("Notification-StartDestinationId: $currentFragmentID")
+            if (extrasType == 3 && currentFragmentID == R.id.taskDetailTabV2Fragment) {      // type 3 is when user taps open button in notification
 
                 val detailViewTask: CeibroTaskV2? =
                     CeibroApplication.CookiesManager.taskDataForDetails
@@ -105,7 +106,7 @@ class NotificationActivity : AppCompatActivity() {
                     }
                 }
 
-            } else if (extrasType == 1 && currentFragmentID == R.id.commentFragment) {      // type 1 is when user taps reply button in notification
+            } else if (extrasType == 1 && currentFragmentID == R.id.taskDetailTabV2Fragment) {      // type 1 is when user taps reply button in notification
 
                 val detailTaskId = CeibroApplication.CookiesManager.taskIdInDetails
                 if (taskData?.taskId == detailTaskId) {
