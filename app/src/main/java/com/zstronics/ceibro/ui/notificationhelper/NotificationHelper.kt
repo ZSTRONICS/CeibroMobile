@@ -180,6 +180,7 @@ class NotificationHelper(context: Context) {
                         ).addAction(
                             R.drawable.app_logo, openActionTextBlue, openIntent
                         )
+                        .setContentIntent(openIntent) // Set the pending intent for the whole notification
                         .build()
 
                     notificationManager.apply {
@@ -258,6 +259,7 @@ class NotificationHelper(context: Context) {
                                 ).addAction(
                                     R.drawable.app_logo, openActionTextBlue, openIntent
                                 )
+                                .setContentIntent(openIntent) // Set the pending intent for the whole notification
                                 .build()
 
                             notificationManager.apply {
@@ -328,6 +330,7 @@ class NotificationHelper(context: Context) {
                             ).addAction(
                                 R.drawable.app_logo, openActionTextBlue, openIntent
                             )
+                            .setContentIntent(openIntent) // Set the pending intent for the whole notification
                             .build()
 
                         notificationManager.apply {
