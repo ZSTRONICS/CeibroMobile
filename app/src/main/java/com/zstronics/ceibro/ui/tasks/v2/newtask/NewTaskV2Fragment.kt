@@ -1060,6 +1060,8 @@ class NewTaskV2Fragment :
                             } else {
                                 "Me; "
                             }
+                            selectedContactList?.clear()
+                            viewState.selectedConfirmerContacts.value=null
                         }
                         viewState.selfAssignedConfermer.value = selfAssigned
                     }
