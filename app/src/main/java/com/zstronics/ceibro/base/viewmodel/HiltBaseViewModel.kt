@@ -12,8 +12,13 @@ import android.os.Looper
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
-import androidx.work.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
@@ -63,8 +68,10 @@ import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import com.zstronics.ceibro.utils.FileUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -299,9 +306,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }.join()
     }
 
+    @Inject
+    lateinit var taskDaoInternal1: TaskV2Dao
+
 
     suspend fun updateAllTasksLists(taskDao: TaskV2Dao): Boolean {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
 
             //Ongoing List
             val rootOngoingAllTasksDB =
@@ -445,14 +455,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
                             (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
-                                TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                TaskDetailEvents.REJECT_CLOSED.eventValue, true
+                            ))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
             val rootClosedFromMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                            (it.fromMeState.equals(
+                                TaskStatus.DONE.name,
+                                true
+                            ) || it.fromMeState.equals(
+                                TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                true
+                            ))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -583,7 +600,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val rootClosedToMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                        (it.toMeState.equals(
+                                            TaskStatus.DONE.name,
+                                            true
+                                        ) || it.toMeState.equals(
+                                            TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                            true
+                                        ))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -595,7 +618,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val rootClosedFromMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                        (it.fromMeState.equals(
+                                            TaskStatus.DONE.name,
+                                            true
+                                        ) || it.fromMeState.equals(
+                                            TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                            true
+                                        ))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -823,7 +852,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     val rootClosedToMeTasks =
                         rootClosedAllTasksDB.filter {
                             it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                    (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                    (it.toMeState.equals(
+                                        TaskStatus.DONE.name,
+                                        true
+                                    ) || it.toMeState.equals(
+                                        TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                        true
+                                    ))
                         }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -834,7 +869,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     val rootClosedFromMeTasks =
                         rootClosedAllTasksDB.filter {
                             it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                    (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                    (it.fromMeState.equals(
+                                        TaskStatus.DONE.name,
+                                        true
+                                    ) || it.fromMeState.equals(
+                                        TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                        true
+                                    ))
                         }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1137,7 +1178,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     CeibroApplication.CookiesManager.rootOngoingAllTasks.postValue(allTasks)
 
                     if (newTask.isAssignedToMe) {
-                        val rootOngoingToMeTasks =
+                        val rootOngoingToMeTasks = synchronized(allTasks) {
                             allTasks.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
                                         (it.toMeState.equals(
@@ -1146,23 +1187,30 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         ) || it.toMeState.equals(TaskStatus.ONGOING.name, true))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
-
+                        }
                         CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(
                             rootOngoingToMeTasks
                         )
                     }
                     if (newTask.isCreator) {
                         val rootOngoingFromMeTasks =
-                            allTasks.filter {
-                                it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
-                                        (it.fromMeState.equals(
-                                            TaskStatus.UNREAD.name,
-                                            true
-                                        ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
+                            synchronized(allTasks) {
+                                allTasks.filter {
+                                    it.taskRootState.equals(
+                                        TaskRootStateTags.Ongoing.tagValue,
+                                        true
+                                    ) &&
+                                            (it.fromMeState.equals(
+                                                TaskStatus.UNREAD.name,
+                                                true
+                                            ) || it.fromMeState.equals(
+                                                TaskStatus.ONGOING.name,
+                                                true
+                                            ))
+                                }
+                                    .sortedByDescending { it.updatedAt }.toMutableList()
+
                             }
-                                .sortedByDescending { it.updatedAt }.toMutableList()
-
-
                         CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(
                             rootOngoingFromMeTasks
                         )
@@ -1935,15 +1983,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     if (inboxTask != null && eventData.initiator.id != currentUser?.id) {
                         inboxTask.actionBy = eventData.initiator
                         inboxTask.createdAt = eventData.createdAt
-                        inboxTask.actionType = if (eventData.eventType == SocketHandler.TaskEvent.TASK_APPROVED.name) {
-                            SocketHandler.TaskEvent.IB_TASK_APPROVED.name
-                        } else if (eventData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name) {
-                            SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name
-                        } else if (eventData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name) {
-                            SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name
-                        } else {
-                            eventData.eventType
-                        }
+                        inboxTask.actionType =
+                            if (eventData.eventType == SocketHandler.TaskEvent.TASK_APPROVED.name) {
+                                SocketHandler.TaskEvent.IB_TASK_APPROVED.name
+                            } else if (eventData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name) {
+                                SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name
+                            } else if (eventData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name) {
+                                SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name
+                            } else {
+                                eventData.eventType
+                            }
                         inboxTask.taskState = eventData.newTaskData.creatorState
                         inboxTask.isSeen = false
                         inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
@@ -2227,10 +2276,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId, true
             )
             if (!isExists) {
-                val currentUser = sessionManager.getUserObj()
-                val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
-                    ViewModelProvider(it).get(SharedViewModel::class.java)
-                }
+//                val currentUser = sessionManager.getUserObj()
+//                val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+//                    ViewModelProvider(it).get(SharedViewModel::class.java)
+//                }
                 val taskEvent = Events(
                     id = eventData.id,
                     taskId = eventData.taskId,
@@ -2253,7 +2302,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.seenBy = eventData.taskData.seenBy
                         task.hiddenBy = eventData.taskData.hiddenBy
                         task.updatedAt = eventData.taskUpdatedAt
-                        task.creatorState = eventData.newTaskData.creatorState
+//                        task.creatorState = eventData.newTaskData.creatorState
 
                         val assignToList = task.assignedToState
                         if (task.confirmer != null) {

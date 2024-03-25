@@ -49,7 +49,7 @@ interface TaskV2Dao {
     @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, pinData = :pinData, taskRootState = :taskRootState, isCanceled = :isCanceled, isTaskInApproval = :isTaskInApproval, userSubState = :userSubState WHERE id = :taskId")
     suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, pinData: CeibroDrawingPins?, taskRootState: String, isCanceled: Boolean, isTaskInApproval: Boolean, userSubState: String)
 
-    @Update
+    @Update(entity = CeibroTaskV2::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateTask(task: CeibroTaskV2)
 
     @Query("SELECT * FROM tasks_v2_basic")

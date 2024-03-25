@@ -29,7 +29,11 @@ import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -252,11 +256,14 @@ class ContactSyncWorker @AssistedInject constructor(
 
     private fun provideConnectionsV2Dao(database: CeibroDatabase) = database.getConnectionsV2Dao()
     private fun providesAppDatabase(context: Context): CeibroDatabase {
-        return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
-            .addCallback(object : RoomDatabase.Callback() {
+        val lock = Any()
+        synchronized(lock) {
+            return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
+                .addCallback(object : RoomDatabase.Callback() {
 
-            })
-            .fallbackToDestructiveMigration().build()
+                })
+                .fallbackToDestructiveMigration().build()
+        }
     }
 
     companion object {
