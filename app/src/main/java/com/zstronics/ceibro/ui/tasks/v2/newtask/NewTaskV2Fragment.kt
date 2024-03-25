@@ -48,7 +48,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -134,14 +135,16 @@ class NewTaskV2Fragment :
 
             R.id.newViewerTopicText -> {
 
-                val selected=viewState.selectedContacts.value ?: mutableListOf()
-                val assigneeList = mutableListOf<AllCeibroConnections.CeibroConnection> ()
+                val selected = viewState.selectedContacts.value ?: mutableListOf()
+                val assigneeList = mutableListOf<AllCeibroConnections.CeibroConnection>()
                 selected.forEach {
                     assigneeList.add(it.copy())
                 }
                 val confirmer = viewState.selectedConfirmerContacts.value
-                confirmer?.let {
-                    assigneeList.add(it.copy())
+                if (viewState.selfAssignedConfermer.value != true) {
+                    confirmer?.let {
+                        assigneeList.add(it.copy())
+                    }
                 }
 
                 val bundle = Bundle()
