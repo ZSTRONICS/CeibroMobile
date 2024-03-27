@@ -469,6 +469,11 @@ class TasksParentTabV3Fragment :
             viewModel.filterTasksList(viewModel.searchedText)
 
         }
+
+        viewModel._applyFilter.value = false
+        viewModel.loadAllTasks {
+
+        }
         viewModel.reloadProjectData()
 
     }
