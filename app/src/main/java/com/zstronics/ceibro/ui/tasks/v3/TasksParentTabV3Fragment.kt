@@ -469,6 +469,7 @@ class TasksParentTabV3Fragment :
             viewModel.filterTasksList(viewModel.searchedText)
 
         }
+        viewModel.reloadProjectData()
 
     }
 
