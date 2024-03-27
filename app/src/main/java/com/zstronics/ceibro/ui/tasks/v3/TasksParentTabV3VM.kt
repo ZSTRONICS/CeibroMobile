@@ -451,6 +451,208 @@ class TasksParentTabV3VM @Inject constructor(
 
     }
 
+    fun loadAllTasksFromDB() {
+        launch {
+            val rootOngoingAllTasks =
+                CeibroApplication.CookiesManager.rootOngoingAllTasks.value ?: mutableListOf()
+            val rootOngoingToMeTasks =
+                CeibroApplication.CookiesManager.rootOngoingToMeTasks.value ?: mutableListOf()
+            val rootOngoingFromMeTasks =
+                CeibroApplication.CookiesManager.rootOngoingFromMeTasks.value ?: mutableListOf()
+
+
+
+                val rootOngoingAllTasksDB =
+                    taskDao.getRootAllTasks(TaskRootStateTags.Ongoing.tagValue)
+                        .toMutableList()
+
+                val rootOngoingToMeTasksDB =
+                    rootOngoingAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                (it.toMeState.equals(
+                                    TaskStatus.NEW.name,
+                                    true
+                                ) || it.toMeState.equals(TaskStatus.ONGOING.name, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+                val rootOngoingFromMeTasksDB =
+                    rootOngoingAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                (it.fromMeState.equals(
+                                    TaskStatus.UNREAD.name,
+                                    true
+                                ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+
+                CeibroApplication.CookiesManager.rootOngoingAllTasks.postValue(rootOngoingAllTasksDB)
+                CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(
+                    rootOngoingToMeTasksDB
+                )
+                CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(
+                    rootOngoingFromMeTasksDB
+                )
+
+//                if (isFirstStartOfOngoingFragment) {
+//                    _selectedTaskTypeOngoingState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfOngoingFragment = false
+//                }
+
+                filteredOngoingTasks = rootOngoingAllTasks
+                _ongoingAllTasks.postValue(rootOngoingAllTasks)
+                _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
+                _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
+
+                originalOngoingAllTasks = rootOngoingAllTasks
+                originalOngoingToMeTasks = rootOngoingToMeTasks
+                originalOngoingFromMeTasks = rootOngoingFromMeTasks
+
+
+
+
+            val rootApprovalAllTasks =
+                CeibroApplication.CookiesManager.rootApprovalAllTasks.value ?: mutableListOf()
+            val rootApprovalInReviewPendingTasks =
+                CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.value
+                    ?: mutableListOf()
+            val rootApprovalToReviewTasks =
+                CeibroApplication.CookiesManager.rootApprovalToReviewTasks.value ?: mutableListOf()
+
+            if (rootApprovalAllTasks.isNotEmpty()) {
+
+                filteredApprovalTasks = rootApprovalAllTasks
+                _approvalAllTasks.postValue(rootApprovalAllTasks)
+                _approvalInReviewTasks.postValue(rootApprovalInReviewPendingTasks)
+                _approvalToReviewTasks.postValue(rootApprovalToReviewTasks)
+
+                originalApprovalAllTasks = rootApprovalAllTasks
+                originalApprovalInReviewTasks = rootApprovalInReviewPendingTasks
+                originalApprovalToReviewTasks = rootApprovalToReviewTasks
+
+//                if (isFirstStartOfApprovalFragment) {
+//                    _selectedTaskTypeApprovalState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfApprovalFragment = false
+//                }
+
+            } else {
+
+                val rootApprovalAllTasksDB =
+                    taskDao.getRootAllTasks(TaskRootStateTags.Approval.tagValue)
+                        .toMutableList()
+
+                val rootApprovalInReviewPendingTasksDB =
+                    rootApprovalAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                (it.userSubState.equals(TaskRootStateTags.InReview.tagValue, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+                val rootApprovalToReviewTasksDB =
+                    rootApprovalAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                (it.userSubState.equals(TaskRootStateTags.ToReview.tagValue, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+                CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(
+                    rootApprovalAllTasksDB
+                )
+                CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(
+                    rootApprovalInReviewPendingTasksDB
+                )
+                CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(
+                    rootApprovalToReviewTasksDB
+                )
+
+                filteredApprovalTasks = rootApprovalAllTasks
+                _approvalAllTasks.postValue(rootApprovalAllTasksDB)
+                _approvalInReviewTasks.postValue(rootApprovalInReviewPendingTasksDB)
+                _approvalToReviewTasks.postValue(rootApprovalToReviewTasksDB)
+
+                originalApprovalAllTasks = rootApprovalAllTasks
+                originalApprovalInReviewTasks = rootApprovalInReviewPendingTasksDB
+                originalApprovalToReviewTasks = rootApprovalToReviewTasksDB
+
+//                if (isFirstStartOfApprovalFragment) {
+//                    _selectedTaskTypeApprovalState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfApprovalFragment = false
+//                }
+
+            }
+
+
+            val rootClosedAllTasks =
+                CeibroApplication.CookiesManager.rootClosedAllTasks.value ?: mutableListOf()
+            val rootClosedToMeTasks =
+                CeibroApplication.CookiesManager.rootClosedToMeTasks.value ?: mutableListOf()
+            val rootClosedFromMeTasks =
+                CeibroApplication.CookiesManager.rootClosedFromMeTasks.value ?: mutableListOf()
+
+            if (rootClosedAllTasks.isNotEmpty()) {
+
+                filteredClosedTasks = rootClosedAllTasks
+                _closedAllTasks.postValue(rootClosedAllTasks)
+                _closedToMeTasks.postValue(rootClosedToMeTasks)
+                _closedFromMeTasks.postValue(rootClosedFromMeTasks)
+
+                originalClosedAllTasks = rootClosedAllTasks
+                originalClosedToMeTasks = rootClosedToMeTasks
+                originalClosedFromMeTasks = rootClosedFromMeTasks
+
+//                if (isFirstStartOfClosedFragment) {
+//                    _selectedTaskTypeClosedState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfClosedFragment = false
+//                }
+
+            } else {
+
+                val rootClosedAllTasksDB =
+                    taskDao.getRootAllTasks(TaskRootStateTags.Closed.tagValue)
+                        .toMutableList()
+
+                val rootClosedToMeTasksDB =
+                    rootClosedAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
+                                    TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+                val rootClosedFromMeTasksDB =
+                    rootClosedAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+                CeibroApplication.CookiesManager.rootClosedAllTasks.postValue(rootClosedAllTasksDB)
+                CeibroApplication.CookiesManager.rootClosedToMeTasks.postValue(rootClosedToMeTasksDB)
+                CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(
+                    rootClosedFromMeTasksDB
+                )
+
+                filteredClosedTasks = rootClosedAllTasks
+                _closedAllTasks.postValue(rootClosedAllTasksDB)
+                _closedToMeTasks.postValue(rootClosedToMeTasksDB)
+                _closedFromMeTasks.postValue(rootClosedFromMeTasksDB)
+
+                originalClosedAllTasks = rootClosedAllTasksDB
+                originalClosedToMeTasks = rootClosedToMeTasksDB
+                originalClosedFromMeTasks = rootClosedFromMeTasksDB
+
+//                if (isFirstStartOfClosedFragment) {
+//                    _selectedTaskTypeClosedState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfClosedFragment = false
+//                }
+
+            }
+
+        }
+
+    }
+
 
     override fun getProjectName(context: Context) {
 

@@ -5,6 +5,8 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -29,7 +31,6 @@ import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ApprovalTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskSortingV3BottomSheet
-import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeParentBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,7 +78,11 @@ class TasksParentTabV3Fragment :
                         viewModel._selectedTaskTypeOngoingState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             viewModel.typeToShowOngoing = "All"
-                        } else if (type.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                        } else if (type.equals(
+                                TaskRootStateTags.AllWithoutViewOnly.tagValue,
+                                true
+                            )
+                        ) {
                             viewModel.typeToShowOngoing = "All - Without Viewer"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                             viewModel.typeToShowOngoing = "From Me"
@@ -99,7 +104,11 @@ class TasksParentTabV3Fragment :
                         viewModel._selectedTaskTypeClosedState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             viewModel.typeToShowClosed = "All"
-                        } else if (type.equals(TaskRootStateTags.AllWithoutViewOnly.tagValue, true)) {
+                        } else if (type.equals(
+                                TaskRootStateTags.AllWithoutViewOnly.tagValue,
+                                true
+                            )
+                        ) {
                             viewModel.typeToShowClosed = "All - Without Viewer"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                             viewModel.typeToShowClosed = "From Me"
@@ -470,10 +479,10 @@ class TasksParentTabV3Fragment :
 
         }
 
-        viewModel._applyFilter.value = false
-        viewModel.loadAllTasks {
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            viewModel.loadAllTasksFromDB()
+        }, 200)
 
-        }
         viewModel.reloadProjectData()
 
     }
