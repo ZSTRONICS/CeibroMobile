@@ -879,6 +879,12 @@ class TaskDetailTabV2Fragment :
         EventBus.getDefault().unregister(this)
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshInboxData(event: LocalEvents.RefreshInboxData) {
+
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskFailedToDone(event: LocalEvents.TaskFailedToDone?) {
         mViewDataBinding.doneBtn.isEnabled = true

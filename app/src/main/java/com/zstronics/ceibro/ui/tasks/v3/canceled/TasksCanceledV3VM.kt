@@ -82,6 +82,7 @@ class TasksCanceledV3VM @Inject constructor(
     var firstStartOfParentFragment = true
     var isFirstStartOfCanceledFragment = true
     var isSearchingTasks = false
+    var isFirstTimeUICreated=true
 
 
     private val _canceledToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
@@ -154,9 +155,7 @@ class TasksCanceledV3VM @Inject constructor(
 
 
     init {
-        loadAllTasks {
 
-        }
         if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
             sessionManager.setUser()
             sessionManager.setToken()

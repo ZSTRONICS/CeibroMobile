@@ -2138,6 +2138,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
+                        EventBus.getDefault().post(LocalEvents.UpdateTaskInDetails(task))
                     }
                     taskDao.insertEventData(taskEvent)
 //                    if (eventData.pinData != null) {
@@ -2237,6 +2238,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
+                        EventBus.getDefault().post(LocalEvents.UpdateTaskInDetails(task))
                     }
                     taskDao.insertEventData(taskEvent)
                     if (eventData.pinData != null) {
@@ -2647,6 +2649,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
+                        EventBus.getDefault().post(LocalEvents.UpdateTaskInDetails(task))
                     }
                     taskDao.insertEventData(taskEvent)
                     if (eventData.pinData != null) {

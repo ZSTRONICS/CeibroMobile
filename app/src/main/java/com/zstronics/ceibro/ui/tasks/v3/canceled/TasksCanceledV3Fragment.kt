@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -29,7 +31,6 @@ import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsCanceledBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskSortingV3BottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersCanceledBottomSheet
-import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.HiddenTasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -55,6 +56,7 @@ class TasksCanceledV3Fragment :
             R.id.backBtn -> {
                 navigateBack()
             }
+
             R.id.clearSearch -> {
                 mViewDataBinding.taskSearchBar.setQuery(null, true)
                 mViewDataBinding.taskSearchBar.clearFocus()
@@ -517,6 +519,15 @@ class TasksCanceledV3Fragment :
 
         }
 
+
+        if (viewModel.isFirstTimeUICreated) {
+
+            viewModel.loadAllTasks {
+
+            }
+            viewModel.isFirstTimeUICreated = false
+        }
+
     }
 
 
@@ -527,6 +538,8 @@ class TasksCanceledV3Fragment :
 
     override fun onDestroy() {
         super.onDestroy()
+
+        viewModel.isFirstTimeUICreated = true
         EventBus.getDefault().unregister(this)
     }
 
@@ -538,9 +551,11 @@ class TasksCanceledV3Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
-        viewModel.loadAllTasks {
 
-        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            viewModel.loadAllTasks {
+            }
+        }, 100)
     }
 
 
