@@ -88,11 +88,7 @@ class TasksV3Adapter @Inject constructor() :
                     }
 
                     val taskState =
-                        if (item.isAssignedToMe) {
-                            item.userSubState
-                        } else if (item.isCreator || item.isTaskViewer || item.isTaskConfirmer) {
-                            item.creatorState
-                        } else if (selectedState.equals(TaskRootStateTags.ToMe.tagValue, true)
+                        if (selectedState.equals(TaskRootStateTags.ToMe.tagValue, true)
                             || selectedState.equals(TaskRootStateTags.InReview.tagValue, true)
                         ) {
                             item.userSubState
@@ -100,6 +96,10 @@ class TasksV3Adapter @Inject constructor() :
                             || selectedState.equals(TaskRootStateTags.ToReview.tagValue, true)
                         ) {
                             item.creatorState
+                        } else if (item.isCreator || item.isTaskViewer || item.isTaskConfirmer) {
+                            item.creatorState
+                        } else if (item.isAssignedToMe) {
+                            item.userSubState
                         } else {
                             "Unknown"
                         }
