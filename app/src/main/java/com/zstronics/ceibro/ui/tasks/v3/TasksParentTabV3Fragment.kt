@@ -5,8 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -479,11 +477,14 @@ class TasksParentTabV3Fragment :
 
         }
 
-        Handler(Looper.getMainLooper()).postDelayed(Runnable {
-            viewModel.loadAllTasksFromDB()
-        }, 200)
+        if (viewModel.isFirstTimeUILoaded) {
+            viewModel.loadAllTasks {
 
-        viewModel.reloadProjectData()
+            }
+            viewModel.reloadProjectData()
+            viewModel.isFirstTimeUILoaded = false
+        }
+
 
     }
 
@@ -495,6 +496,7 @@ class TasksParentTabV3Fragment :
 
     override fun onDestroy() {
         super.onDestroy()
+        viewModel.isFirstTimeUILoaded = true
         EventBus.getDefault().unregister(this)
     }
 
