@@ -25,7 +25,7 @@
             android:gravity="start"
             android:paddingHorizontal="@dimen/_7sdp"
             android:paddingVertical="@dimen/_7sdp"
-            android:text="@string/rename_group"
+            android:text="@string/edit_group"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="12sp"

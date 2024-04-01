@@ -618,6 +618,7 @@
     <string name="delete_group">Delete group</string>
     <string name="remove_floor">Remove floor</string>
     <string name="rename_group">Rename group</string>
+    <string name="edit_group">Edit group</string>
     <string name="add_new_group">+ Add new group</string>
     <string name="to">To</string>
     <string name="from">From</string>
