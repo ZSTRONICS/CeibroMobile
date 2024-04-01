@@ -325,6 +325,17 @@ class TaskDetailTabV2Fragment :
             }, 500)
 
         }
+        tabAdapter.goToItemClickListener = {
+            if (it.isTaskFile) {
+                mViewDataBinding.viewPager.setCurrentItem(0, true)
+            } else {
+                mViewDataBinding.viewPager.setCurrentItem(1, true)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    EventBus.getDefault().post(LocalEvents.ScrollToPositionFromTaskFiles(it))
+                }, 500)
+            }
+        }
+
         mViewDataBinding.viewPager.adapter = tabAdapter
 
         mViewDataBinding.viewPager.registerOnPageChangeCallback(object :

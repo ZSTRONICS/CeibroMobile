@@ -1228,6 +1228,16 @@ class TaskDetailCommentsV2Fragment :
             }
         }
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun scrollToPositionFromTaskFiles(event: LocalEvents.ScrollToPositionFromTaskFiles) {
+        val list = eventsAdapter.listItems
+        list.forEachIndexed { index, events ->
+            if (events.id == event.events.commentId) {
+                mViewDataBinding.eventsRV.scrollToPosition(index)
+                return@forEachIndexed
+            }
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun openKeyboard(event: LocalEvents.OpenKeyboard) {

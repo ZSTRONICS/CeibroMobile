@@ -67,6 +67,10 @@ class TaskDetailFilesAdapter constructor(
     var imageClickListener: ((position: Int, item: LocalTaskDetailFiles) -> Unit)? =
         null
 
+
+    var goToItemClickListener: ((data: LocalTaskDetailFiles) -> Unit)? =
+        null
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
     private val permissionList10 = arrayOf(
@@ -379,6 +383,17 @@ class TaskDetailFilesAdapter constructor(
                                 subject = null,
                                 title = "Share File"
                             )
+                        }else if (tag.equals("goTo",true)){
+
+
+                            goToItemClickListener?.invoke(item)
+                            if (item.isTaskFile)
+
+                            cancelAndMakeToast(
+                                it.context,
+                                "Task file ${item.isTaskFile}",
+                                Toast.LENGTH_SHORT
+                            )
                         }
                     }
                 }, 30)
@@ -610,6 +625,10 @@ class TaskDetailFilesAdapter constructor(
         tvDownload.setOnClickListener {
             popupWindow.dismiss()
             callback.invoke("download")
+        }
+        tvFileLocation.setOnClickListener {
+            popupWindow.dismiss()
+            callback.invoke("goTo")
         }
 
         tvShare.setOnClickListener {

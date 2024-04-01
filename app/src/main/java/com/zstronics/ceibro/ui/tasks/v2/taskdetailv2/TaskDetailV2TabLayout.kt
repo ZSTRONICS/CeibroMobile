@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailcomments.TaskDetailCommentsV2Fragment
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.TaskDetailFilesV2Fragment
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailparent.TaskDetailParentV2Fragment
@@ -13,8 +14,10 @@ private const val NUM_TABS = 3
 
 class TaskDetailV2TabLayout(fragmentManager: FragmentActivity) :
     FragmentStateAdapter(fragmentManager) {
-    var pinnedCommentClickListener: ((data: Events) -> Unit)? =
-        null
+    var pinnedCommentClickListener: ((data: Events) -> Unit)? = null
+
+    var goToItemClickListener: ((data: LocalTaskDetailFiles) -> Unit)? = null
+
 
     override fun getItemCount(): Int = NUM_TABS
 
@@ -28,6 +31,11 @@ class TaskDetailV2TabLayout(fragmentManager: FragmentActivity) :
 
         taskDetailParentV2Fragment.pinnedCommentClickListener = { event ->
             pinnedCommentClickListener?.invoke(event)
+        }
+
+        taskDetailFilesV2Fragment.goToItemClickListener = { file ->
+
+            goToItemClickListener?.invoke(file)
         }
         return when (position) {
             0 -> taskDetailParentV2Fragment

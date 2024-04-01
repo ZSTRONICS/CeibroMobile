@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
@@ -140,5 +141,6 @@ object LocalEvents {
     data class UpdateDrawingPins(val pinData: CeibroDrawingPins?)
     class UpdateFileDownloadProgress
     class ScrollToPosition(val events: Events)
+    class ScrollToPositionFromTaskFiles(val events: LocalTaskDetailFiles)
     class OpenKeyboard
 }

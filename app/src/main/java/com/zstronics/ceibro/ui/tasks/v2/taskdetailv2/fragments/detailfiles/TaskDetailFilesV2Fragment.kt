@@ -18,7 +18,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
@@ -65,6 +64,9 @@ class TaskDetailFilesV2Fragment :
     override val layoutResId: Int = R.layout.fragment_task_detail_files_v2
     override fun toolBarVisibility(): Boolean = false
     private val filesAdapterList = arrayOf("All", "Photos", "Links", "Files")
+    var goToItemClickListener: ((data: LocalTaskDetailFiles) -> Unit)? =
+        null
+
     override fun onClick(id: Int) {
         when (id) {
             R.id.tvAll -> {
@@ -150,6 +152,9 @@ class TaskDetailFilesV2Fragment :
             requireContext(),
             viewModel.downloadedDrawingV2Dao
         )
+        detailFilesAdapter.goToItemClickListener = { taskFile ->
+            goToItemClickListener?.invoke(taskFile)
+        }
         detailFilesAdapter.downloadFileCallBack { data, tag ->
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 /*MainScope().launch {
@@ -464,7 +469,8 @@ class TaskDetailFilesV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        requestPermissions(permissions,
+        requestPermissions(
+            permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }
@@ -814,7 +820,7 @@ class TaskDetailFilesV2Fragment :
     @SuppressLint("NotifyDataSetChanged")
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
-      //  detailFilesAdapter.notifyDataSetChanged()
+        //  detailFilesAdapter.notifyDataSetChanged()
 
     }
 }
