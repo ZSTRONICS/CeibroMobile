@@ -702,4 +702,5 @@
     <string name="approver">Approver</string>
     <string name="view_only">View Only</string>
     <string name="all_without_view_only">All - without view only</string>
+    <string name="remove">Remove</string>
 </resources>

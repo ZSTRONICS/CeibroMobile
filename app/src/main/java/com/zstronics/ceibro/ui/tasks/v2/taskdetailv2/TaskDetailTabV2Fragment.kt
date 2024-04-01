@@ -474,7 +474,7 @@ class TaskDetailTabV2Fragment :
                     }
                 }
 
-                mViewDataBinding.detailViewHeading.text = item.taskUID
+                mViewDataBinding.detailViewHeading.text = item.title?.trim() ?: "Task Details"
             } else {
                 mViewDataBinding.doneBtn.isEnabled = false
                 mViewDataBinding.doneBtn.isClickable = false

@@ -119,7 +119,7 @@
                     android:visibility="visible"
                     app:leftBgColor="@color/appRed"
                     app:leftImage="@drawable/icon_delete_white"
-                    app:leftText="@string/delete_heading"
+                    app:leftText="@string/remove"
                     app:textColor="@color/white"
                     app:textSize="13sp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
