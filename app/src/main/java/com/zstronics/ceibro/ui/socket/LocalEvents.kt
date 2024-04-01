@@ -139,4 +139,5 @@ object LocalEvents {
     data class UpdateDrawingPins(val pinData: CeibroDrawingPins?)
     class UpdateFileDownloadProgress
     class ScrollToPosition(val events: Events)
+    class OpenKeyboard
 }

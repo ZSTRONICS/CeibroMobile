@@ -24,6 +24,7 @@ import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
@@ -1207,7 +1208,7 @@ class TaskDetailCommentsV2Fragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onUpdateDrawingPins(event: LocalEvents.ScrollToPosition) {
+    fun scrollToPosition(event: LocalEvents.ScrollToPosition) {
         val list = eventsAdapter.listItems
         list.forEachIndexed { index, events ->
             if (events.id == event.events.id) {
@@ -1215,6 +1216,13 @@ class TaskDetailCommentsV2Fragment :
                 return@forEachIndexed
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun openKeyboard(event: LocalEvents.OpenKeyboard) {
+        mViewDataBinding.msgTypingField.requestFocus()
+        mViewDataBinding.msgTypingField.showKeyboard()
+
     }
 
 }

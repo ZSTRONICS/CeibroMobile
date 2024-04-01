@@ -211,9 +211,12 @@ class TaskDetailTabV2Fragment :
             }
 
             R.id.taskCommentBtn -> {
-
                 mViewDataBinding.viewPager.setCurrentItem(1, true)
-                return
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    EventBus.getDefault().post(LocalEvents.OpenKeyboard())
+                }, 100)
+
             }
 
             R.id.doneBtn -> {
