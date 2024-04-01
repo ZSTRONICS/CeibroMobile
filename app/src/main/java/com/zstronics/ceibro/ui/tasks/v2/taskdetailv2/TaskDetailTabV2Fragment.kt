@@ -306,7 +306,10 @@ class TaskDetailTabV2Fragment :
         viewModel.notificationTaskData.observe(viewLifecycleOwner) { notificationData ->
             if (notificationData != null) {
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
+                if (viewModel.notificationType == 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+
             }
         }
         manager =

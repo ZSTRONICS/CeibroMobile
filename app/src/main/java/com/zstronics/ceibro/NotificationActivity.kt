@@ -49,6 +49,7 @@ class NotificationActivity : AppCompatActivity() {
 
         val bundle = Bundle()
         bundle.putParcelable("notificationTaskData", taskData)
+        bundle.putInt("notificationType", extrasType)
         bundle.putInt(NAVIGATION_Graph_ID, navigationGraphId)
         bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId)
 

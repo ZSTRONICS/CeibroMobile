@@ -56,6 +56,7 @@ class TaskDetailTabV2VM @Inject constructor(
     val originalEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
 
     var notificationTaskData: MutableLiveData<NotificationTaskData?> = MutableLiveData()
+    var notificationType: Int = 0
     var isTaskBeingDone: MutableLiveData<Boolean> = MutableLiveData(false)
 
     var rootState = ""
@@ -85,9 +86,12 @@ class TaskDetailTabV2VM @Inject constructor(
 
             val notificationData: NotificationTaskData? =
                 bundle?.getParcelable("notificationTaskData")
+            val notificationType1 =
+                bundle?.getInt("notificationType") ?: 0
 
             if (notificationData != null) {         //It means detail is opened via notification if not null
                 notificationTaskData.postValue(notificationData)
+                notificationType = notificationType1
                 if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                     sessionManager.setUser()
                     sessionManager.setToken()

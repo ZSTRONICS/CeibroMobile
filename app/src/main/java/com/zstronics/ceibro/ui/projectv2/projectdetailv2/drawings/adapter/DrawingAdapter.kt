@@ -465,10 +465,10 @@ class DrawingAdapter constructor(
         uri: Uri,
         context: Context
     ): String? {
-        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        val outputStream: FileOutputStream
 
-        try {
+
+        try {val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+            val outputStream: FileOutputStream
             // Create a file in the internal storage
             val file = File(context.filesDir, fileName)
             outputStream = FileOutputStream(file)
