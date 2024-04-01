@@ -188,7 +188,17 @@ class TaskDetailParentV2Fragment :
         onlyImageAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
                 val bundle = Bundle()
-                bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
+                val onlyImagesOriginal = viewModel.onlyImages.value
+                val imagesWithCommentOriginal = viewModel.imagesWithComments.value
+                val allImages: MutableList<TaskFiles> = mutableListOf()
+                if (!onlyImagesOriginal.isNullOrEmpty()) {
+                    allImages.addAll(onlyImagesOriginal)
+                }
+                if (!imagesWithCommentOriginal.isNullOrEmpty()) {
+                    allImages.addAll(imagesWithCommentOriginal)
+                }
+                //position will remain same as the first items in the al;l list is only image, so no need to change the position
+                bundle.putParcelableArray("images", allImages.toTypedArray())
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
@@ -224,11 +234,25 @@ class TaskDetailParentV2Fragment :
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
                 val bundle = Bundle()
+                val onlyImagesOriginal = viewModel.onlyImages.value
+                val imagesWithCommentOriginal = viewModel.imagesWithComments.value
+                //position will be changed here because first items in all list are only image but user tapped on image with comment.
+                // so default position is of image with comment
+                var newPosition = position
+                val allImages: MutableList<TaskFiles> = mutableListOf()
+                if (!onlyImagesOriginal.isNullOrEmpty()) {
+                    newPosition = position + onlyImagesOriginal.size
+                    allImages.addAll(onlyImagesOriginal)
+                }
+                if (!imagesWithCommentOriginal.isNullOrEmpty()) {
+                    allImages.addAll(imagesWithCommentOriginal)
+                }
+
                 bundle.putParcelableArray(
                     "images",
-                    viewModel.imagesWithComments.value?.toTypedArray()
+                    allImages.toTypedArray()
                 )
-                bundle.putInt("position", position)
+                bundle.putInt("position", newPosition)
                 bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
             }
