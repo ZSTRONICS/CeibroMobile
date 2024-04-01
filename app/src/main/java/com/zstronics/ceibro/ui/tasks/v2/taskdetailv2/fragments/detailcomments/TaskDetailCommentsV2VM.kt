@@ -119,17 +119,19 @@ class TaskDetailCommentsV2VM @Inject constructor(
                     isTaskBeingDone.postValue(isTaskBeingDone1)
                     _taskDetail.postValue(task)
                     originalTask.postValue(task)
-                    if (!events.isNullOrEmpty()) {
-                        originalEvents.postValue(events.toMutableList())
-                        _taskEvents.postValue(events.toMutableList())
-                    } else {
-                        if (task.eventsCount > 0) {
+
+//                    if (!events.isNullOrEmpty()) {
+//                        originalEvents.postValue(events.toMutableList())
+//                        _taskEvents.postValue(events.toMutableList())
+//                    }
+//                    else {
+//                        if (task.eventsCount > 0) {
                             getAllEvents(task.id)
-                        } else {
-                            originalEvents.postValue(mutableListOf<Events>())
-                            _taskEvents.postValue(mutableListOf<Events>())
-                        }
-                    }
+//                        } else {
+//                            originalEvents.postValue(mutableListOf<Events>())
+//                            _taskEvents.postValue(mutableListOf<Events>())
+//                        }
+//                    }
                     syncEvents(task.id)
 
                 } ?: run {
@@ -504,6 +506,15 @@ class TaskDetailCommentsV2VM @Inject constructor(
             }
         }
     }
+
+
+     fun syncEventsOnFragmentResume(
+        taskId: String
+    ) {
+
+     }
+
+
      fun syncEvents(
         taskId: String
     ) {
@@ -548,13 +559,13 @@ class TaskDetailCommentsV2VM @Inject constructor(
                             taskDao.insertMultipleEvents(missingEvents)
                         }
                     } else {
-                        originalEvents.postValue(allEvents)
-                        _taskEvents.postValue(allEvents)
+//                        originalEvents.postValue(allEvents)
+//                        _taskEvents.postValue(allEvents)
                     }
                 } else {
                     alert("Failed to sync task events")
-                    originalEvents.postValue(allEvents)
-                    _taskEvents.postValue(allEvents)
+//                    originalEvents.postValue(allEvents)
+//                    _taskEvents.postValue(allEvents)
                 }
             }
         }

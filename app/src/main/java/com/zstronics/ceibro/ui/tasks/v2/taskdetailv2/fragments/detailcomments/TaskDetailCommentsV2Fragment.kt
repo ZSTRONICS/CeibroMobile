@@ -1199,14 +1199,14 @@ class TaskDetailCommentsV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        if (!viewModel.isResumedCalled) {
-            println("fragment : resumed called")
-            viewModel.isResumedCalled = true
-            viewModel.taskDetail.value?.let {
-                viewModel.syncEvents(it.id)
-            }
-
-        }
+//        if (!viewModel.isResumedCalled) {
+//            println("fragment : resumed called")
+//            viewModel.isResumedCalled = true
+//            viewModel.taskDetail.value?.let {
+//                viewModel.syncEventsOnFragmentResume(it.id)
+//            }
+//
+//        }
     }
 
     @SuppressLint("NotifyDataSetChanged")

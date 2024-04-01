@@ -322,7 +322,7 @@ class TaskDetailTabV2Fragment :
             mViewDataBinding.viewPager.setCurrentItem(1, true)
             Handler(Looper.getMainLooper()).postDelayed({
                 EventBus.getDefault().post(LocalEvents.ScrollToPosition(it))
-            }, 100)
+            }, 500)
 
         }
         mViewDataBinding.viewPager.adapter = tabAdapter
