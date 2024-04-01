@@ -387,14 +387,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
                             (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
-                                TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                TaskDetailEvents.REJECT_CLOSED.eventValue, true
+                            ))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
             val rootClosedFromMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                            (it.fromMeState.equals(
+                                TaskStatus.DONE.name,
+                                true
+                            ) || it.fromMeState.equals(
+                                TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                true
+                            ))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1705,8 +1712,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 //                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
 
                 }.join()
-                EventBus.getDefault()
-                    .post(LocalEvents.TaskSeenEvent(updatedTask))
+                if (taskSeen.creatorStateChanged || taskSeen.stateChanged) {
+                    EventBus.getDefault().post(LocalEvents.TaskSeenEvent(updatedTask))
+                }
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(taskSeen.pinData))
 
