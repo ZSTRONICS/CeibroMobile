@@ -395,7 +395,7 @@ class EventsMultiViewRVAdapter constructor(
                 }
 
                 TaskDetailEvents.CancelTask.eventValue -> {
-
+                    binding.dotMenu.visibility = View.GONE
                     binding.otherEventText.text = "Task canceled by ${creatorName.toCamelCase()}"
 
                 }
@@ -416,6 +416,7 @@ class EventsMultiViewRVAdapter constructor(
                 }
 
                 TaskDetailEvents.DoneTask.eventValue -> {
+                    binding.dotMenu.visibility = View.GONE
                     binding.otherEventText.text =
                         "${creatorName.toCamelCase()} marked the task as done"
 

@@ -1075,6 +1075,8 @@ class TaskDetailParentV2Fragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskDoneEvent(event: LocalEvents.TaskDoneEvent?) {
         val task = event?.task
+        val taskEvent = event?.taskEvent
+        pinOrUnPinEvent(taskEvent)
         if (task != null) {
             viewModel.taskDetail.value?.let { taskDetail ->
                 if (task.id == taskDetail.id) {
@@ -1090,10 +1092,22 @@ class TaskDetailParentV2Fragment :
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskCanceledEvent(
+        event: LocalEvents.TaskCanceledEvent?
+    ) {
+        val updatedEvent = event?.taskEvent
+        pinOrUnPinEvent(updatedEvent)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskEventUpdate(
         event: LocalEvents.TaskEventUpdate?
     ) {
         val updatedEvent = event?.events
+        pinOrUnPinEvent(updatedEvent)
+    }
+
+    fun pinOrUnPinEvent(updatedEvent: Events?) {
         val taskDetail = viewModel.taskDetail.value
         if (taskDetail != null && updatedEvent != null && updatedEvent.taskId == taskDetail.id) {
 

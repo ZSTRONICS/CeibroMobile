@@ -2197,7 +2197,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         updatedAt = eventData.updatedAt,
                         invitedMembers = eventData.invitedMembers,
                         eventNumber = eventData.eventNumber,
-                        isPinned = eventData.isPinned
+                        isPinned = true
                     )
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
                     val task = taskDao.getTaskByID(eventData.taskId)
@@ -2245,16 +2245,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(eventData.pinData)
                     }
 
-//                    if (task?.creator?.id != userId) {
-//                        sharedViewModel?.isHiddenUnread?.postValue(true)
-//                        sessionManager.saveHiddenUnread(true)
-//                    }
 
                     updateAllTasksLists(taskDao)
 
-                    EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
+//                    EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
+                    EventBus.getDefault().post(LocalEvents.TaskCanceledEvent(task, taskEvent))
                 }.join()
-
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
                 TaskEventsList.removeEvent(
@@ -2293,7 +2289,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
                     eventNumber = eventData.eventNumber,
-                    isPinned = eventData.isPinned
+                    isPinned = true
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)

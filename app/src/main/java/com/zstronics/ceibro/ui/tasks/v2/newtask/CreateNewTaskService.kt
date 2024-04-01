@@ -1705,7 +1705,7 @@ class CreateNewTaskService : Service() {
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
                     eventNumber = eventData.eventNumber,
-                    isPinned = eventData.isPinned
+                    isPinned = true
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)

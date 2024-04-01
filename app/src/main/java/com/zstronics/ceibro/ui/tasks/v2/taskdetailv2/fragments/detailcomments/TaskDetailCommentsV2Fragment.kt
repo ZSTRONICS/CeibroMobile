@@ -458,6 +458,17 @@ class TaskDetailCommentsV2Fragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskCanceledEvent(
+        event: LocalEvents.TaskCanceledEvent?
+    ) {
+        val newEvent = event?.taskEvent
+        val taskDetail = viewModel.taskDetail.value
+        if (taskDetail != null && newEvent != null && newEvent.taskId == taskDetail.id) {
+            addEventsToUI(newEvent)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskEventUpdate(
         event: LocalEvents.TaskEventUpdate?
     ) {
