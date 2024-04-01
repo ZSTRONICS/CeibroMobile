@@ -82,6 +82,9 @@ class EventsMultiViewRVAdapter constructor(
     }
 
 
+    var pinnedCommentClickListener: ((data: Events) -> Unit)? =
+        null
+
     override fun getItemViewType(position: Int): Int {
 
         return if (listItems[position].eventType.equals(
@@ -168,6 +171,9 @@ class EventsMultiViewRVAdapter constructor(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Events) {
+            binding.rootLayout.setOnClickListener {
+                pinnedCommentClickListener?.invoke(item)
+            }
 
             val context = binding.eventPinImg.context
             binding.onlyComment.text = ""
@@ -883,6 +889,9 @@ class EventsMultiViewRVAdapter constructor(
         fun bind(item: Events) {
             val context = binding.otherEventText.context
 
+            binding.rootLayout.setOnClickListener {
+                pinnedCommentClickListener?.invoke(item)
+            }
 
             val creatorName =
                 if (item.initiator.firstName.isEmpty() && item.initiator.surName.isEmpty()) {
@@ -1017,6 +1026,9 @@ class EventsMultiViewRVAdapter constructor(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Events) {
+            binding.rootLayout.setOnClickListener {
+                pinnedCommentClickListener?.invoke(item)
+            }
 
             val context = binding.eventPinImg.context
             binding.onlyComment.text = ""
@@ -1158,7 +1170,6 @@ class EventsMultiViewRVAdapter constructor(
                         }, 15)
                     }
                 }
-
 
 
             }

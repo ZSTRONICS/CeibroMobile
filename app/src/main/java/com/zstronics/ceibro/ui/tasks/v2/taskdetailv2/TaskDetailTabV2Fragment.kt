@@ -13,14 +13,12 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -39,7 +37,6 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -58,7 +55,6 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 
 @AndroidEntryPoint
 class TaskDetailTabV2Fragment :
@@ -316,6 +312,13 @@ class TaskDetailTabV2Fragment :
         list.add(getString(R.string.comments))
         list.add(getString(R.string.files_heading))
         tabAdapter = TaskDetailV2TabLayout(requireActivity())
+        tabAdapter.pinnedCommentClickListener = {
+            mViewDataBinding.viewPager.setCurrentItem(1, true)
+            Handler(Looper.getMainLooper()).postDelayed({
+                EventBus.getDefault().post(LocalEvents.ScrollToPosition(it))
+            }, 100)
+
+        }
         mViewDataBinding.viewPager.adapter = tabAdapter
 
         mViewDataBinding.viewPager.registerOnPageChangeCallback(object :
@@ -655,7 +658,8 @@ class TaskDetailTabV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        requestPermissions(permissions,
+        requestPermissions(
+            permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }

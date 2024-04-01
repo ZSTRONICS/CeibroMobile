@@ -14,7 +14,6 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
@@ -27,6 +26,7 @@ import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -74,6 +74,9 @@ class TaskDetailParentV2Fragment :
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
+
+    var pinnedCommentClickListener: ((data: Events) -> Unit)? =
+        null
 
     override fun onClick(id: Int) {
         when (id) {
@@ -330,6 +333,9 @@ class TaskDetailParentV2Fragment :
                 }
         }
 
+        pinnedEventsAdapter.pinnedCommentClickListener = { event ->
+            pinnedCommentClickListener?.invoke(event)
+        }
         pinnedEventsAdapter.requestPermissionCallBack {
             checkDownloadFilePermission()
         }
@@ -444,7 +450,7 @@ class TaskDetailParentV2Fragment :
                 task.userSubState
             } else if (task.isCreator || task.isTaskViewer || task.isTaskConfirmer) {
                 task.creatorState
-            }  else {
+            } else {
                 task.userSubState
             }
         val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
@@ -802,7 +808,8 @@ class TaskDetailParentV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        requestPermissions(permissions,
+        requestPermissions(
+            permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }

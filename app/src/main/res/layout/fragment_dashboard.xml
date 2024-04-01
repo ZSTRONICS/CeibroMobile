@@ -1012,7 +1012,8 @@
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/_6sdp"
                         android:paddingStart="@dimen/_2sdp"
-                        android:paddingEnd="@dimen/_10sdp">
+                        android:paddingEnd="@dimen/_10sdp"
+                        android:visibility="gone">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivNotes"

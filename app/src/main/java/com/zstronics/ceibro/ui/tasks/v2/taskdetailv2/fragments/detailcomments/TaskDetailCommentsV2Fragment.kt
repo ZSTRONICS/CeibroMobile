@@ -17,7 +17,6 @@ import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -777,7 +776,8 @@ class TaskDetailCommentsV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        requestPermissions(permissions,
+        requestPermissions(
+            permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }
@@ -1200,9 +1200,21 @@ class TaskDetailCommentsV2Fragment :
     @SuppressLint("NotifyDataSetChanged")
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun downloadingFile(event: LocalEvents.UpdateFileDownloadProgress) {
-       // onlyImageAdapter.notifyDataSetChanged()
-      //  filesAdapter.notifyDataSetChanged()
-      //  eventsAdapter.notifyDataSetChanged()
+        // onlyImageAdapter.notifyDataSetChanged()
+        //  filesAdapter.notifyDataSetChanged()
+        //  eventsAdapter.notifyDataSetChanged()
 
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateDrawingPins(event: LocalEvents.ScrollToPosition) {
+        val list = eventsAdapter.listItems
+        list.forEachIndexed { index, events ->
+            if (events.id == event.events.id) {
+                mViewDataBinding.eventsRV.scrollToPosition(index)
+                return@forEachIndexed
+            }
+        }
+    }
+
 }
