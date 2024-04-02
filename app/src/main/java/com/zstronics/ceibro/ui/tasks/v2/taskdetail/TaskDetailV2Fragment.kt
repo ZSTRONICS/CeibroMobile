@@ -285,6 +285,7 @@ class TaskDetailV2Fragment :
         CeibroApplication.CookiesManager.taskDetailEvents = null
         CeibroApplication.CookiesManager.taskDetailRootState = null
         CeibroApplication.CookiesManager.taskDetailSelectedSubState = null
+        CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = null
         super.onDetach()
     }
 

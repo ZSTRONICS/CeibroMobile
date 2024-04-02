@@ -201,6 +201,7 @@ class TaskToMeFragment :
                 }
                 viewModel.launch {
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
+                    CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = null
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
                     CeibroApplication.CookiesManager.taskDetailRootState = TaskRootStateTags.ToMe.tagValue.lowercase()
