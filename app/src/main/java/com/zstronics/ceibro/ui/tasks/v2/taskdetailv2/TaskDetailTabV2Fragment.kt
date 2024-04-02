@@ -321,8 +321,8 @@ class TaskDetailTabV2Fragment :
         tabAdapter.pinnedCommentClickListener = {
             mViewDataBinding.viewPager.setCurrentItem(1, true)
             Handler(Looper.getMainLooper()).postDelayed({
-                EventBus.getDefault().post(LocalEvents.ScrollToPosition(it))
-            }, 500)
+                EventBus.getDefault().postSticky(LocalEvents.ScrollToPosition(it))
+            }, 100)
 
         }
         tabAdapter.goToItemClickListener = {

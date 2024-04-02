@@ -82,6 +82,8 @@ class TaskDetailCommentsV2VM @Inject constructor(
     var taskId: String = ""
     var isResumedCalled = false
 
+    var isTaskScrolled: Events? =null
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 

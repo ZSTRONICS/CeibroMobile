@@ -166,7 +166,17 @@ class TasksParentTabV3Fragment :
             }
 
             R.id.imgSearchFilter -> {
-                mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
+                if (mViewDataBinding.tasksSearchCard.visibility == View.VISIBLE) {
+
+                    mViewDataBinding.tasksSearchCard.visibility = View.GONE
+                    mViewDataBinding.taskSearchBar.setQuery(null, true)
+                    mViewDataBinding.taskSearchBar.clearFocus()
+                    mViewDataBinding.taskSearchBar.hideKeyboard()
+
+                } else {
+                    mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
+                }
+
             }
 
             R.id.cancelTaskSearch -> {

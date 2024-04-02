@@ -243,6 +243,19 @@ class TaskDetailCommentsV2Fragment :
                     }
                 }
             }, 100)
+
+            Handler().postDelayed({
+                viewModel.isTaskScrolled?.let {
+                        val list = eventsAdapter.listItems
+                        list.forEachIndexed { index, events ->
+                            if (events.id == it.id) {
+                                mViewDataBinding.eventsRV.scrollToPosition(index)
+                                return@forEachIndexed
+                            }
+                        }
+                }
+                viewModel.isTaskScrolled=null
+            }, 500)
         }
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
@@ -1218,16 +1231,21 @@ class TaskDetailCommentsV2Fragment :
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun scrollToPosition(event: LocalEvents.ScrollToPosition) {
-        val list = eventsAdapter.listItems
-        list.forEachIndexed { index, events ->
-            if (events.id == event.events.id) {
-                mViewDataBinding.eventsRV.scrollToPosition(index)
-                return@forEachIndexed
+        viewModel.isTaskScrolled = event.events
+        Handler(Looper.getMainLooper()).postDelayed({
+            val list = eventsAdapter.listItems
+            list.forEachIndexed { index, events ->
+                if (events.id == event.events.id) {
+                    mViewDataBinding.eventsRV.scrollToPosition(index)
+                    return@forEachIndexed
+                }
             }
-        }
+        }, 500)
+        EventBus.getDefault().removeStickyEvent(event);
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun scrollToPositionFromTaskFiles(event: LocalEvents.ScrollToPositionFromTaskFiles) {
         val list = eventsAdapter.listItems
