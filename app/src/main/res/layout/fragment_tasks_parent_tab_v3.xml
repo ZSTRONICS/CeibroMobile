@@ -446,8 +446,8 @@
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivSearch"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginStart="@dimen/_8sdp"
                             android:padding="1dp"
                             android:src="@drawable/icon_search"
