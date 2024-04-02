@@ -95,6 +95,7 @@ class InboxFragment :
                 val task = viewModel.taskDao.getTaskByID(inboxData.taskId)
                 val allEvents = viewModel.taskDao.getEventsOfTask(inboxData.taskId)
 
+                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = null
                 CeibroApplication.CookiesManager.taskDataForDetails = task
                 CeibroApplication.CookiesManager.taskDetailEvents = allEvents
                 CeibroApplication.CookiesManager.taskDetailRootState = if (task != null) {

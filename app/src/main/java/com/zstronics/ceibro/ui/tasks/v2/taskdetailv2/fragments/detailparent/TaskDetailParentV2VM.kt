@@ -22,6 +22,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,7 +74,7 @@ class TaskDetailParentV2VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-        launch {
+        GlobalScope.launch {
             val taskData: CeibroTaskV2? = CeibroApplication.CookiesManager.taskDataForDetails
             val taskDataFromNotification: CeibroTaskV2? =
                 CeibroApplication.CookiesManager.taskDataForDetailsFromNotification
