@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
+import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -199,6 +200,35 @@ class LocationDrawingV2VM @Inject constructor(
             }
         }
     }
+
+
+     fun deleteGroupByID(groupId: String, callback: () -> Unit) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.deleteGroupByIdV2(groupId)) {
+
+                is ApiResponse.Success -> {
+                    groupsV2Dao.deleteGroupById(groupId)
+                    _myGroupData.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupId == item._id) {
+                                iterator.remove()
+                            }
+                        }
+                        _myGroupData.value = currentList
+                    }
+                    loading(false, response.data.message)
+                    callback.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+     }
     fun publicOrPrivateGroup(group: CeibroGroupsV2) {
         launch {
             loading(true)
@@ -223,5 +253,62 @@ class LocationDrawingV2VM @Inject constructor(
             }
         }
     }
+     fun createGroupByProjectTIDV2(
+        projectId: String,
+        groupName: String,
+        callback: (CeibroGroupsV2) -> Unit
+    ) {
+        val request = CreateNewGroupV2Request(groupName)
+        launch {
+            loading(true, "")
+            when (val response = projectRepository.createGroupV2(projectId, request)) {
+                is ApiResponse.Success -> {
+                    groupsV2Dao.insertGroup(response.data.group)
 
+                    val list=_myGroupData.value
+                    list?.add(response.data.group)
+                    list?.let {
+                        _myGroupData.postValue(it)
+                    }
+
+                    callback.invoke(response.data.group)
+                    loading(false, "")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+     fun updateGroupByIDV2(
+        groupId: String,
+        groupName: String,
+        callback: (group: CeibroGroupsV2) -> Unit
+    ) {
+        val request = CreateNewGroupV2Request(groupName)
+        launch {
+            loading(true)
+            when (val response = projectRepository.updateGroupByIdV2(groupId, request)) {
+
+                is ApiResponse.Success -> {
+                    groupsV2Dao.insertGroup(response.data.group)
+                    val group = response.data.group
+                    val list = myGroupData.value
+
+
+                    list?.let {
+                        _myGroupData.value = it
+                    }
+                    loading(false, "")
+                    callback.invoke(group)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
 }

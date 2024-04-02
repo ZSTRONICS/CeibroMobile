@@ -10,7 +10,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
+import android.text.Editable
 import android.view.View
 import android.widget.SearchView
 import androidx.annotation.RequiresApi
@@ -28,6 +31,7 @@ import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentLocationDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -82,20 +86,28 @@ class LocationDrawingV2Fragment :
             }
 
             R.id.addNewDrawing -> {
-                fragmentManager?.let {
-                    chooseFile(it) { fromLocation ->
-                        if (fromLocation.equals("local", true)) {
 
-                            chooseDocuments(
-                                mimeTypes = arrayOf(
-                                    "application/pdf"
-                                )
-                            )
-                        } else {
-                            shortToastNow("Coming Soon")
-                        }
-                    }
+                addNewGroupBottomSheet(viewModel) { groupData ->
+
+
                 }
+
+
+//
+//                fragmentManager?.let {
+//                    chooseFile(it) { fromLocation ->
+//                        if (fromLocation.equals("local", true)) {
+//
+//                            chooseDocuments(
+//                                mimeTypes = arrayOf(
+//                                    "application/pdf"
+//                                )
+//                            )
+//                        } else {
+//                            shortToastNow("Coming Soon")
+//                        }
+//                    }
+//                }
             }
 
             R.id.projectFilterBtn -> {
@@ -809,6 +821,57 @@ class LocationDrawingV2Fragment :
         )
     }
 
+    private fun addNewGroupBottomSheet(
+        model: LocationDrawingV2VM,
+        callback: (group: CeibroGroupsV2) -> Unit
+    ) {
+        val sheet = AddNewGroupBS(model) { groupData ->
+            callback.invoke(groupData)
+        }
+
+        sheet.onRenameGroup = { name, data ->
+            viewModel.updateGroupByIDV2(groupId = data._id, groupName = name) { group ->
+                sheet.groupAdapter.updateItem(group)
+                sheet.binding.addGroupBtn.text = "Save"
+                sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
+                sheet.binding.clAddGroup.visibility = View.GONE
+                Handler(Looper.getMainLooper()).postDelayed({
+                    hideKeyboard()
+                }, 200)
+            }
+        }
+
+        sheet.onDeleteGroup = { data ->
+            viewModel.deleteGroupByID(groupId = data._id) {
+
+                sheet.groupAdapter.deleteItem(data._id)
+                if (!sheet.binding.addGroupBtn.text.toString().equals("Save", true)) {
+                    sheet.binding.addGroupBtn.text = "Save"
+                    sheet.binding.etNewGroup.text = Editable.Factory.getInstance().newEditable("")
+                    sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
+                    sheet.binding.clAddGroup.visibility = View.GONE
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        hideKeyboard()
+                    }, 200)
+                }
+            }
+        }
+
+        sheet.onAddGroup = {
+            viewModel.projectData.value?.let {project->
+                viewModel.createGroupByProjectTIDV2(project._id, it) {
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        hideKeyboard()
+                    }, 200)
+                    sheet.dismiss()
+                }
+            }
+        }
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "AddNewGroupBS")
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUpdateGroupDrawings(event: LocalEvents.UpdateGroupDrawings?) {
