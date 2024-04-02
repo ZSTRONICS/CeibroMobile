@@ -10,12 +10,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
 import android.view.View
 import android.widget.SearchView
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
@@ -30,7 +28,6 @@ import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentLocationDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -82,6 +79,23 @@ class LocationDrawingV2Fragment :
         when (id) {
             R.id.backBtn -> {
                 EventBus.getDefault().post(LocalEvents.LoadLocationProjectFragmentInLocation())
+            }
+
+            R.id.addNewDrawing -> {
+                fragmentManager?.let {
+                    chooseFile(it) { fromLocation ->
+                        if (fromLocation.equals("local", true)) {
+
+                            chooseDocuments(
+                                mimeTypes = arrayOf(
+                                    "application/pdf"
+                                )
+                            )
+                        } else {
+                            shortToastNow("Coming Soon")
+                        }
+                    }
+                }
             }
 
             R.id.projectFilterBtn -> {
@@ -320,7 +334,7 @@ class LocationDrawingV2Fragment :
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
                     if (it.trim().equals("100%", true)) {
-                     //   sectionedAdapter.notifyDataSetChanged()
+                        //   sectionedAdapter.notifyDataSetChanged()
                         tv.visibility = View.GONE
                         ivDownloaded.visibility = View.VISIBLE
                         tv.text = it
@@ -337,6 +351,15 @@ class LocationDrawingV2Fragment :
         sectionedAdapter.requestPermissionCallBack {
 
             checkDownloadFilePermission()
+        }
+
+        sectionedAdapter.publicGroupCallBack { tag, group ->
+            if (group != null) {
+                viewModel.publicOrPrivateGroup(group)
+            }
+        }
+        sectionedAdapter.deleteClickListener = { item ->
+            viewModel.deleteGroupByID(item._id)
         }
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
@@ -476,7 +499,8 @@ class LocationDrawingV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        requestPermissions(permissions,
+        requestPermissions(
+            permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }
@@ -821,14 +845,16 @@ class LocationDrawingV2Fragment :
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         EventBus.getDefault().register(this)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
         EventBus.getDefault().unregister(this)
+        super.onDestroy()
+
     }
 }
 

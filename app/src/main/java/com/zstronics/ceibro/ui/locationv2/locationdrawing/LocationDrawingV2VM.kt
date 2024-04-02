@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -160,6 +161,67 @@ class LocationDrawingV2VM @Inject constructor(
         }
 
         return (found.isNotEmpty())
+    }
+    fun deleteGroupByID(groupId: String) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.deleteGroupByIdV2(groupId)) {
+
+                is ApiResponse.Success -> {
+                    groupsV2Dao.deleteGroupById(groupId)
+
+                    _myGroupData.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupId == item._id) {
+                                iterator.remove()
+                            }
+                        }
+                        _myGroupData.value = currentList
+                    }
+                    _favoriteGroups.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupId == item._id) {
+                                iterator.remove()
+                            }
+                        }
+                        _favoriteGroups.value = currentList
+                    }
+                    loading(false, response.data.message)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+    fun publicOrPrivateGroup(group: CeibroGroupsV2) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.makeGroupPublicOrPrivate(
+                state = !group.publicGroup,
+                groupId = group._id
+            )) {
+
+                is ApiResponse.Success -> {
+                    groupsV2Dao.insertGroup(response.data.group)
+                    projectData.value?.let { getGroupsByProjectID(it._id) }
+                    if (response.data.group.publicGroup) {
+                        loading(false, "Group is now public")
+                    } else {
+                        loading(false, "Group is now private")
+                    }
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
     }
 
 }

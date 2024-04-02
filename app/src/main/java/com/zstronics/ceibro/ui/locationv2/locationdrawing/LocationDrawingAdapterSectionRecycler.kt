@@ -9,16 +9,20 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -84,6 +88,13 @@ class LocationDrawingAdapterSectionRecycler constructor(
     fun requestPermissionCallBack(requestPermissionClickListener: (tag: String) -> Unit) {
         this.requestPermissionClickListener = requestPermissionClickListener
     }
+    var publicGroupClickListener: ((tag: String, CeibroGroupsV2?) -> Unit)? = null
+
+    fun publicGroupCallBack(publicGroupClickListener: (tag: String, CeibroGroupsV2?) -> Unit) {
+        this.publicGroupClickListener = publicGroupClickListener
+    }
+
+    var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
 
     override fun onCreateSectionViewHolder(
         sectionViewGroup: ViewGroup?,
@@ -150,7 +161,9 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
 
             binding.apply {
-                ivOptions.visibility = View.GONE
+                ivOptions.setOnClickListener {
+                    togglePopupMenu(it, item)
+                }
                 ivDownload.visibility = View.GONE
                 ivFav.visibility = View.GONE
                 viewOne.visibility = View.GONE
@@ -524,6 +537,173 @@ class LocationDrawingAdapterSectionRecycler constructor(
             ) == PackageManager.PERMISSION_GRANTED
         }
     }
+    private fun togglePopupMenu(view: View, item: CeibroGroupsV2?) {
+        item?.let {
+            popUpMenu(view, item)
+        }
+
+    }
+
+    private fun popUpMenu(v: View, item: CeibroGroupsV2): PopupWindow {
+        val popupWindow = PopupWindow(v.context)
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_location_group_menu, null)
+
+        //following code is to make popup at top if the view is at bottom
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        //ShowAsDropDown statement at bottom, according to the view visibilities
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, -250, -55)
+        } else {
+            popupWindow.showAsDropDown(v, -250, -55)
+        }
+
+        val publicGroup = view.findViewById<AppCompatTextView>(R.id.publicGroup)
+        val deleteGroup = view.findViewById<AppCompatTextView>(R.id.deleteGroup)
+        if (item.publicGroup) {
+            publicGroup.text = context.resources.getString(R.string.private_group)
+        } else {
+            publicGroup.text = context.resources.getString(R.string.public_group)
+        }
+
+        publicGroup.setOnClickListener {
+            popupWindow.dismiss()
+            publicGroupDialog(it.context, item) { tag, group ->
+                if (tag.equals("yes", true)) {
+                    publicGroupClickListener?.invoke(tag, group)
+                }
+            }
+        }
+        deleteGroup.setOnClickListener {
+            popupWindow.dismiss()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (item.drawings.isEmpty()) {
+                    deleteGroup(it.context, item) { data ->
+                        deleteClickListener?.invoke(data)
+                    }
+
+                } else {
+                    cannotDeleteAlertBox(it.context)
+                }
+            }, 100)
+
+        }
+
+        return popupWindow
+    }
+
+    private fun publicGroupDialog(
+        context: Context,
+        group: CeibroGroupsV2?,
+        callback: (String, CeibroGroupsV2?) -> Unit
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        if (group?.publicGroup == true) {
+            dialogText.text =
+                context.resources.getString(R.string.are_you_sure_you_want_to_make_this_group_private)
+        } else {
+            dialogText.text =
+                context.resources.getString(R.string.are_you_sure_you_want_to_make_this_group_public)
+        }
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            alertDialog.dismiss()
+            callback.invoke("yes", group)
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+    private fun deleteGroup(
+        context: Context,
+        groupResponseV2: CeibroGroupsV2,
+        callback: (CeibroGroupsV2) -> Unit
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text =
+            context.resources.getString(R.string.are_you_sure_you_want_to_delete_this_group)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            callback.invoke(groupResponseV2)
+            alertDialog.dismiss()
+
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
 
 
+    private fun cannotDeleteAlertBox(
+        context: Context,
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        yesBtn.text = context.getString(R.string.ok)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val saperater = view.findViewById<View>(R.id.viewSaperator)
+        saperater.visibility = View.GONE
+        noBtn.visibility = View.GONE
+
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text =
+            context.resources.getString(R.string.cannot_delete_group)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
 }

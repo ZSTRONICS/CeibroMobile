@@ -173,7 +173,6 @@ class AddNewLocationBottomSheet(
             checkDownloadFilePermission()
         }
 
-
         val linearLayoutManager = LinearLayoutManager(requireContext())
 //        mViewDataBinding.drawingsRV.removeAllViews()
         binding.newTaskGroupsRV.layoutManager = linearLayoutManager
