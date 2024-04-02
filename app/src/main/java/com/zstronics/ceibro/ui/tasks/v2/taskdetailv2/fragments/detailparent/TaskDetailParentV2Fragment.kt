@@ -210,6 +210,8 @@ class TaskDetailParentV2Fragment :
 
         viewModel.drawingFile.observe(viewLifecycleOwner) { drawingList ->
             if (!drawingList.isNullOrEmpty()) {
+                mViewDataBinding.onlyDrawingRV.visibility = View.VISIBLE
+                mViewDataBinding.onlyDrawings.visibility = View.VISIBLE
                 onlyDrawingAdapter.setList(drawingList)
             } else {
                 onlyDrawingAdapter.setList(listOf())
@@ -470,12 +472,12 @@ class TaskDetailParentV2Fragment :
             )
 
             TaskRootStateTags.InReview.tagValue.uppercase() -> Pair(
-                R.drawable.status_in_review_outline,
+                R.drawable.status_in_review_outline_more_corners,
                 state.toCamelCase()
             )
 
             TaskRootStateTags.ToReview.tagValue.uppercase() -> Pair(
-                R.drawable.status_in_review_outline,
+                R.drawable.status_in_review_outline_more_corners,
                 state.toCamelCase()
             )
 
@@ -589,7 +591,7 @@ class TaskDetailParentV2Fragment :
         val document: ArrayList<TaskFiles> = arrayListOf()
 
         for (item in files) {
-            when (item.fileTag) {
+            when (item.fileTag.lowercase()) {
                 AttachmentTags.Image.tagValue -> {
                     onlyImage.add(item)
                 }

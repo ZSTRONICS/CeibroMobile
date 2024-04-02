@@ -6,6 +6,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
@@ -20,6 +21,7 @@ class LocationsV2VM @Inject constructor(
     private val drawingPinsDao: DrawingPinsV2Dao,
     val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
     private val groupsV2Dao: GroupsV2Dao,
+    val taskDao: TaskV2Dao,
 ) : HiltBaseViewModel<ILocationsV2.State>(), ILocationsV2.ViewModel {
 
     var index = -10

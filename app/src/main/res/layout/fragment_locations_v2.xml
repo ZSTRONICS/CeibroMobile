@@ -70,9 +70,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_6sdp"
-                    android:orientation="vertical"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginBottom="@dimen/_6sdp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/saperaterTwo"
                     app:layout_constraintStart_toEndOf="@+id/saperaterOne"
@@ -91,10 +91,10 @@
                         android:textSize="12sp" />
 
                     <androidx.appcompat.widget.AppCompatSpinner
-                        android:backgroundTint="@color/black"
                         android:id="@+id/locationSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:backgroundTint="@color/black"
                         android:paddingVertical="@dimen/_1sdp"
                         android:visibility="visible" />
 

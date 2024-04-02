@@ -30,10 +30,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
@@ -46,6 +46,7 @@ import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.location.MarkerPointsData
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -764,7 +765,22 @@ class LocationsV2Fragment :
                                         if (xPoint >= (pinInfo.xPointToDisplay - (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) && xPoint <= (pinInfo.xPointToDisplay + (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) &&
                                             yPoint >= (pinInfo.yPointToDisplay - (pinInfo.loadedBitmap.height / 2) / tappedPoint.third) && yPoint <= (pinInfo.yPointToDisplay + (pinInfo.loadedBitmap.height / 2) / tappedPoint.third)
                                         ) {
-                                            shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
+                                            if (pinInfo.loadedPinData?.taskData != null) {
+                                                requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                viewModel.viewModelScope.launch {
+                                                    val task = viewModel.taskDao.getTaskByID(pinInfo.loadedPinData.taskData._id)
+                                                    if (task != null) {
+                                                        showTaskCard(task)
+                                                    } else {
+                                                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                        shortToastNow("Task doesn't exist locally")
+                                                    }
+                                                }
+                                            } else {
+                                                shortToastNow("Unable to fetch task info")
+                                            }
+//                                            shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
                                             break
                                         }
                                     }
@@ -934,6 +950,24 @@ class LocationsV2Fragment :
         }
 
     }
+
+
+    private fun showTaskCard(task: CeibroTaskV2) {
+        val sheet = LocationTaskCardBottomSheet(task) {
+            //invoked when task card will be tapped
+        }
+
+        sheet.isCancelable = true
+        sheet.setStyle(
+            BottomSheetDialogFragment.STYLE_NORMAL,
+            R.style.CustomBottomSheetDialogTheme
+        )
+        sheet.show(childFragmentManager, "LocationTaskCardBottomSheet")
+        Handler(Looper.getMainLooper()).postDelayed({
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        }, 300)
+    }
+
 
     //First Solution
     private fun mapPdfCoordinatesToCanvas(
