@@ -109,16 +109,12 @@ class FilesRVAdapter constructor(
                         } else {
                             cancelAndMakeToast(
                                 view.context,
-                                "File not downloaded",
+                                "Please wait while file is downloading",
                                 Toast.LENGTH_SHORT
                             )
                         }
                     } ?: kotlin.run {
-                        cancelAndMakeToast(
-                            view.context,
-                            "File not downloaded",
-                            Toast.LENGTH_SHORT
-                        )
+                        startDownloadFileCheck(item, view, binding, absoluteAdapterPosition)
                     }
                 }
             }
@@ -137,16 +133,12 @@ class FilesRVAdapter constructor(
                         } else {
                             cancelAndMakeToast(
                                 view.context,
-                                "File not downloaded",
+                                "Please wait while file is downloading",
                                 Toast.LENGTH_SHORT
                             )
                         }
                     } ?: kotlin.run {
-                        cancelAndMakeToast(
-                            view.context,
-                            "File not downloaded",
-                            Toast.LENGTH_SHORT
-                        )
+                        startDownloadFileCheck(item, view, binding, absoluteAdapterPosition)
                     }
                 }
             }
@@ -164,16 +156,12 @@ class FilesRVAdapter constructor(
                         } else {
                             cancelAndMakeToast(
                                 view.context,
-                                "File not downloaded",
+                                "Please wait while file is downloading",
                                 Toast.LENGTH_SHORT
                             )
                         }
                     } ?: kotlin.run {
-                        cancelAndMakeToast(
-                            view.context,
-                            "File not downloaded",
-                            Toast.LENGTH_SHORT
-                        )
+                        startDownloadFileCheck(item, view, binding, absoluteAdapterPosition)
                     }
                 }
             }
@@ -190,16 +178,12 @@ class FilesRVAdapter constructor(
                         } else {
                             cancelAndMakeToast(
                                 view.context,
-                                "File not downloaded",
+                                "Please wait while file is downloading",
                                 Toast.LENGTH_SHORT
                             )
                         }
                     } ?: kotlin.run {
-                        cancelAndMakeToast(
-                            view.context,
-                            "File not downloaded",
-                            Toast.LENGTH_SHORT
-                        )
+                        startDownloadFileCheck(item, view, binding, absoluteAdapterPosition)
                     }
                 }
             }
@@ -265,54 +249,7 @@ class FilesRVAdapter constructor(
             }
 
             binding.ivDownloadFile.setOnClickListener {
-                if (item.fileUrl.isEmpty()) {
-                    cancelAndMakeToast(
-                        it.context,
-                        "File address is invalid or file is corrupted",
-                        Toast.LENGTH_SHORT
-                    )
-                } else {
-                    if (networkConnectivityObserver.isNetworkAvailable()) {
-
-                        if (checkDownloadFilePermission(
-                                context
-                            )
-                        ) {
-
-                            it.visibility = View.GONE
-                            binding.tvDownloadProgress.visibility = View.VISIBLE
-                            downloadFileClickListener?.invoke(
-                                binding.tvDownloadProgress,
-                                binding.ivDownloadFile,
-                                binding.ivDownloaded,
-                                item,
-                                ""
-                            )
-
-                            checkDownloadStatus(
-                                item.id,
-                                binding.ivDownloaded,
-                                binding.tvDownloadProgress,
-                                binding.ivDownloadFile,
-                                position
-                            ) {
-
-                                notifyItemChanged(position)
-                            }
-
-                        } else {
-
-                            requestPermissionClickListener?.invoke("getpermissoin")
-                        }
-
-                    } else {
-                        cancelAndMakeToast(
-                            it.context,
-                            "No Internet Available.",
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                }
+                startDownloadFileCheck(item, it, binding, absoluteAdapterPosition)
             }
 
             val context = binding.uploadImg.context
@@ -321,6 +258,66 @@ class FilesRVAdapter constructor(
             binding.fileSize.text = "File size: unknown"
             binding.clearIcon.visibility = View.GONE
 
+        }
+    }
+
+    fun startDownloadFileCheck(
+        item: TaskFiles,
+        view: View,
+        binding: LayoutCeibroFilesBinding,
+        position: Int
+    ) {
+        if (item.fileUrl.isEmpty()) {
+            cancelAndMakeToast(
+                view.context,
+                "File address is invalid or file is corrupted",
+                Toast.LENGTH_SHORT
+            )
+        } else {
+            if (networkConnectivityObserver.isNetworkAvailable()) {
+
+                if (checkDownloadFilePermission(
+                        context
+                    )
+                ) {
+
+                    binding.ivDownloadFile.visibility = View.GONE
+                    binding.tvDownloadProgress.visibility = View.VISIBLE
+                    downloadFileClickListener?.invoke(
+                        binding.tvDownloadProgress,
+                        binding.ivDownloadFile,
+                        binding.ivDownloaded,
+                        item,
+                        ""
+                    )
+
+                    checkDownloadStatus(
+                        item.id,
+                        binding.ivDownloaded,
+                        binding.tvDownloadProgress,
+                        binding.ivDownloadFile,
+                        position
+                    ) {
+
+                        notifyItemChanged(position)
+                    }
+                    cancelAndMakeToast(
+                        view.context,
+                        "Please wait while file is downloaded",
+                        Toast.LENGTH_SHORT
+                    )
+                } else {
+
+                    requestPermissionClickListener?.invoke("getpermissoin")
+                }
+
+            } else {
+                cancelAndMakeToast(
+                    view.context,
+                    "No Internet Available.",
+                    Toast.LENGTH_SHORT
+                )
+            }
         }
     }
 

@@ -246,16 +246,16 @@ class TaskDetailCommentsV2Fragment :
 
             Handler().postDelayed({
                 viewModel.isTaskScrolled?.let {
-                        val list = eventsAdapter.listItems
-                        list.forEachIndexed { index, events ->
-                            if (events.id == it.id) {
-                                mViewDataBinding.eventsRV.scrollToPosition(index)
-                                return@forEachIndexed
-                            }
+                    val list = eventsAdapter.listItems
+                    list.forEachIndexed { index, events ->
+                        if (events.id == it.id) {
+                            mViewDataBinding.eventsRV.scrollToPosition(index)
+                            return@forEachIndexed
                         }
+                    }
                 }
-                viewModel.isTaskScrolled=null
-            }, 500)
+                viewModel.isTaskScrolled = null
+            }, 300)
         }
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
@@ -1233,16 +1233,19 @@ class TaskDetailCommentsV2Fragment :
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun scrollToPosition(event: LocalEvents.ScrollToPosition) {
-        viewModel.isTaskScrolled = event.events
         Handler(Looper.getMainLooper()).postDelayed({
             val list = eventsAdapter.listItems
-            list.forEachIndexed { index, events ->
-                if (events.id == event.events.id) {
-                    mViewDataBinding.eventsRV.scrollToPosition(index)
-                    return@forEachIndexed
+            if (list.isNullOrEmpty()) {
+                viewModel.isTaskScrolled = event.events
+            } else {
+                list.forEachIndexed { index, events ->
+                    if (events.id == event.events.id) {
+                        mViewDataBinding.eventsRV.scrollToPosition(index)
+                        return@forEachIndexed
+                    }
                 }
             }
-        }, 500)
+        }, 200)
         EventBus.getDefault().removeStickyEvent(event);
     }
 
