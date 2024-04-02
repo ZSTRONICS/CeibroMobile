@@ -58,6 +58,8 @@ class TasksParentTabV3Fragment :
                             viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
                         mViewDataBinding.userFilterCounter.text = size.toString()
                         viewModel.userFilterCounter = size.toString()
+
+                        viewModel._applyFilter.value = true
                     }
                 ) { groupsList ->
                     viewModel.selectedGroups = groupsList
@@ -67,6 +69,8 @@ class TasksParentTabV3Fragment :
                     mViewDataBinding.userFilterCounter.text = size.toString()
                     viewModel.userFilterCounter = size.toString()
 
+
+                    viewModel._applyFilter.value = true
                 }
             }
 
@@ -139,11 +143,6 @@ class TasksParentTabV3Fragment :
                 }
             }
 
-            R.id.imgSearchFilter -> {
-
-                viewModel._applyFilter.value = true
-            }
-
             R.id.ivSort -> {
                 sortInboxBottomSheet()
             }
@@ -153,6 +152,7 @@ class TasksParentTabV3Fragment :
                 chooseProjectFromList(viewModel) {
                     mViewDataBinding.projectFilterCounter.text = it
                     viewModel.projectFilterCounter = it
+                    viewModel._applyFilter.value = true
                 }
             }
 
@@ -161,14 +161,16 @@ class TasksParentTabV3Fragment :
                 chooseTagsType(viewModel) {
                     mViewDataBinding.tagFilterCounter.text = it
                     viewModel.tagFilterCounter = it
+                    viewModel._applyFilter.value = true
                 }
             }
 
             R.id.imgSearchFilter -> {
-//                mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
+                mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
             }
 
             R.id.cancelTaskSearch -> {
+                mViewDataBinding.tasksSearchCard.visibility = View.GONE
                 mViewDataBinding.taskSearchBar.setQuery(null, true)
                 mViewDataBinding.taskSearchBar.clearFocus()
                 mViewDataBinding.taskSearchBar.hideKeyboard()
