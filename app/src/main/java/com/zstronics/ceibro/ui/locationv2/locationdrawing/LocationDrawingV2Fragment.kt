@@ -86,28 +86,8 @@ class LocationDrawingV2Fragment :
             }
 
             R.id.addNewDrawing -> {
-
                 addNewGroupBottomSheet(viewModel) { groupData ->
-
-
                 }
-
-
-//
-//                fragmentManager?.let {
-//                    chooseFile(it) { fromLocation ->
-//                        if (fromLocation.equals("local", true)) {
-//
-//                            chooseDocuments(
-//                                mimeTypes = arrayOf(
-//                                    "application/pdf"
-//                                )
-//                            )
-//                        } else {
-//                            shortToastNow("Coming Soon")
-//                        }
-//                    }
-//                }
             }
 
             R.id.projectFilterBtn -> {
@@ -340,6 +320,26 @@ class LocationDrawingV2Fragment :
             CeibroApplication.CookiesManager.cameToLocationViewFromProject = false
             CeibroApplication.CookiesManager.openingNewLocationFile = true
             EventBus.getDefault().post(LocalEvents.LoadViewDrawingFragmentInLocation())
+        }
+
+        sectionedAdapter.addNewDrawingClickListener = { data ->
+
+
+            fragmentManager?.let {
+                chooseFile(it) { fromLocation ->
+                    if (fromLocation.equals("local", true)) {
+
+                        chooseDocuments(
+                            mimeTypes = arrayOf(
+                                "application/pdf"
+                            )
+                        )
+                    } else {
+                        shortToastNow("Coming Soon")
+                    }
+                }
+            }
+            EventBus.getDefault().postSticky(data?.let { LocalEvents.GroupSelected(it) })
         }
 
         sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->
@@ -859,7 +859,7 @@ class LocationDrawingV2Fragment :
         }
 
         sheet.onAddGroup = {
-            viewModel.projectData.value?.let {project->
+            viewModel.projectData.value?.let { project ->
                 viewModel.createGroupByProjectTIDV2(project._id, it) {
 
                     Handler(Looper.getMainLooper()).postDelayed({

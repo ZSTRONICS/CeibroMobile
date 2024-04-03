@@ -142,17 +142,15 @@ class NewDrawingV2Fragment :
 
                     }
                 }
-                if (createFloorList.size>0){
+                if (createFloorList.size > 0) {
                     viewModel.createFloorsByProjectID(
                         viewModel.projectId.value.toString(), createFloorList
                     ) {
                         sheet.dismiss()
                     }
-                }else{
+                } else {
                     sheet.dismiss()
                 }
-
-
 
 
             } else {
@@ -167,19 +165,19 @@ class NewDrawingV2Fragment :
                     }
                 }
 
-                if (createFloorList.size>0){
+                if (createFloorList.size > 0) {
                     viewModel.createFloorsByProjectID(
                         viewModel.projectId.value.toString(), createFloorList
                     ) {
-                        viewModel.floorList.value?.forEachIndexed{idenx,item->
-                            if (floorData.floorName==item.floorName){
+                        viewModel.floorList.value?.forEachIndexed { idenx, item ->
+                            if (floorData.floorName == item.floorName) {
                                 viewModel.selectedFloor = item
                             }
                         }
 
                         sheet.dismiss()
                     }
-                }else{
+                } else {
                     sheet.dismiss()
                 }
                 /*   viewModel.createFloorByProjectID(
@@ -303,4 +301,19 @@ class NewDrawingV2Fragment :
         viewModel.getGroupsByProjectID(viewModel.projectId.value.toString())
     }
 
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onGroupSelected(event: LocalEvents.GroupSelected?) {
+        Handler().postDelayed({
+            val group = event?.group
+            group?.let { preSelectedGroup ->
+                viewModel.selectedGroup = preSelectedGroup
+                mViewDataBinding.groupField.isClickable = false
+                mViewDataBinding.groupField.isEnabled = false
+                viewState.groupName.value = preSelectedGroup.groupName
+
+            }
+            EventBus.getDefault().removeStickyEvent(event);
+        }, 200)
+    }
 }

@@ -19,27 +19,21 @@ import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
-import com.zstronics.ceibro.databinding.LayoutlocationdrawingitemlistingBinding
 import com.zstronics.ceibro.databinding.LayoutlocationdrawinglistBinding
 import com.zstronics.ceibro.ui.locationv2.locationdrawing.adapter.LocationDrawingAdapter
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.adapter.DrawingAdapter
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -50,7 +44,7 @@ import java.io.InputStream
 class LocationDrawingAdapterSectionRecycler constructor(
     val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
     val context: Context,
-    sectionList: MutableList<LocationDrawingSectionHeader>,
+   val sectionList: MutableList<LocationDrawingSectionHeader>,
     val networkConnectivityObserver: NetworkConnectivityObserver
 ) : SectionRecyclerViewAdapter<
         LocationDrawingSectionHeader,
@@ -89,6 +83,8 @@ class LocationDrawingAdapterSectionRecycler constructor(
         this.requestPermissionClickListener = requestPermissionClickListener
     }
     var publicGroupClickListener: ((tag: String, CeibroGroupsV2?) -> Unit)? = null
+
+    var addNewDrawingClickListener: (( CeibroGroupsV2?) -> Unit)? = null
 
     fun publicGroupCallBack(publicGroupClickListener: (tag: String, CeibroGroupsV2?) -> Unit) {
         this.publicGroupClickListener = publicGroupClickListener
@@ -136,7 +132,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
         childPostitoin: Int,
         p3: CeibroGroupsV2?
     ) {
-        holder?.bind(p3)
+        holder?.bind(sectionPosition,p3)
     }
 
 
@@ -157,10 +153,19 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
     inner class ConnectionsChildViewHolder constructor(val binding: LayoutlocationdrawinglistBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: CeibroGroupsV2?) {
+        fun bind(sectionPosition: Int, item: CeibroGroupsV2?) {
 
+
+            val title=sectionList[sectionPosition].getSectionText()
 
             binding.apply {
+
+                if (title.equals("My Groups",true)){
+                    ivOptions.visibility=View.VISIBLE
+                }else{
+                    ivOptions.visibility=View.GONE
+                }
+
                 ivOptions.setOnClickListener {
                     togglePopupMenu(it, item)
                 }
@@ -569,13 +574,15 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
         //ShowAsDropDown statement at bottom, according to the view visibilities
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -250, -55)
+            popupWindow.showAsDropDown(v, -320, -255)
         } else {
-            popupWindow.showAsDropDown(v, -250, -55)
+            popupWindow.showAsDropDown(v, -320, -55)
         }
 
         val publicGroup = view.findViewById<AppCompatTextView>(R.id.publicGroup)
+        val addNewDrawing = view.findViewById<AppCompatTextView>(R.id.addNewDrawing)
         val deleteGroup = view.findViewById<AppCompatTextView>(R.id.deleteGroup)
+        addNewDrawing.visibility=View.VISIBLE
         if (item.publicGroup) {
             publicGroup.text = context.resources.getString(R.string.private_group)
         } else {
@@ -589,6 +596,14 @@ class LocationDrawingAdapterSectionRecycler constructor(
                     publicGroupClickListener?.invoke(tag, group)
                 }
             }
+        }
+
+        addNewDrawing.setOnClickListener {
+            popupWindow.dismiss()
+
+            addNewDrawingClickListener?.invoke( item)
+
+
         }
         deleteGroup.setOnClickListener {
             popupWindow.dismiss()

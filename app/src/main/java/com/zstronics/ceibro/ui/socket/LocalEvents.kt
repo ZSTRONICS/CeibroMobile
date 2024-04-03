@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.socket
 
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -143,4 +144,5 @@ object LocalEvents {
     class ScrollToPosition(val events: Events)
     class ScrollToPositionFromTaskFiles(val events: LocalTaskDetailFiles)
     class OpenKeyboard
+    class GroupSelected(val group: CeibroGroupsV2)
 }
