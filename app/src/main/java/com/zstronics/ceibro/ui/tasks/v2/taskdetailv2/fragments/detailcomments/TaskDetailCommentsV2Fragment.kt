@@ -1267,4 +1267,51 @@ class TaskDetailCommentsV2Fragment :
 
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun openKeyboardWithFile(event: LocalEvents.OpenKeyboardWithFile) {
+
+        checkDownloadStatus(viewModel.downloadedDrawingV2Dao, event.item)
+
+        EventBus.getDefault().removeStickyEvent(event)
+        Handler().postDelayed(Runnable {
+            mViewDataBinding.msgTypingField.requestFocus()
+            mViewDataBinding.msgTypingField.showKeyboard()
+        }, 200)
+    }
+
+    private fun checkDownloadStatus(
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        item: TaskFiles
+    ) {
+        MainScope().launch {
+            val drawingObject =
+                downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.id)
+            drawingObject?.let {
+                if (it.isDownloaded && it.localUri.isNotEmpty()) {
+                    showToast("file Already downloaded")
+                } else if (it.downloading) {
+                    getDownloadProgress(
+                        context,
+                        it.downloadId
+                    ) { status ->
+                        GlobalScope.launch(Dispatchers.Main) {
+                            if (tag == "retry" || tag == "failed") {
+                                downloadedDrawingV2Dao.deleteByDrawingID(item.id)
+                            } else if (tag?.trim().equals("100%", true)) {
+
+                                shortToastNow("Downloaded")
+                            }
+                        }
+
+                    }
+                }
+            } ?: run {
+                val triplet = Triple(item.id, item.fileName, item.fileUrl)
+                downloadFile(triplet, viewModel.downloadedDrawingV2Dao) {
+                }
+
+            }
+        }
+    }
 }
+

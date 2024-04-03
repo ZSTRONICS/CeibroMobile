@@ -978,4 +978,11 @@ class TaskDetailTabV2Fragment :
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun ImageObject(event: LocalEvents.ImageFile) {
+        mViewDataBinding.viewPager.setCurrentItem(1, true)
+        Handler(Looper.getMainLooper()).postDelayed({
+            EventBus.getDefault().postSticky(LocalEvents.OpenKeyboardWithFile(event.item))
+        }, 300)
+    }
 }

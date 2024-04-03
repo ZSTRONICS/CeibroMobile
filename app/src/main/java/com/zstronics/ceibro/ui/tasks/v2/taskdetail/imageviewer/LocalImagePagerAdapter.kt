@@ -4,16 +4,15 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutImageViewerBinding
 import ee.zstronics.ceibro.camera.PickedImages
-import ee.zstronics.ceibro.camera.databinding.LayoutCeibroFullImageViewerBinding
 import javax.inject.Inject
 
 class LocalImagePagerAdapter @Inject constructor() :
@@ -21,7 +20,7 @@ class LocalImagePagerAdapter @Inject constructor() :
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
     var listItems: MutableList<PickedImages> = mutableListOf()
-
+    var currentVisibleIndex = 0
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -86,5 +85,17 @@ class LocalImagePagerAdapter @Inject constructor() :
 
 
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
+                currentVisibleIndex =
+                    layoutManager?.findFirstVisibleItemPosition() ?: RecyclerView.NO_POSITION
+            }
+        })
     }
 }

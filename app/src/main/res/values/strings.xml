@@ -705,4 +705,6 @@
     <string name="all_without_view_only">All - without view only</string>
     <string name="remove">Remove</string>
     <string name="add_new_drawing">Add new drawing</string>
+    <string name="reply">Reply</string>
+    <string name="edit_and_reply">Edit and reply</string>
 </resources>

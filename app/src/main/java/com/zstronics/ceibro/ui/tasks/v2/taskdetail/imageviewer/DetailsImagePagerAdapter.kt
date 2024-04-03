@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -19,7 +20,7 @@ class DetailsImagePagerAdapter @Inject constructor() :
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
     var listItems: MutableList<LocalTaskDetailFiles> = mutableListOf()
-
+    var currentVisibleIndex = 0
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -84,5 +85,17 @@ class DetailsImagePagerAdapter @Inject constructor() :
 
 
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
+                currentVisibleIndex =
+                    layoutManager?.findFirstVisibleItemPosition() ?: RecyclerView.NO_POSITION
+            }
+        })
     }
 }

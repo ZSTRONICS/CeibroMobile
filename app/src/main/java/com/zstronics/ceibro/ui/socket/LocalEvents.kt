@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.socket
 
+import android.net.Uri
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -8,6 +9,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
@@ -144,5 +146,8 @@ object LocalEvents {
     class ScrollToPosition(val events: Events)
     class ScrollToPositionFromTaskFiles(val events: LocalTaskDetailFiles)
     class OpenKeyboard
+    class OpenKeyboardWithFile(val item: TaskFiles)
     class GroupSelected(val group: CeibroGroupsV2)
+    class ImageFile(val item: TaskFiles)
+    class ImageUri(val url: Uri)
 }
