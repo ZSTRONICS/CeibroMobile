@@ -230,7 +230,7 @@ class InboxFragment :
             changeSortingText(latestSortingType)
         }
 
-        sheet.isCancelable = false
+        sheet.isCancelable = true
         sheet.show(childFragmentManager, "InboxSortingBottomSheet")
     }
 
