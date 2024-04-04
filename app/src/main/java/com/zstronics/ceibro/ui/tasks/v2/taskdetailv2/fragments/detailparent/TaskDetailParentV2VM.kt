@@ -18,7 +18,7 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,8 +51,7 @@ class TaskDetailParentV2VM @Inject constructor(
     val _onlyImages: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val onlyImages: MutableLiveData<ArrayList<TaskFiles>> = _onlyImages
 
-    val _imagesWithComments: MutableLiveData<ArrayList<TaskFiles>> =
-        MutableLiveData(arrayListOf())
+    val _imagesWithComments: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val imagesWithComments: MutableLiveData<ArrayList<TaskFiles>> = _imagesWithComments
 
     val _documents: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
@@ -61,7 +60,8 @@ class TaskDetailParentV2VM @Inject constructor(
 
     val _taskPinnedEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
     val taskPinnedEvents: MutableLiveData<MutableList<Events>> = _taskPinnedEvents
-    val originalPinnedEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
+    val originalPinnedEvents: MutableLiveData<MutableList<Events>> =
+        MutableLiveData(mutableListOf())
 
     var isTaskBeingDone: MutableLiveData<Boolean> = MutableLiveData(false)
 
@@ -182,11 +182,31 @@ class TaskDetailParentV2VM @Inject constructor(
     }
 
     private fun getPinnedEvents(
-        taskId: String,
-        isPinned: Boolean
+        taskId: String, isPinned: Boolean
     ) {
         launch {
-            val allEvents = taskDao.getPinnedEventsOfTask(taskId, isPinned).toMutableList()
+            val pinnedAllEvents = taskDao.getPinnedEventsOfTask(taskId, isPinned).toMutableList()
+            val taskAllEvents = taskDao.getEventsOfTask(taskId).toMutableList()
+            val allEvents = ArrayList<Events>()
+            allEvents.addAll(pinnedAllEvents)
+            taskAllEvents.forEach { event ->
+                if (event.eventType.equals(
+                        TaskDetailEvents.Comment.eventValue, true
+                    )
+                ) {
+                    // do nothing
+                } else if (event.commentData != null && (!event.commentData.message.isNullOrEmpty() || event.commentData?.files?.isNotEmpty() == true)) {
+
+                    if (!allEvents.contains(event)) {
+                        allEvents.add(event)
+                    }
+                } else {
+                    if (!allEvents.contains(event)) {
+                        allEvents.add(event)
+                    }
+                }
+            }
+
             originalPinnedEvents.postValue(allEvents)
             _taskPinnedEvents.postValue(allEvents)
         }
