@@ -34,6 +34,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.toLightDBContacts
 import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
@@ -247,6 +248,9 @@ class TasksHiddenParentTabV3VM @Inject constructor(
                     it.taskRootState.equals(TaskRootStateTags.Hidden.tagValue, true) &&
                             (it.hiddenState.equals(
                                 TaskStatus.DONE.name,
+                                true
+                            )) || (it.hiddenState.equals(
+                                TaskDetailEvents.REJECT_CLOSED.eventValue,
                                 true
                             ))
                 }.sortedByDescending { it.updatedAt }.toMutableList()

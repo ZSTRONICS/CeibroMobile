@@ -596,7 +596,7 @@ class EventsMultiViewRVAdapter constructor(
                     }
                 }
 
-                TaskDetailEvents.REJECT_CLOSE.eventValue -> {
+                TaskDetailEvents.REJECT_CLOSED.eventValue -> {
 
                     binding.otherEventText.text =
                         "${creatorName.toCamelCase()} rejected and closed the task"
