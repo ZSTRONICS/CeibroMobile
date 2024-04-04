@@ -79,8 +79,8 @@ class ImageViewerFragment :
 
                     "detailViewImages" -> {
                         val item =
-                            detailsImagePagerAdapter.listItems[localImagePagerAdapter.currentVisibleIndex]
-                       // EventBus.getDefault().post(LocalEvents.ImageUrl(item))
+                            detailsImagePagerAdapter.listItems[detailsImagePagerAdapter.currentVisibleIndex]
+                        EventBus.getDefault().post(LocalEvents.LocalImageFile(item,it))
                         navigateBack()
                     }
                 }

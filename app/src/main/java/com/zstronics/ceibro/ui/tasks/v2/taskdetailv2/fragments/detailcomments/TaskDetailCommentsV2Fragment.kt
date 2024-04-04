@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,9 +22,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -120,6 +130,15 @@ class TaskDetailCommentsV2Fragment :
             }
 
             R.id.sendMsgBtn -> {
+
+                if (mViewDataBinding.downloadImgLayout.visibility == View.VISIBLE) {
+                    shortToastNow("Downloading File")
+                    return
+                }
+
+
+
+
                 viewModel.uploadComment(
                     requireContext()
                 ) { eventData ->
@@ -384,7 +403,11 @@ class TaskDetailCommentsV2Fragment :
 
 
         viewModel.listOfImages.observe(viewLifecycleOwner) {
-            onlyImageAdapter.setList(it)
+
+            GlobalScope.launch(Dispatchers.Main) {
+                onlyImageAdapter.setList(it)
+            }
+
             if (it.isNotEmpty()) {
                 mViewDataBinding.newImagesRV.visibility = View.VISIBLE
             } else {
@@ -1270,24 +1293,37 @@ class TaskDetailCommentsV2Fragment :
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun openKeyboardWithFile(event: LocalEvents.OpenKeyboardWithFile) {
-
-
         EventBus.getDefault().removeStickyEvent(event)
-        Handler().postDelayed(Runnable {
-            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, event.item, event.type)
+        Handler(Looper.getMainLooper()).postDelayed({
+            val triplet = Triple(event.item.id, event.item.fileName, event.item.fileUrl)
+
+            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, event.type)
             mViewDataBinding.msgTypingField.requestFocus()
             mViewDataBinding.msgTypingField.showKeyboard()
         }, 200)
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun OpenKeyboardWithLocalFile(event: LocalEvents.OpenKeyboardWithLocalFile) {
+        EventBus.getDefault().removeStickyEvent(event)
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            val triplet = Triple(event.item.fileId, event.item.fileName, event.item.fileUrl)
+
+            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, event.type)
+            mViewDataBinding.msgTypingField.requestFocus()
+            mViewDataBinding.msgTypingField.showKeyboard()
+        }, 200)
+    }
+
+
     private fun checkDownloadStatus(
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
-        item: TaskFiles,
+        triplet: Triple<String, String, String>,
         type: String
     ) {
-        MainScope().launch {
+        MainScope().launch(Dispatchers.Main) {
             val drawingObject =
-                downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.id)
+                downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(triplet.first)
             drawingObject?.let {
                 if (it.isDownloaded && it.localUri.isNotEmpty()) {
                     getFileData(it.localUri, requireContext(), type)
@@ -1297,21 +1333,105 @@ class TaskDetailCommentsV2Fragment :
                         it.downloadId
                     ) { status ->
                         GlobalScope.launch(Dispatchers.Main) {
-                            if (tag == "retry" || tag == "failed") {
-                                downloadedDrawingV2Dao.deleteByDrawingID(item.id)
-                            } else if (tag?.trim().equals("100%", true)) {
-
+                            if (status == "retry" || status == "failed") {
+                                downloadedDrawingV2Dao.deleteByDrawingID(triplet.first)
+                            } else if (status.trim().equals("100%", true)) {
                                 shortToastNow("Downloaded")
                             }
                         }
-
                     }
                 }
             } ?: run {
-                val triplet = Triple(item.id, item.fileName, item.fileUrl)
-                downloadFile(triplet, viewModel.downloadedDrawingV2Dao) {
-                }
 
+
+                mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
+
+                // val triplet = Triple(item.id, item.fileName, item.fileUrl)
+
+                val circularProgressDrawable = CircularProgressDrawable(requireContext())
+                circularProgressDrawable.strokeWidth = 4f
+                circularProgressDrawable.centerRadius = 14f
+                circularProgressDrawable.start()
+
+                val requestOptions = RequestOptions()
+                    .placeholder(circularProgressDrawable)
+                    .error(R.drawable.profile_img)
+                    .skipMemoryCache(true)
+                    .centerCrop()
+
+                Glide.with(requireContext())
+                    .load(triplet.third)
+                    .apply(requestOptions)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            circularProgressDrawable.stop()
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            circularProgressDrawable.stop()
+                            return false
+                        }
+                    })
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(mViewDataBinding.smallImgView)
+                downloadFile(triplet, viewModel.downloadedDrawingV2Dao) { progress ->
+                    if (progress.equals("100%", true)) {
+                        MainScope().launch(Dispatchers.Main) {
+
+                            mViewDataBinding.downloadImgLayout.visibility = View.GONE
+                            checkDownloadStatus(
+                                downloadedDrawingV2Dao,
+                                triplet,
+                                type
+                            )
+                        }
+                    } else if (progress == "retry" || progress == "failed") {
+                        MainScope().launch(Dispatchers.Main) {
+                            mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
+                            mViewDataBinding.ivRetry.visibility = View.VISIBLE
+                            mViewDataBinding.progressBar.visibility = View.GONE
+                            mViewDataBinding.ivRetry.setOnClick {
+
+                                mViewDataBinding.progressBar.visibility = View.VISIBLE
+
+                                downloadFile(triplet, viewModel.downloadedDrawingV2Dao) { status ->
+                                    if (status.equals("100%", true)) {
+                                        MainScope().launch(Dispatchers.Main) {
+                                            mViewDataBinding.downloadImgLayout.visibility =
+                                                View.GONE
+                                            checkDownloadStatus(
+                                                downloadedDrawingV2Dao,
+                                                triplet,
+                                                type
+                                            )
+                                        }
+                                    } else if (status == "retry" || status == "failed") {
+                                        MainScope().launch(Dispatchers.Main) {
+                                            mViewDataBinding.downloadImgLayout.visibility =
+                                                View.VISIBLE
+                                            mViewDataBinding.ivRetry.visibility = View.VISIBLE
+                                            mViewDataBinding.progressBar.visibility = View.GONE
+                                        }
+                                    }
+                                }
+
+                                shortToastNow("Downloading failed")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1336,9 +1456,6 @@ class TaskDetailCommentsV2Fragment :
                     fileExtension
                 )
                 val file = FileUtils.getFile(requireContext(), newUri)
-                val selectedImgDetail =
-                    getPickedFileDetail(requireContext(), newUri)
-
                 val compressedImageFile =
                     Compressor.compress(requireContext(), file) {
                         quality(80)
@@ -1359,14 +1476,12 @@ class TaskDetailCommentsV2Fragment :
                         if (type != "reply") {
 
                             val newList: ArrayList<PickedImages> = arrayListOf()
-                            //  val listOfPickedImages = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
                             val ceibroCamera =
                                 Intent(requireActivity(), CeibroImageViewerActivity::class.java)
                             val bundle = Bundle()
                             if (viewModel.listOfImages.value != null) {
                                 newList.addAll(viewModel.listOfImages.value!!)
                             }
-                            //  newList.addAll(oldImages)
 
                             bundle.putParcelableArrayList("images", newList)
                             bundle.putParcelable("object", pickedImage[0])
@@ -1377,9 +1492,8 @@ class TaskDetailCommentsV2Fragment :
                     }
                 }
             } else {
-                shortToastNow("One of the file has file-type unknown")
+                shortToastNow("Image url is corrupted!")
             }
         }
     }
 }
-

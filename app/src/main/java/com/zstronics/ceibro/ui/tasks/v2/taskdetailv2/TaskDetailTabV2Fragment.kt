@@ -980,9 +980,50 @@ class TaskDetailTabV2Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun ImageObject(event: LocalEvents.ImageFile) {
-        mViewDataBinding.viewPager.setCurrentItem(1, true)
+
+        if (mViewDataBinding.viewPager.currentItem != 1) {
+            mViewDataBinding.viewPager.setCurrentItem(1, true)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (mViewDataBinding.viewPager.currentItem != 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+            }, 100)
+        }
+
         Handler(Looper.getMainLooper()).postDelayed({
-            EventBus.getDefault().postSticky(LocalEvents.OpenKeyboardWithFile(event.item,event.type))
+
+            if (mViewDataBinding.viewPager.currentItem != 1) {
+                mViewDataBinding.viewPager.setCurrentItem(1, true)
+            }
+
+            EventBus.getDefault()
+                .postSticky(LocalEvents.OpenKeyboardWithFile(event.item, event.type))
+        }, 300)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun LocalImageFile(event: LocalEvents.LocalImageFile) {
+
+        if (mViewDataBinding.viewPager.currentItem != 1) {
+            mViewDataBinding.viewPager.setCurrentItem(1, true)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (mViewDataBinding.viewPager.currentItem != 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+            }, 100)
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+
+            if (mViewDataBinding.viewPager.currentItem != 1) {
+                mViewDataBinding.viewPager.setCurrentItem(1, true)
+
+            }
+
+            EventBus.getDefault()
+                .postSticky(LocalEvents.OpenKeyboardWithLocalFile(event.item, event.type))
         }, 300)
     }
 }

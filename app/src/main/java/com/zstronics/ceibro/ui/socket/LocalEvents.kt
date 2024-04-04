@@ -149,5 +149,7 @@ object LocalEvents {
     class OpenKeyboardWithFile(val item: TaskFiles,val type:String)
     class GroupSelected(val group: CeibroGroupsV2)
     class ImageFile(val item: TaskFiles,val type:String)
+    class LocalImageFile(val item: LocalTaskDetailFiles, val type:String)
+    class OpenKeyboardWithLocalFile(val item: LocalTaskDetailFiles,val type:String)
     class ImageUri(val url: Uri)
 }
