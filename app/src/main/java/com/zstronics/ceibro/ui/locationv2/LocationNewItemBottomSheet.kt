@@ -17,6 +17,7 @@ class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
     lateinit var binding: LayoutLocationNewItemBinding
     var onSheetDismiss: (() -> Unit)? = null
     var onAddTaskBtnClicked: (() -> Unit)? = null
+    var onCloseBtnClicked: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +39,7 @@ class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.closeBtn.setOnClickListener {
-            dismiss()
+            onCloseBtnClicked?.invoke()
         }
         binding.addTaskBtn.setOnClickListener {
             onAddTaskBtnClicked?.invoke()

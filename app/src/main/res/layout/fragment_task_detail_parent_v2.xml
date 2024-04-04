@@ -475,7 +475,7 @@
                             android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginBottom="@dimen/_4sdp"
                             android:fontFamily="@font/inter_medium"
-                            android:text="@string/pinned_comments"
+                            android:text="@string/pins_and_logs"
                             android:textColor="@color/black"
                             android:textSize="13.5sp"
                             app:layout_constraintBottom_toBottomOf="parent"

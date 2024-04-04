@@ -93,6 +93,7 @@ class LocationsV2Fragment :
     )
 
 
+    private var tempViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
     private var inViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
     private var addNewMarkerPoints: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
         mutableListOf()
@@ -927,16 +928,36 @@ class LocationsV2Fragment :
                         loadingOldData = false
 
 
-                        inViewPinsList.mapIndexed { index, marker ->
+                        val foundNewPin = inViewPinsList.find { listPin -> listPin.isNewPoint.equals("new", true) }
+                        if (foundNewPin != null) {
+                            val newPinIndex1 = inViewPinsList.indexOf(foundNewPin)
+                            inViewPinsList.removeAt(newPinIndex1)
+                            tempViewPinsList.clear()
+                            tempViewPinsList.addAll(inViewPinsList)
+                            inViewPinsList.clear()
+                            inViewPinsList.add(foundNewPin)     //This condition is for new task, so that no other task pin shows in the screenshot for new task
+                            val newPinIndex = inViewPinsList.indexOf(foundNewPin)
                             mapPdfCoordinatesToCanvas(
                                 canvas,
-                                marker,
-                                index,
+                                foundNewPin,
+                                newPinIndex,
                                 pageWidth,
                                 pageHeight,
-                                marker.loadedPinData
+                                foundNewPin.loadedPinData
                             )
+                        } else {
+                            inViewPinsList.mapIndexed { index, marker ->
+                                mapPdfCoordinatesToCanvas(
+                                    canvas,
+                                    marker,
+                                    index,
+                                    pageWidth,
+                                    pageHeight,
+                                    marker.loadedPinData
+                                )
+                            }
                         }
+
 //                    for (marker in markers) {
 //
 ////                    canvas.drawCircle(point.x, point.y, 10f, paint)
@@ -1147,10 +1168,10 @@ class LocationsV2Fragment :
         }
 
         if (marker.isNewPoint.equals("new", true)) {
-            val newX = adjustedX + transX + (scaledBitmap.width - 17)
-            val newY = adjustedY + transY + (scaledBitmap.height - 17)
+//            val newX = adjustedX + transX + (scaledBitmap.width - 17)
+//            val newY = adjustedY + transY + (scaledBitmap.height - 17)
 
-            println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
+//            println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
 //            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
 
             inViewPinsList[markerIndex] =
@@ -1257,7 +1278,17 @@ class LocationsV2Fragment :
                 inViewPinsList.removeAt(markerIndex)
             } catch (_: Exception) {
             }
-            mViewDataBinding.pdfView.invalidate()
+            Handler(Looper.getMainLooper()).postDelayed({
+                inViewPinsList.clear()
+                inViewPinsList.addAll(tempViewPinsList)
+                mViewDataBinding.pdfView.invalidate()
+            }, 200)
+        }
+
+        sheet.onCloseBtnClicked = {
+            inViewPinsList.clear()
+            inViewPinsList.addAll(tempViewPinsList)
+            sheet.dismiss()
         }
 
         sheet.onAddTaskBtnClicked = {
@@ -1300,7 +1331,7 @@ class LocationsV2Fragment :
             sheet.dismiss()
         }
         sheet.isCancelable = true
-        sheet.show(childFragmentManager, "ChangePasswordSheet")
+        sheet.show(childFragmentManager, "LocationNewItemBottomSheet")
     }
 
 

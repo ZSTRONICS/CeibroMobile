@@ -661,6 +661,7 @@
     <string name="pin_comment">Pin comment</string>
     <string name="unpin_comment">Unpin comment</string>
     <string name="pinned_comments">Pinned comments</string>
+    <string name="pins_and_logs">Pins and Logs</string>
     <string name="project">Project</string>
     <string name="tags">Tags</string>
     <string name="all">All</string>
