@@ -146,8 +146,8 @@ object LocalEvents {
     class ScrollToPosition(val events: Events)
     class ScrollToPositionFromTaskFiles(val events: LocalTaskDetailFiles)
     class OpenKeyboard
-    class OpenKeyboardWithFile(val item: TaskFiles)
+    class OpenKeyboardWithFile(val item: TaskFiles,val type:String)
     class GroupSelected(val group: CeibroGroupsV2)
-    class ImageFile(val item: TaskFiles)
+    class ImageFile(val item: TaskFiles,val type:String)
     class ImageUri(val url: Uri)
 }

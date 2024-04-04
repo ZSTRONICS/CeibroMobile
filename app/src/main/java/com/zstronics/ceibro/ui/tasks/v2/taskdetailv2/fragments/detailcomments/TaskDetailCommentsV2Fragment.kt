@@ -18,6 +18,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
@@ -1270,10 +1271,10 @@ class TaskDetailCommentsV2Fragment :
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun openKeyboardWithFile(event: LocalEvents.OpenKeyboardWithFile) {
 
-        checkDownloadStatus(viewModel.downloadedDrawingV2Dao, event.item)
 
         EventBus.getDefault().removeStickyEvent(event)
         Handler().postDelayed(Runnable {
+            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, event.item, event.type)
             mViewDataBinding.msgTypingField.requestFocus()
             mViewDataBinding.msgTypingField.showKeyboard()
         }, 200)
@@ -1281,14 +1282,15 @@ class TaskDetailCommentsV2Fragment :
 
     private fun checkDownloadStatus(
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
-        item: TaskFiles
+        item: TaskFiles,
+        type: String
     ) {
         MainScope().launch {
             val drawingObject =
                 downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.id)
             drawingObject?.let {
                 if (it.isDownloaded && it.localUri.isNotEmpty()) {
-                    showToast("file Already downloaded")
+                    getFileData(it.localUri, requireContext(), type)
                 } else if (it.downloading) {
                     getDownloadProgress(
                         context,
@@ -1310,6 +1312,72 @@ class TaskDetailCommentsV2Fragment :
                 downloadFile(triplet, viewModel.downloadedDrawingV2Dao) {
                 }
 
+            }
+        }
+    }
+
+    private fun getFileData(localUri: String, context: Context, type: String) {
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val image = File(localUri)
+            if (image.exists()) {
+                val uri = image.toUri()
+
+                val pickedImage = arrayListOf<PickedImages>()
+                val fileName = getFileNameFromUri(context, uri)
+                var fileExtension = getFileExtension(context, uri)
+                if (fileExtension.isNullOrEmpty()) {
+                    fileExtension = "jpg"
+                }
+                val newUri = createFileUriFromContentUri(
+                    requireContext(),
+                    image.toUri(),
+                    fileName,
+                    fileExtension
+                )
+                val file = FileUtils.getFile(requireContext(), newUri)
+                val selectedImgDetail =
+                    getPickedFileDetail(requireContext(), newUri)
+
+                val compressedImageFile =
+                    Compressor.compress(requireContext(), file) {
+                        quality(80)
+                        format(Bitmap.CompressFormat.JPEG)
+                    }
+                val compressedImageUri = Uri.fromFile(compressedImageFile)
+
+                if (compressedImageUri != null) {
+                    val selectedNewImgDetail =
+                        getPickedFileDetail(
+                            context,
+                            compressedImageUri
+                        )
+
+                    pickedImage.add(selectedNewImgDetail)
+                    if (pickedImage.size > 0) {
+                        viewModel.listOfImages.value = pickedImage
+                        if (type != "reply") {
+
+                            val newList: ArrayList<PickedImages> = arrayListOf()
+                            //  val listOfPickedImages = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                            val ceibroCamera =
+                                Intent(requireActivity(), CeibroImageViewerActivity::class.java)
+                            val bundle = Bundle()
+                            if (viewModel.listOfImages.value != null) {
+                                newList.addAll(viewModel.listOfImages.value!!)
+                            }
+                            //  newList.addAll(oldImages)
+
+                            bundle.putParcelableArrayList("images", newList)
+                            bundle.putParcelable("object", pickedImage[0])
+                            bundle.putBoolean("isFromNewTaskFragment", true)
+                            ceibroCamera.putExtras(bundle)
+                            ceibroImageViewerLauncher.launch(ceibroCamera)
+                        }
+                    }
+                }
+            } else {
+                shortToastNow("One of the file has file-type unknown")
             }
         }
     }
