@@ -33,7 +33,7 @@
             android:textSize="12sp" />
         <TextView
             android:id="@+id/reply"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/_5sdp"
             android:fontFamily="@font/inter_medium"
