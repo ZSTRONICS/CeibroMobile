@@ -262,7 +262,8 @@ class TaskDetailCommentsV2Fragment :
             Handler().postDelayed({
                 eventsAdapter.itemCount.let { itemCount ->
                     if (itemCount > 0) {
-                        val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                        val layoutManager =
+                            mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
                         layoutManager.scrollToPositionWithOffset(itemCount - 1, 200)
 //                        mViewDataBinding.eventsRV.smoothScrollToPosition(itemCount - 1)
                     }
@@ -274,7 +275,8 @@ class TaskDetailCommentsV2Fragment :
                     val list = eventsAdapter.listItems
                     list.forEachIndexed { index, events ->
                         if (events.id == it.id) {
-                            val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                            val layoutManager =
+                                mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
                             layoutManager.scrollToPositionWithOffset(index, 200)
 //                            mViewDataBinding.eventsRV.smoothScrollToPosition(index)
                             return@forEachIndexed
@@ -1252,6 +1254,28 @@ class TaskDetailCommentsV2Fragment :
 //
 //        }
 
+        openKeyboardWithFile?.let {
+            Handler(Looper.getMainLooper()).postDelayed({
+                val item = CeibroApplication.OpenKeyboardWithFile(it.item, it.type)
+                val triplet = Triple(item.item.id, item.item.fileName, item.item.fileUrl)
+                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, it.type)
+                mViewDataBinding.msgTypingField.requestFocus()
+                mViewDataBinding.msgTypingField.showKeyboard()
+                openKeyboardWithFile = null
+            }, 200)
+        }
+
+
+        openKeyboardWithLocalFile?.let {
+            val item = CeibroApplication.OpenKeyboardWithLocalFile(it.item, it.type)
+            Handler(Looper.getMainLooper()).postDelayed({
+                val triplet = Triple(item.item.fileId, item.item.fileName, item.item.fileUrl)
+                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, item.type)
+                mViewDataBinding.msgTypingField.requestFocus()
+                mViewDataBinding.msgTypingField.showKeyboard()
+                openKeyboardWithLocalFile = null
+            }, 200)
+        }
 
     }
 
@@ -1273,7 +1297,8 @@ class TaskDetailCommentsV2Fragment :
             } else {
                 list.forEachIndexed { index, events ->
                     if (events.id == event.events.id) {
-                        val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                        val layoutManager =
+                            mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
                         layoutManager.scrollToPositionWithOffset(index, 200)
 //                        mViewDataBinding.eventsRV.smoothScrollToPosition(index)
                         return@forEachIndexed
@@ -1299,7 +1324,7 @@ class TaskDetailCommentsV2Fragment :
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun openKeyboard(event: LocalEvents.OpenKeyboard) {
-       EventBus.getDefault().removeStickyEvent(event)
+        EventBus.getDefault().removeStickyEvent(event)
         mViewDataBinding.msgTypingField.requestFocus()
         mViewDataBinding.msgTypingField.showKeyboard()
 
@@ -1329,7 +1354,7 @@ class TaskDetailCommentsV2Fragment :
                     openKeyboardWithLocalFile = null
                 }, 200)
             }
-        },200)
+        }, 200)
 
 
     }
@@ -1456,7 +1481,7 @@ class TaskDetailCommentsV2Fragment :
                                 checkDownloadedFile(
                                     downloadedDrawingV2Dao,
                                     triplet,
-                                    type
+                                   "reply"
                                 )
                             }
                         } else if (progress == "retry" || progress == "failed") {
@@ -1628,5 +1653,30 @@ class TaskDetailCommentsV2Fragment :
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(mViewDataBinding.smallImgView)
 
+    }
+
+    fun reloadReplyEvent() {
+        openKeyboardWithFile?.let {
+            Handler(Looper.getMainLooper()).postDelayed({
+                val item = CeibroApplication.OpenKeyboardWithFile(it.item, it.type)
+                val triplet = Triple(item.item.id, item.item.fileName, item.item.fileUrl)
+                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, it.type)
+                mViewDataBinding.msgTypingField.requestFocus()
+                mViewDataBinding.msgTypingField.showKeyboard()
+                openKeyboardWithFile = null
+            }, 200)
+        }
+
+
+        openKeyboardWithLocalFile?.let {
+            val item = CeibroApplication.OpenKeyboardWithLocalFile(it.item, it.type)
+            Handler(Looper.getMainLooper()).postDelayed({
+                val triplet = Triple(item.item.fileId, item.item.fileName, item.item.fileUrl)
+                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, item.type)
+                mViewDataBinding.msgTypingField.requestFocus()
+                mViewDataBinding.msgTypingField.showKeyboard()
+                openKeyboardWithLocalFile = null
+            }, 200)
+        }
     }
 }

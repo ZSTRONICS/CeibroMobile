@@ -22,10 +22,10 @@ class TaskDetailV2TabLayout(fragmentManager: FragmentActivity) :
     override fun getItemCount(): Int = NUM_TABS
 
 
-    val taskDetailParentV2Fragment = TaskDetailParentV2Fragment()
+    private val taskDetailParentV2Fragment = TaskDetailParentV2Fragment()
 
     val taskDetailCommentsV2Fragment = TaskDetailCommentsV2Fragment()
-    val taskDetailFilesV2Fragment = TaskDetailFilesV2Fragment()
+    private val taskDetailFilesV2Fragment = TaskDetailFilesV2Fragment()
 
     override fun createFragment(position: Int): Fragment {
 

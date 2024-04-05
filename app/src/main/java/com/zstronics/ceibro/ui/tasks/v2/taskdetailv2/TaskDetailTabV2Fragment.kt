@@ -984,46 +984,59 @@ class TaskDetailTabV2Fragment :
     fun ImageObject(event: LocalEvents.ImageFile) {
 
         openKeyboardWithFile = CeibroApplication.OpenKeyboardWithFile(event.item, event.type)
-        EventBus.getDefault().removeAllStickyEvents()
-        if (mViewDataBinding.viewPager.currentItem != 1) {
-            mViewDataBinding.viewPager.setCurrentItem(1, true)
+        if (mViewDataBinding.viewPager.currentItem == 1) {
+            tabAdapter.taskDetailCommentsV2Fragment.reloadReplyEvent()
+        } else {
+
+
+            EventBus.getDefault().removeAllStickyEvents()
+            if (mViewDataBinding.viewPager.currentItem != 1) {
+                mViewDataBinding.viewPager.setCurrentItem(1, true)
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (mViewDataBinding.viewPager.currentItem != 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+            }, 150)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (mViewDataBinding.viewPager.currentItem != 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+                // EventBus.getDefault().postSticky(LocalEvents.OpenKeyboard())
+            }, 350)
         }
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (mViewDataBinding.viewPager.currentItem != 1) {
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
-            }
-        }, 150)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (mViewDataBinding.viewPager.currentItem != 1) {
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
-            }
-            EventBus.getDefault().postSticky(LocalEvents.OpenKeyboard())
-        }, 350)
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun LocalImageFile(event: LocalEvents.LocalImageFile) {
 
+
         openKeyboardWithLocalFile =
             CeibroApplication.OpenKeyboardWithLocalFile(event.item, event.type)
-        if (mViewDataBinding.viewPager.currentItem != 1) {
-            mViewDataBinding.viewPager.setCurrentItem(1, true)
+        if (mViewDataBinding.viewPager.currentItem == 1) {
+            tabAdapter.taskDetailCommentsV2Fragment.reloadReplyEvent()
+        } else {
+
+
+            if (mViewDataBinding.viewPager.currentItem != 1) {
+                mViewDataBinding.viewPager.setCurrentItem(1, true)
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (mViewDataBinding.viewPager.currentItem != 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+            }, 150)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (mViewDataBinding.viewPager.currentItem != 1) {
+                    mViewDataBinding.viewPager.setCurrentItem(1, true)
+                }
+                //  EventBus.getDefault().postSticky(LocalEvents.OpenKeyboard())
+            }, 350)
         }
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (mViewDataBinding.viewPager.currentItem != 1) {
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
-            }
-        }, 150)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (mViewDataBinding.viewPager.currentItem != 1) {
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
-            }
-            EventBus.getDefault().postSticky(LocalEvents.OpenKeyboard())
-        }, 350)
     }
 }
