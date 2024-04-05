@@ -995,14 +995,11 @@ class TaskDetailTabV2Fragment :
             }
         }, 150)
 
-
-
         Handler(Looper.getMainLooper()).postDelayed({
             if (mViewDataBinding.viewPager.currentItem != 1) {
                 mViewDataBinding.viewPager.setCurrentItem(1, true)
             }
             EventBus.getDefault().postSticky(LocalEvents.OpenKeyboard())
-
         }, 350)
     }
 
@@ -1014,8 +1011,8 @@ class TaskDetailTabV2Fragment :
             CeibroApplication.OpenKeyboardWithLocalFile(event.item, event.type)
         if (mViewDataBinding.viewPager.currentItem != 1) {
             mViewDataBinding.viewPager.setCurrentItem(1, true)
-
         }
+
         Handler(Looper.getMainLooper()).postDelayed({
             if (mViewDataBinding.viewPager.currentItem != 1) {
                 mViewDataBinding.viewPager.setCurrentItem(1, true)
