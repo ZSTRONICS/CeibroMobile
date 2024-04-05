@@ -111,7 +111,7 @@ class TaskDetailCommentsV2VM @Inject constructor(
                 _taskDetail.postValue(taskDataFromNotification!!)
                 originalTask.postValue(taskDataFromNotification!!)
 
-//                getAllEvents(taskDataFromNotification.id)
+                getAllEvents(taskDataFromNotification.id)
                 syncEvents(taskDataFromNotification.id)
 
             } else {
