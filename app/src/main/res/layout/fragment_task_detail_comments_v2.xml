@@ -115,94 +115,111 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/appGrey"
                     android:textSize="15sp"
-                    app:layout_constraintBottom_toTopOf="@id/newImagesRV"
+                    app:layout_constraintBottom_toTopOf="@id/imagesLayout"
                     app:layout_constraintEnd_toStartOf="@+id/attachmentBtn"
                     app:layout_constraintStart_toEndOf="@+id/emojiBtn"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/downloadImgLayout"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="@dimen/_1sdp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/msgTypingField"
-                    app:layout_constraintStart_toStartOf="@+id/msgTypingField">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/smallImgView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/new_background"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        style="?android:attr/progressBarStyleSmall"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:indeterminate="true"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="@id/smallImgView"
-                        app:layout_constraintEnd_toEndOf="@id/smallImgView"
-                        app:layout_constraintStart_toStartOf="@id/smallImgView"
-                        app:layout_constraintTop_toTopOf="@id/smallImgView" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/ivRetry"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/_2sdp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/download"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/newImagesRV"
+                <LinearLayout
+                    android:id="@+id/imagesLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="3dp"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="horizontal"
-                    android:paddingStart="1dp"
-                    android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toTopOf="@id/newFilesRV"
-                    app:layout_constraintEnd_toStartOf="@+id/attachmentBtn"
-                    app:layout_constraintStart_toEndOf="@+id/emojiBtn"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/layout_ceibro_only_image" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/newFilesRV"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="5dp"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="horizontal"
-                    android:visibility="gone"
+                    android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/attachmentBtn"
-                    app:layout_constraintStart_toEndOf="@+id/emojiBtn"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/layout_new_comment_files" />
+                    app:layout_constraintStart_toEndOf="@+id/emojiBtn">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/newImagesRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="3dp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="horizontal"
+                        android:paddingStart="1dp"
+                        android:visibility="gone"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toTopOf="@id/newFilesRV"
+                        app:layout_constraintEnd_toStartOf="@+id/attachmentBtn"
+                        app:layout_constraintStart_toEndOf="@+id/emojiBtn"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/layout_ceibro_only_image" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/newFilesRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="5dp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/attachmentBtn"
+                        app:layout_constraintStart_toEndOf="@+id/emojiBtn"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/layout_new_comment_files" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/downloadImgLayout"
+                        android:layout_width="@dimen/_55sdp"
+                        android:layout_height="@dimen/_55sdp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="5dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/msgTypingField"
+                        app:layout_constraintStart_toStartOf="@+id/msgTypingField">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/smallImgView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/new_background"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            style="?android:attr/progressBarStyleSmall"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:indeterminate="true"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="@id/smallImgView"
+                            app:layout_constraintEnd_toEndOf="@id/smallImgView"
+                            app:layout_constraintStart_toStartOf="@id/smallImgView"
+                            app:layout_constraintTop_toTopOf="@id/smallImgView" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivRetry"
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:padding="@dimen/_2sdp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/download"
+                            android:tint="@color/white"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
 
 
                 <androidx.appcompat.widget.AppCompatImageView
