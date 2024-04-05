@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
@@ -84,8 +85,10 @@ open class CeibroApplication : Application() {
         var rootOngoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var rootOngoingFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var rootApprovalAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
-        var rootApprovalInReviewPendingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
-        var rootApprovalToReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+        var rootApprovalInReviewPendingTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
+            MutableLiveData()
+        var rootApprovalToReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
+            MutableLiveData()
         var rootClosedAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var rootClosedToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var rootClosedFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
@@ -116,5 +119,10 @@ open class CeibroApplication : Application() {
         var drawingFileForNewTask: MutableLiveData<DrawingV2> = MutableLiveData()
         var cameToLocationViewFromProject: Boolean = false
         var openingNewLocationFile: Boolean = false
+        var openKeyboardWithLocalFile: OpenKeyboardWithLocalFile? = null
+        var openKeyboardWithFile: OpenKeyboardWithFile? = null
     }
+
+    class OpenKeyboardWithLocalFile(val item: LocalTaskDetailFiles, val type: String)
+    open class OpenKeyboardWithFile(val item: TaskFiles, val type: String)
 }

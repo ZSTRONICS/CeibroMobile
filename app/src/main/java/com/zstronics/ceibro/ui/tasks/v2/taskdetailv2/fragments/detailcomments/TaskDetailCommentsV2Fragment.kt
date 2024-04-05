@@ -32,8 +32,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
+import com.zstronics.ceibro.CeibroApplication.CookiesManager.openKeyboardWithFile
+import com.zstronics.ceibro.CeibroApplication.CookiesManager.openKeyboardWithLocalFile
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.longToastNow
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
@@ -1245,6 +1247,31 @@ class TaskDetailCommentsV2Fragment :
 //            }
 //
 //        }
+
+
+        openKeyboardWithFile?.let {
+            Handler(Looper.getMainLooper()).postDelayed({
+                val item = CeibroApplication.OpenKeyboardWithFile(it.item, it.type)
+                val triplet = Triple(item.item.id, item.item.fileName, item.item.fileUrl)
+                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, it.type)
+                mViewDataBinding.msgTypingField.requestFocus()
+                mViewDataBinding.msgTypingField.showKeyboard()
+                openKeyboardWithFile = null
+            }, 200)
+        }
+
+
+        openKeyboardWithLocalFile?.let {
+            val item = CeibroApplication.OpenKeyboardWithLocalFile(it.item, it.type)
+            Handler(Looper.getMainLooper()).postDelayed({
+                val triplet = Triple(item.item.fileId, item.item.fileName, item.item.fileUrl)
+                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, item.type)
+                mViewDataBinding.msgTypingField.requestFocus()
+                mViewDataBinding.msgTypingField.showKeyboard()
+                openKeyboardWithLocalFile = null
+            }, 200)
+        }
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1292,28 +1319,28 @@ class TaskDetailCommentsV2Fragment :
 
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun openKeyboardWithFile(event: LocalEvents.OpenKeyboardWithFile) {
-        EventBus.getDefault().removeStickyEvent(event)
-        Handler(Looper.getMainLooper()).postDelayed({
-            val triplet = Triple(event.item.id, event.item.fileName, event.item.fileUrl)
-            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, event.type)
-            mViewDataBinding.msgTypingField.requestFocus()
-            mViewDataBinding.msgTypingField.showKeyboard()
-        }, 200)
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun OpenKeyboardWithLocalFile(event: LocalEvents.OpenKeyboardWithLocalFile) {
-        EventBus.getDefault().removeStickyEvent(event)
-        Handler(Looper.getMainLooper()).postDelayed(Runnable {
-            val triplet = Triple(event.item.fileId, event.item.fileName, event.item.fileUrl)
-
-            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, event.type)
-            mViewDataBinding.msgTypingField.requestFocus()
-            mViewDataBinding.msgTypingField.showKeyboard()
-        }, 200)
-    }
+//    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+//    fun openKeyboardWithFile(event: LocalEvents.OpenKeyboardWithFile) {
+//        EventBus.getDefault().removeStickyEvent(event)
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            val triplet = Triple(event.item.id, event.item.fileName, event.item.fileUrl)
+//            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, event.type)
+//            mViewDataBinding.msgTypingField.requestFocus()
+//            mViewDataBinding.msgTypingField.showKeyboard()
+//        }, 200)
+//    }
+//
+//    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+//    fun OpenKeyboardWithLocalFile(event: LocalEvents.OpenKeyboardWithLocalFile) {
+//        EventBus.getDefault().removeStickyEvent(event)
+//        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+//            val triplet = Triple(event.item.fileId, event.item.fileName, event.item.fileUrl)
+//
+//            checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, event.type)
+//            mViewDataBinding.msgTypingField.requestFocus()
+//            mViewDataBinding.msgTypingField.showKeyboard()
+//        }, 200)
+//    }
 
 
     private fun checkDownloadStatus(
@@ -1322,7 +1349,7 @@ class TaskDetailCommentsV2Fragment :
         type: String
     ) {
 
-        MainScope().launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             delay(500)
             val drawingObject =
                 downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(triplet.first)
@@ -1346,43 +1373,48 @@ class TaskDetailCommentsV2Fragment :
                                     )
                                 }
                             } else if (status == "retry" || status == "failed") {
-                                MainScope().launch(Dispatchers.Main) {
-                                    mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
-                                    mViewDataBinding.ivRetry.visibility = View.VISIBLE
-                                    mViewDataBinding.progressBar.visibility = View.GONE
-                                    mViewDataBinding.ivRetry.setOnClick {
-                                        mViewDataBinding.ivRetry.visibility = View.GONE
-                                        mViewDataBinding.progressBar.visibility = View.VISIBLE
-
-                                        downloadFile(
-                                            triplet,
-                                            viewModel.downloadedDrawingV2Dao
-                                        ) { status ->
-                                            if (status.equals("100%", true)) {
-                                                MainScope().launch(Dispatchers.Main) {
-                                                    mViewDataBinding.downloadImgLayout.visibility =
-                                                        View.GONE
-                                                    checkDownloadedFile(
-                                                        downloadedDrawingV2Dao,
-                                                        triplet,
-                                                        type
-                                                    )
-                                                }
-                                            } else if (status == "retry" || status == "failed") {
-                                                MainScope().launch(Dispatchers.Main) {
-                                                    mViewDataBinding.downloadImgLayout.visibility =
-                                                        View.VISIBLE
-                                                    mViewDataBinding.ivRetry.visibility =
-                                                        View.VISIBLE
-                                                    mViewDataBinding.progressBar.visibility =
-                                                        View.GONE
-                                                }
-                                            }
-                                        }
-
-                                        shortToastNow("Downloading failed")
-                                    }
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    downloadedDrawingV2Dao.deleteByDrawingID(triplet.third)
+                                    mViewDataBinding.downloadImgLayout.visibility = View.GONE
+                                    shortToastNow("Downloading failed")
                                 }
+                                /* MainScope().launch(Dispatchers.Main) {
+                                     mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
+                                     mViewDataBinding.ivRetry.visibility = View.VISIBLE
+                                     mViewDataBinding.progressBar.visibility = View.GONE
+                                     mViewDataBinding.ivRetry.setOnClick {
+                                         mViewDataBinding.ivRetry.visibility = View.GONE
+                                         mViewDataBinding.progressBar.visibility = View.VISIBLE
+
+                                         downloadFile(
+                                             triplet,
+                                             viewModel.downloadedDrawingV2Dao
+                                         ) { status ->
+                                             if (status.equals("100%", true)) {
+                                                 MainScope().launch(Dispatchers.Main) {
+                                                     mViewDataBinding.downloadImgLayout.visibility =
+                                                         View.GONE
+                                                     checkDownloadedFile(
+                                                         downloadedDrawingV2Dao,
+                                                         triplet,
+                                                         type
+                                                     )
+                                                 }
+                                             } else if (status == "retry" || status == "failed") {
+                                                 MainScope().launch(Dispatchers.Main) {
+                                                     mViewDataBinding.downloadImgLayout.visibility =
+                                                         View.VISIBLE
+                                                     mViewDataBinding.ivRetry.visibility =
+                                                         View.VISIBLE
+                                                     mViewDataBinding.progressBar.visibility =
+                                                         View.GONE
+                                                 }
+                                             }
+                                         }
+
+                                         shortToastNow("Downloading failed")
+                                     }
+                                 }*/
                             }
                         }
                     }
@@ -1400,46 +1432,7 @@ class TaskDetailCommentsV2Fragment :
 
                     mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
 
-                    // val triplet = Triple(item.id, item.fileName, item.fileUrl)
-
-                    val circularProgressDrawable = CircularProgressDrawable(requireContext())
-                    circularProgressDrawable.strokeWidth = 4f
-                    circularProgressDrawable.centerRadius = 14f
-                    circularProgressDrawable.start()
-
-                    val requestOptions = RequestOptions()
-                        .placeholder(circularProgressDrawable)
-                        .error(R.drawable.profile_img)
-                        .skipMemoryCache(true)
-                        .centerCrop()
-
-                    Glide.with(requireContext())
-                        .load(triplet.third)
-                        .apply(requestOptions)
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                circularProgressDrawable.stop()
-                                return false
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                dataSource: DataSource?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                circularProgressDrawable.stop()
-                                return false
-                            }
-                        })
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(mViewDataBinding.smallImgView)
+                    showImageFromURL(triplet.third)
                     downloadFile(triplet, viewModel.downloadedDrawingV2Dao) { progress ->
                         if (progress.equals("100%", true)) {
                             MainScope().launch(Dispatchers.Main) {
@@ -1452,41 +1445,47 @@ class TaskDetailCommentsV2Fragment :
                                 )
                             }
                         } else if (progress == "retry" || progress == "failed") {
-                            MainScope().launch(Dispatchers.Main) {
-                                mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
-                                mViewDataBinding.ivRetry.visibility = View.VISIBLE
-                                mViewDataBinding.progressBar.visibility = View.GONE
-                                mViewDataBinding.ivRetry.setOnClick {
-                                    mViewDataBinding.ivRetry.visibility = View.GONE
-                                    mViewDataBinding.progressBar.visibility = View.VISIBLE
-
-                                    downloadFile(
-                                        triplet,
-                                        viewModel.downloadedDrawingV2Dao
-                                    ) { status ->
-                                        if (status.equals("100%", true)) {
-                                            MainScope().launch(Dispatchers.Main) {
-                                                mViewDataBinding.downloadImgLayout.visibility =
-                                                    View.GONE
-                                                checkDownloadedFile(
-                                                    downloadedDrawingV2Dao,
-                                                    triplet,
-                                                    type
-                                                )
-                                            }
-                                        } else if (status == "retry" || status == "failed") {
-                                            MainScope().launch(Dispatchers.Main) {
-                                                mViewDataBinding.downloadImgLayout.visibility =
-                                                    View.VISIBLE
-                                                mViewDataBinding.ivRetry.visibility = View.VISIBLE
-                                                mViewDataBinding.progressBar.visibility = View.GONE
-                                            }
-                                        }
-                                    }
-
-                                    shortToastNow("Downloading failed")
-                                }
+                            GlobalScope.launch(Dispatchers.Main) {
+                                downloadedDrawingV2Dao.deleteByDrawingID(triplet.third)
+                                mViewDataBinding.downloadImgLayout.visibility = View.GONE
+                                shortToastNow("Downloading failed")
                             }
+
+                            /*  MainScope().launch(Dispatchers.Main) {
+                                   mViewDataBinding.downloadImgLayout.visibility = View.VISIBLE
+                                   mViewDataBinding.ivRetry.visibility = View.VISIBLE
+                                   mViewDataBinding.progressBar.visibility = View.GONE
+                                   mViewDataBinding.ivRetry.setOnClick {
+                                       mViewDataBinding.ivRetry.visibility = View.GONE
+                                       mViewDataBinding.progressBar.visibility = View.VISIBLE
+
+                                       downloadFile(
+                                           triplet,
+                                           viewModel.downloadedDrawingV2Dao
+                                       ) { status ->
+                                           if (status.equals("100%", true)) {
+                                               MainScope().launch(Dispatchers.Main) {
+                                                   mViewDataBinding.downloadImgLayout.visibility =
+                                                       View.GONE
+                                                   checkDownloadedFile(
+                                                       downloadedDrawingV2Dao,
+                                                       triplet,
+                                                       type
+                                                   )
+                                               }
+                                           } else if (status == "retry" || status == "failed") {
+                                               MainScope().launch(Dispatchers.Main) {
+                                                   mViewDataBinding.downloadImgLayout.visibility =
+                                                       View.VISIBLE
+                                                   mViewDataBinding.ivRetry.visibility = View.VISIBLE
+                                                   mViewDataBinding.progressBar.visibility = View.GONE
+                                               }
+                                           }
+                                       }
+
+                                       shortToastNow("Downloading failed")
+                                   }
+                               }*/
                         }
                     }
                 } else {
@@ -1574,4 +1573,45 @@ class TaskDetailCommentsV2Fragment :
         }
     }
 
+    private fun showImageFromURL(url: String) {
+        val circularProgressDrawable = CircularProgressDrawable(requireContext())
+        circularProgressDrawable.strokeWidth = 4f
+        circularProgressDrawable.centerRadius = 14f
+        circularProgressDrawable.start()
+
+        val requestOptions = RequestOptions()
+            .placeholder(circularProgressDrawable)
+            .error(R.drawable.profile_img)
+            .skipMemoryCache(true)
+            .centerCrop()
+
+        Glide.with(requireContext())
+            .load(url)
+            .apply(requestOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+            })
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(mViewDataBinding.smallImgView)
+
+    }
 }

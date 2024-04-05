@@ -25,6 +25,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
+import com.zstronics.ceibro.CeibroApplication.CookiesManager.openKeyboardWithFile
+import com.zstronics.ceibro.CeibroApplication.CookiesManager.openKeyboardWithLocalFile
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
@@ -981,6 +983,9 @@ class TaskDetailTabV2Fragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun ImageObject(event: LocalEvents.ImageFile) {
 
+        openKeyboardWithFile = CeibroApplication.OpenKeyboardWithFile(event.item, event.type)
+        EventBus.getDefault().removeAllStickyEvents()
+
         if (mViewDataBinding.viewPager.currentItem != 1) {
             mViewDataBinding.viewPager.setCurrentItem(1, true)
 
@@ -988,23 +993,16 @@ class TaskDetailTabV2Fragment :
                 if (mViewDataBinding.viewPager.currentItem != 1) {
                     mViewDataBinding.viewPager.setCurrentItem(1, true)
                 }
-            }, 100)
+            }, 200)
         }
 
-        Handler(Looper.getMainLooper()).postDelayed({
-
-            if (mViewDataBinding.viewPager.currentItem != 1) {
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
-            }
-
-            EventBus.getDefault()
-                .postSticky(LocalEvents.OpenKeyboardWithFile(event.item, event.type))
-        }, 300)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun LocalImageFile(event: LocalEvents.LocalImageFile) {
 
+        openKeyboardWithLocalFile =
+            CeibroApplication.OpenKeyboardWithLocalFile(event.item, event.type)
         if (mViewDataBinding.viewPager.currentItem != 1) {
             mViewDataBinding.viewPager.setCurrentItem(1, true)
 
@@ -1012,18 +1010,7 @@ class TaskDetailTabV2Fragment :
                 if (mViewDataBinding.viewPager.currentItem != 1) {
                     mViewDataBinding.viewPager.setCurrentItem(1, true)
                 }
-            }, 100)
+            }, 200)
         }
-
-        Handler(Looper.getMainLooper()).postDelayed({
-
-            if (mViewDataBinding.viewPager.currentItem != 1) {
-                mViewDataBinding.viewPager.setCurrentItem(1, true)
-
-            }
-
-            EventBus.getDefault()
-                .postSticky(LocalEvents.OpenKeyboardWithLocalFile(event.item, event.type))
-        }, 300)
     }
 }
