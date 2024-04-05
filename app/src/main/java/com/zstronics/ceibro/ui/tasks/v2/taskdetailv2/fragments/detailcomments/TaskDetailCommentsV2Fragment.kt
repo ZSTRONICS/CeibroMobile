@@ -1253,29 +1253,6 @@ class TaskDetailCommentsV2Fragment :
 //        }
 
 
-        openKeyboardWithFile?.let {
-            Handler(Looper.getMainLooper()).postDelayed({
-                val item = CeibroApplication.OpenKeyboardWithFile(it.item, it.type)
-                val triplet = Triple(item.item.id, item.item.fileName, item.item.fileUrl)
-                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, it.type)
-                mViewDataBinding.msgTypingField.requestFocus()
-                mViewDataBinding.msgTypingField.showKeyboard()
-                openKeyboardWithFile = null
-            }, 200)
-        }
-
-
-        openKeyboardWithLocalFile?.let {
-            val item = CeibroApplication.OpenKeyboardWithLocalFile(it.item, it.type)
-            Handler(Looper.getMainLooper()).postDelayed({
-                val triplet = Triple(item.item.fileId, item.item.fileName, item.item.fileUrl)
-                checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, item.type)
-                mViewDataBinding.msgTypingField.requestFocus()
-                mViewDataBinding.msgTypingField.showKeyboard()
-                openKeyboardWithLocalFile = null
-            }, 200)
-        }
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1320,10 +1297,40 @@ class TaskDetailCommentsV2Fragment :
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun openKeyboard(event: LocalEvents.OpenKeyboard) {
+       EventBus.getDefault().removeStickyEvent(event)
         mViewDataBinding.msgTypingField.requestFocus()
         mViewDataBinding.msgTypingField.showKeyboard()
+
+
+
+        Handler().postDelayed(Runnable {
+
+            openKeyboardWithFile?.let {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val item = CeibroApplication.OpenKeyboardWithFile(it.item, it.type)
+                    val triplet = Triple(item.item.id, item.item.fileName, item.item.fileUrl)
+                    checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, it.type)
+                    mViewDataBinding.msgTypingField.requestFocus()
+                    mViewDataBinding.msgTypingField.showKeyboard()
+                    openKeyboardWithFile = null
+                }, 200)
+            }
+
+
+            openKeyboardWithLocalFile?.let {
+                val item = CeibroApplication.OpenKeyboardWithLocalFile(it.item, it.type)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val triplet = Triple(item.item.fileId, item.item.fileName, item.item.fileUrl)
+                    checkDownloadStatus(viewModel.downloadedDrawingV2Dao, triplet, item.type)
+                    mViewDataBinding.msgTypingField.requestFocus()
+                    mViewDataBinding.msgTypingField.showKeyboard()
+                    openKeyboardWithLocalFile = null
+                }, 200)
+            }
+        },200)
+
 
     }
 
