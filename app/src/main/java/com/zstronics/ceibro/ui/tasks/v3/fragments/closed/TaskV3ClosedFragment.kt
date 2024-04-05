@@ -316,15 +316,15 @@ class TaskV3ClosedFragment :
 
         if (positionOfIcon > height) {
             if (data.isCreator) {
-                popupWindow.showAsDropDown(v, -195, -280)
+                popupWindow.showAsDropDown(v, -205, -280)
             } else {
-                popupWindow.showAsDropDown(v, -135, -175)
+                popupWindow.showAsDropDown(v, -145, -175)
             }
         } else {
             if (data.isCreator) {
-                popupWindow.showAsDropDown(v, -195, -10)
+                popupWindow.showAsDropDown(v, -205, -10)
             } else {
-                popupWindow.showAsDropDown(v, -135, -10)
+                popupWindow.showAsDropDown(v, -145, -10)
             }
         }
 

@@ -400,9 +400,9 @@ class TasksCanceledV3Fragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -221, -170)
+            popupWindow.showAsDropDown(v, -231, -170)
         } else {
-            popupWindow.showAsDropDown(v, -221, -10)
+            popupWindow.showAsDropDown(v, -231, -10)
         }
 
 

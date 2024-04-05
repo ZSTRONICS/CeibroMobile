@@ -274,9 +274,9 @@ class TaskV3HiddenClosedFragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -174, -170)
+            popupWindow.showAsDropDown(v, -180, -170)
         } else {
-            popupWindow.showAsDropDown(v, -174, -10)
+            popupWindow.showAsDropDown(v, -180, -10)
         }
 
 
