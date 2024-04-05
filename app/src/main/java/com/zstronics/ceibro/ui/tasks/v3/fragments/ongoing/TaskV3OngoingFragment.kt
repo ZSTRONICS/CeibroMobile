@@ -321,15 +321,15 @@ class TaskV3OngoingFragment :
 
         if (positionOfIcon > height) {
             if (data.isCreator) {
-                popupWindow.showAsDropDown(v, -167, -280)
+                popupWindow.showAsDropDown(v, -177, -280)
             } else {
-                popupWindow.showAsDropDown(v, -135, -175)
+                popupWindow.showAsDropDown(v, -145, -175)
             }
         } else {
             if (data.isCreator) {
-                popupWindow.showAsDropDown(v, -167, -10)
+                popupWindow.showAsDropDown(v, -177, -10)
             } else {
-                popupWindow.showAsDropDown(v, -135, -10)
+                popupWindow.showAsDropDown(v, -145, -10)
             }
         }
 

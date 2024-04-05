@@ -276,7 +276,7 @@ class GroupV2Fragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -200, -170)
+            popupWindow.showAsDropDown(v, -205, -170)
         } else {
             popupWindow.showAsDropDown(v, -205, -60)
         }
