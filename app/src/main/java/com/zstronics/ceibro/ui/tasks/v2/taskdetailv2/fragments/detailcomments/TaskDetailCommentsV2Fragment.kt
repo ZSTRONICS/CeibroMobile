@@ -262,7 +262,9 @@ class TaskDetailCommentsV2Fragment :
             Handler().postDelayed({
                 eventsAdapter.itemCount.let { itemCount ->
                     if (itemCount > 0) {
-                        mViewDataBinding.eventsRV.scrollToPosition(itemCount - 1)
+                        val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                        layoutManager.scrollToPositionWithOffset(itemCount - 1, 200)
+//                        mViewDataBinding.eventsRV.smoothScrollToPosition(itemCount - 1)
                     }
                 }
             }, 100)
@@ -272,13 +274,15 @@ class TaskDetailCommentsV2Fragment :
                     val list = eventsAdapter.listItems
                     list.forEachIndexed { index, events ->
                         if (events.id == it.id) {
-                            mViewDataBinding.eventsRV.scrollToPosition(index)
+                            val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                            layoutManager.scrollToPositionWithOffset(index, 200)
+//                            mViewDataBinding.eventsRV.smoothScrollToPosition(index)
                             return@forEachIndexed
                         }
                     }
                 }
                 viewModel.isTaskScrolled = null
-            }, 300)
+            }, 400)
         }
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
@@ -1292,12 +1296,14 @@ class TaskDetailCommentsV2Fragment :
             } else {
                 list.forEachIndexed { index, events ->
                     if (events.id == event.events.id) {
-                        mViewDataBinding.eventsRV.scrollToPosition(index)
+                        val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                        layoutManager.scrollToPositionWithOffset(index, 200)
+//                        mViewDataBinding.eventsRV.smoothScrollToPosition(index)
                         return@forEachIndexed
                     }
                 }
             }
-        }, 200)
+        }, 250)
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -1306,7 +1312,9 @@ class TaskDetailCommentsV2Fragment :
         val list = eventsAdapter.listItems
         list.forEachIndexed { index, events ->
             if (events.id == event.events.commentId) {
-                mViewDataBinding.eventsRV.scrollToPosition(index)
+                val layoutManager = mViewDataBinding.eventsRV.layoutManager as LinearLayoutManager
+                layoutManager.scrollToPositionWithOffset(index, 200)
+//                mViewDataBinding.eventsRV.smoothScrollToPosition(index)
                 return@forEachIndexed
             }
         }
