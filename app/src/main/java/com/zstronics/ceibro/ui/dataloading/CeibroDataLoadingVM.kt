@@ -103,6 +103,20 @@ class CeibroDataLoadingVM @Inject constructor(
     }
 
     var apiSucceedCount = 0f
+    suspend fun validateToken(callBack: (isSuccess: Boolean, code: Int) -> Unit) {
+        launch {
+            when (val response = dashboardRepository.validateUserToken()) {
+                is ApiResponse.Success -> {
+                    callBack.invoke(true, response.code)
+                }
+
+                is ApiResponse.Error -> {
+                    callBack.invoke(false, response.error.statusCode)
+                }
+            }
+        }
+    }
+
     suspend fun loadAppData(context: Context, callBack: () -> Unit) {
         Log.d("Data loading stared at ", DateUtils.getCurrentTimeStamp())
 

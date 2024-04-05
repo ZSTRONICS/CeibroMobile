@@ -71,22 +71,43 @@ class CeibroDataLoadingFragment :
         socketEventsInitiating()
 
         GlobalScope.launch {
-            viewModel.loadAppData(requireContext()) {
-                val progress = viewModel.apiSucceedCount.div(API_CALL_COUNT).times(
-                    100
-                ).toInt()
-                mViewDataBinding.syncProgress.setProgress(
-                    progress, true
-                )
-                if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
-                    isNavigated = true
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
-                        navigateToDashboard()
-                    }, 100)
+            viewModel.validateToken { isSuccess, code ->
+                if (code in 400..406) {
+                    viewModel.endUserSession(requireContext())
+                    shortToastNow("Token expired, please re-login")
+                    launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                        options = Bundle(),
+                        clearPrevious = true
+                    ) {
+                        putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+                        putExtra(
+                            NAVIGATION_Graph_START_DESTINATION_ID,
+                            R.id.loginFragment
+                        )
+                    }
+                    Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
+                } else {
+                    GlobalScope.launch {
+                        viewModel.loadAppData(requireContext()) {
+                            val progress = viewModel.apiSucceedCount.div(API_CALL_COUNT).times(
+                                100
+                            ).toInt()
+                            mViewDataBinding.syncProgress.setProgress(
+                                progress, true
+                            )
+                            if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
+                                isNavigated = true
+                                val handler = Handler(Looper.getMainLooper())
+                                handler.postDelayed({
+                                    Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
+                                    navigateToDashboard()
+                                }, 100)
+                            }
+                        }
+                    }
                 }
             }
+
         }
     }
 

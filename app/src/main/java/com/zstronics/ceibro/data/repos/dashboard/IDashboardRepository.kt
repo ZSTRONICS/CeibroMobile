@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.dashboard
 
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.repos.auth.refreshtoken.TokenValidityResponse
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
@@ -109,4 +110,6 @@ interface IDashboardRepository {
     suspend fun deleteConnectionGroupInBulk(
         deleteBulkGroupRequest: DeleteGroupInBulkRequest
     ): ApiResponse<GenericResponse>
+
+    suspend fun validateUserToken(): ApiResponse<TokenValidityResponse>
 }

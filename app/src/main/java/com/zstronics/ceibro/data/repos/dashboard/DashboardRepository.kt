@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.repos.dashboard
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
+import com.zstronics.ceibro.data.repos.auth.refreshtoken.TokenValidityResponse
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
@@ -290,6 +291,14 @@ class DashboardRepository @Inject constructor(
             call =
             {
                 service.deleteConnectionGroupsInBulk(deleteBulkGroupRequest)
+            }
+        )
+
+   override suspend fun validateUserToken(): ApiResponse<TokenValidityResponse> =
+        executeSafely(
+            call =
+            {
+                service.validateUserToken()
             }
         )
 

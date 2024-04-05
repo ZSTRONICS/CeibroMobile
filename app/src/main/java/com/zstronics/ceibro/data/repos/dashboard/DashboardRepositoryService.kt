@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.repos.dashboard
 
+import com.zstronics.ceibro.data.repos.auth.refreshtoken.TokenValidityResponse
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
@@ -163,4 +164,7 @@ interface DashboardRepositoryService {
         @Body deleteGroupInBulkRequest: DeleteGroupInBulkRequest
     ): Response<GenericResponse>
 
+
+    @POST("v2/users/token/isValid")
+    suspend fun validateUserToken(): Response<TokenValidityResponse>
 }
