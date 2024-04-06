@@ -133,8 +133,11 @@ class TaskDetailTabV2Fragment :
                                             true
                                         CeibroApplication.CookiesManager.openingNewLocationFile =
                                             true
-                                        navigateBackFromDetailFragment {
-                                            navigateBack()
+
+                                        navigateBackFromDetailFragmentForDrawing { backAllowed ->
+                                            if (backAllowed) {
+                                                navigateBack()
+                                            }
                                             EventBus.getDefault()
                                                 .postSticky(LocalEvents.LoadDrawingInLocation())
                                         }
@@ -442,6 +445,9 @@ class TaskDetailTabV2Fragment :
                         TaskStatus.DONE.name,
                         true
                     ) || item.creatorState.equals(
+                        TaskDetailEvents.REJECT_CLOSED.eventValue,
+                        true
+                    ) || item.creatorState.equals(
                         TaskStatus.CANCELED.name,
                         true
                     ) ||
@@ -530,6 +536,31 @@ class TaskDetailTabV2Fragment :
             }
         } else {
             callBack.invoke()
+        }
+    }
+
+    private fun navigateBackFromDetailFragmentForDrawing(callBack: (backAllowed: Boolean) -> Unit) {
+        val instances = countActivitiesInBackStack(requireContext())
+        if (viewModel.notificationTaskData.value != null) {
+            if (instances <= 1) {
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = Bundle(),
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        R.id.homeFragment
+                    )
+                }
+                callBack.invoke(false)
+            } else {
+                //finish is called so that second instance of app will be closed and only one last instance will remain
+                finish()
+                callBack.invoke(false)
+            }
+        } else {
+            callBack.invoke(true)
         }
     }
 

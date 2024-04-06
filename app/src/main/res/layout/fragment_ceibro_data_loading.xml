@@ -44,10 +44,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:text="@string/app_data_sync_message"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/_27sdp"
+            android:layout_marginEnd="@dimen/_27sdp"
             android:textSize="@dimen/_13sdp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"

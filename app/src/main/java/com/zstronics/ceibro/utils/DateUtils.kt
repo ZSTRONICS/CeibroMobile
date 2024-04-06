@@ -39,7 +39,7 @@ object DateUtils {
     const val FORMAT_SHORT_DATE_MON_YEAR = "dd-MM-yyyy"             // 29-05-2023
     const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT = "dd.MM.yyyy"    // 29.05.2023
     const val SHORT_DATE_MON_YEAR_ONLY = "dd.MM.yy"    // 29.05.23
-    const val SHORT_DATE_MON_YEAR_WITH_TIME = "dd.MM.yy hh:mm a"    // 29.05.23 13:30
+    const val SHORT_DATE_MON_YEAR_WITH_TIME = "dd.MM.yy HH:mm"    // 29.05.23 13:30
     const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY = "E, dd.MM.yy"  // Mon, 14.04.23
     fun getAge(date: Date): Int {
         val today = Calendar.getInstance()
@@ -84,7 +84,7 @@ object DateUtils {
         val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
-        val outputFormat = SimpleDateFormat(FORMAT_TIME_12H, Locale.getDefault())
+        val outputFormat = SimpleDateFormat(FORMAT_TIME_24H, Locale.getDefault())
         outputFormat.timeZone = TimeZone.getDefault()
 
         val utcDate: Date = inputFormat.parse(utcTime) ?: return ""
@@ -119,7 +119,7 @@ object DateUtils {
         val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
-        val outputFormat = SimpleDateFormat(FORMAT_TIME_12H, Locale.getDefault())
+        val outputFormat = SimpleDateFormat(FORMAT_TIME_24H, Locale.getDefault())
         outputFormat.timeZone = TimeZone.getDefault()
 
         val utcDate: Date = inputFormat.parse(utcTime) ?: return ""
@@ -156,7 +156,7 @@ object DateUtils {
         val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
-        val outputFormat = SimpleDateFormat(FORMAT_TIME_12H, Locale.getDefault())
+        val outputFormat = SimpleDateFormat(FORMAT_TIME_24H, Locale.getDefault())
         outputFormat.timeZone = TimeZone.getDefault()
 
         val utcDate: Date = inputFormat.parse(utcTime) ?: return ""

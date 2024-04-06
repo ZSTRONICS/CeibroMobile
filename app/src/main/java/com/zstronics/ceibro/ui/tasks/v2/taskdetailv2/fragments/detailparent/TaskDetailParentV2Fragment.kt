@@ -112,15 +112,15 @@ class TaskDetailParentV2Fragment :
                 }
             }
 
-            R.id.pinnedCommentsHeaderLayout -> {
-                if (mViewDataBinding.pinnedCommentsRV.visibility == View.VISIBLE) {
-                    mViewDataBinding.pinnedCommentsRV.visibility = View.GONE
-                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
-                } else {
-                    mViewDataBinding.pinnedCommentsRV.visibility = View.VISIBLE
-                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
-                }
-            }
+//            R.id.pinnedCommentsHeaderLayout -> {
+//                if (mViewDataBinding.pinnedCommentsRV.visibility == View.VISIBLE) {
+//                    mViewDataBinding.pinnedCommentsRV.visibility = View.GONE
+//                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
+//                } else {
+//                    mViewDataBinding.pinnedCommentsRV.visibility = View.VISIBLE
+//                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+//                }
+//            }
         }
     }
 

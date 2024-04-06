@@ -251,9 +251,11 @@ class HiddenTasksV3Adapter @Inject constructor() :
                     if (item.description.isEmpty()) {
                         inboxTaskEventDescription.text = ""
                         inboxTaskEventDescription.visibility = View.GONE
+                        inboxTaskTitle.maxLines = 2
                     } else {
                         inboxTaskEventDescription.text = item.description
                         inboxTaskEventDescription.visibility = View.VISIBLE
+                        inboxTaskTitle.maxLines = 1
                     }
 
                     if (!item.creator.profilePic.isNullOrEmpty()) {
