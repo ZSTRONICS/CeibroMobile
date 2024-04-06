@@ -15,6 +15,7 @@ import com.zstronics.ceibro.base.KEY_IS_FROM_ME_UNREAD
 import com.zstronics.ceibro.base.KEY_IS_HIDDEN_UNREAD
 import com.zstronics.ceibro.base.KEY_IS_TO_ME_UNREAD
 import com.zstronics.ceibro.base.KEY_IS_USER_LOGGED_IN
+import com.zstronics.ceibro.base.KEY_LOCALE
 import com.zstronics.ceibro.base.KEY_PASS
 import com.zstronics.ceibro.base.KEY_PROJECT
 import com.zstronics.ceibro.base.KEY_SAVED_TASK
@@ -280,7 +281,8 @@ class SessionManager constructor(
     }
 
     fun getInboxUpdatedAtTimeStamp(): String {
-         return sharedPreferenceManager.getValueString(KEY_INBOX_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
+        return sharedPreferenceManager.getValueString(KEY_INBOX_UPDATED_AT)
+            ?: "2020-01-01T17:12:18.787Z"
 //        return "2020-01-01T17:12:18.787Z"
     }
 
@@ -312,6 +314,14 @@ class SessionManager constructor(
 
     fun saveStringValue(key: String, value: String) {
         sharedPreferenceManager.saveString(key, value)
+    }
+
+    fun setLocaleValue(value: String) {
+        sharedPreferenceManager.saveString(KEY_LOCALE, value)
+    }
+
+    fun getLocaleValue(): String {
+        return sharedPreferenceManager.getValueString(KEY_LOCALE) ?: "English"
     }
 
 }

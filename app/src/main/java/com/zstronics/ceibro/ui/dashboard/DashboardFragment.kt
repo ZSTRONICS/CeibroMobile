@@ -48,6 +48,7 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
+import com.zstronics.ceibro.ui.dashboard.bottomSheet.ChangeLocaleBottomSheet
 import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.inbox.InboxFragment
 import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
@@ -62,6 +63,7 @@ import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3Fragment
 import com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3Fragment
+import com.zstronics.ceibro.utils.LocaleChanger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,6 +71,7 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -101,6 +104,24 @@ class DashboardFragment :
         when (id) {
             R.id.createNewTaskBtn -> {
                 navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
+            }
+
+            R.id.localeLayout -> {
+                closeDrawerLayout()
+                changeLocaleBottomSheet(viewModel.sessionManager.getLocaleValue()) { type ->
+                    if (type.isNotEmpty()) {
+                        showChangeLocaleDialog { resp ->
+                            if (resp.equals("yes", true)) {
+                                viewModel.sessionManager.setLocaleValue(type)
+                                if (type.equals("English", true)) {
+                                    setLocale(requireActivity(), "en")
+                                } else {
+                                    setLocale(requireActivity(), "ru")
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
 
@@ -143,18 +164,22 @@ class DashboardFragment :
                 closeDrawerLayout()
                 navigateToProfile()
             }
+
             R.id.menuFooterConnectionsBtn -> {
                 closeDrawerLayout()
                 navigateToConnections()
             }
+
             R.id.menuGroupsBtn -> {
                 closeDrawerLayout()
                 navigateToGroups()
             }
+
             R.id.menuFeedbackHeaderBtn -> {
                 closeDrawerLayout()
                 showFeedbackDialog()
             }
+
             R.id.menuToMeTaskBtn -> {
                 closeDrawerLayout()
 //                Handler(Looper.getMainLooper()).postDelayed({
@@ -162,6 +187,7 @@ class DashboardFragment :
 //                },50)
                 shortToastNow("Coming soon")
             }
+
             R.id.menuFromMeTaskBtn -> {
                 closeDrawerLayout()
 //                Handler(Looper.getMainLooper()).postDelayed({
@@ -169,18 +195,20 @@ class DashboardFragment :
 //                },50)
                 shortToastNow("Coming soon")
             }
+
             R.id.menuHiddenTaskBtn -> {
                 closeDrawerLayout()
                 Handler(Looper.getMainLooper()).postDelayed({
                     navigate(R.id.tasksHiddenParentTabV3Fragment)
-                },20)
+                }, 20)
 //                shortToastNow("Coming soon")
             }
+
             R.id.menuCancelledTaskBtn -> {
                 closeDrawerLayout()
                 Handler(Looper.getMainLooper()).postDelayed({
                     navigate(R.id.tasksCanceledV3Fragment)
-                },20)
+                }, 20)
 //                shortToastNow("Coming soon")
             }
 
@@ -932,6 +960,7 @@ class DashboardFragment :
     private fun navigateToConnections() {
         navigate(R.id.MyConnectionV2Fragment)
     }
+
     private fun navigateToGroups() {
         navigate(R.id.groupV2Fragment)
     }
@@ -1147,4 +1176,42 @@ class DashboardFragment :
             false
         }
     }
+
+    private fun changeLocaleBottomSheet(type: String, callback: (String) -> Unit) {
+        val sheet = ChangeLocaleBottomSheet(type) {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "ChangeLocaleBottomSheet")
+
+    }
+
+    private fun setLocale(activity: Activity, languageCode: String?) {
+        val langCode = languageCode ?: Locale.getDefault().language
+        LocaleChanger.changeLanguage(activity, langCode)
+        restartActivity()
+    }
+
+    private fun restartActivity() {
+        val intent = requireActivity().intent
+        finish()
+        startActivity(intent)
+    }
+
+    private fun showChangeLocaleDialog(callback: (String) -> Unit) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.change_language))
+            .setMessage(getString(R.string.are_you_sure_you_want_to_change_language))
+            .setPositiveButton(getString(R.string.yes)) { dialog: DialogInterface, _: Int ->
+                callback.invoke("yes")
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.no)) { dialog: DialogInterface, _: Int ->
+                callback.invoke("no")
+                dialog.dismiss()
+            }
+            .show()
+    }
+
 }

@@ -617,4 +617,6 @@
     <string name="project">Проект</string>
     <string name="tags">Теги</string>
     <string name="all">Все</string>
+    <string name="are_you_sure_you_want_to_change_language">Вы уверены, что хотите изменить язык?</string>
+    <string name="change_language">Изменение языка</string>
 </resources>

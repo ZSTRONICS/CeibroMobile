@@ -39,7 +39,6 @@ open class CeibroApplication : Application() {
         ceibroApplication = this
         sessionValidator.setAuthRepository(authApi)
         sessionValidator.setSessionManager(sessionManager)
-
         // Logging set to help debug issues, remove before releasing your app.
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
         TooLargeTool.startLogging(this)

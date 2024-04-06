@@ -289,6 +289,7 @@
     <string name="click_to_add_more_files_heading"><u>Click to add more files</u></string>
     <string name="upload_heading">Upload</string>
     <string name="are_you_sure_you_want_to_delete_the_task_heading">Are you sure you want to delete the task?</string>
+    <string name="are_you_sure_you_want_to_change_language">Are you sure you want to change language?</string>
     <string name="are_you_sure_you_want_to_delete_this_subtask_heading">Are you sure you want to delete this subtask?</string>
     <string name="are_you_sure_you_want_to_reject_this_subtask_heading">Are you sure you want to reject this subtask?</string>
     <string name="please_enter_a_reason_to_reject_heading">Please enter a reason to reject</string>
@@ -553,6 +554,7 @@
     <string name="is_contacts_cursor_valid">Is contacts cursor valid</string>
     <string name="contacts_sync_count">Last contact sync count</string>
     <string name="close_app">Close App</string>
+    <string name="change_language">Change Language</string>
     <string name="are_you_sure_you_want_to_close_the_app">Are you sure you want to close the app?</string>
     <string name="are_you_sure_you_want_to_delete_this_group">Are you sure you want to delete this group?</string>
     <string name="are_you_sure_you_want_to_make_this_group_public">Are you sure you want to make this group public?</string>
@@ -707,4 +709,6 @@
     <string name="add_new_drawing">Add new drawing</string>
     <string name="reply">Reply</string>
     <string name="edit_and_reply">Edit and reply</string>
+    <string name="english">English</string>
+    <string name="russian">Russian</string>
 </resources>

@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.base.activity
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.zstronics.ceibro.utils.LocaleChanger
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -35,4 +37,7 @@ abstract class BaseActivity : AppCompatActivity() {
         //
     }
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleChanger.wrapContext(base))
+    }
 }
