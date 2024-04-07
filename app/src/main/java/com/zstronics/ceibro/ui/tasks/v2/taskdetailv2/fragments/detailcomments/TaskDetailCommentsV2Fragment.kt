@@ -1475,7 +1475,7 @@ class TaskDetailCommentsV2Fragment :
                     showImageFromURL(triplet.third)
                     downloadFile(triplet, viewModel.downloadedDrawingV2Dao) { progress ->
                         if (progress.equals("100%", true)) {
-                            MainScope().launch(Dispatchers.Main) {
+                            GlobalScope.launch(Dispatchers.Main) {
 
                                 mViewDataBinding.downloadImgLayout.visibility = View.GONE
                                 checkDownloadedFile(
@@ -1601,7 +1601,7 @@ class TaskDetailCommentsV2Fragment :
         triplet: Triple<String, String, String>,
         type: String
     ) {
-        MainScope().launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             delay(500)
             val drawingObject =
                 downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(triplet.first)

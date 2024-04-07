@@ -41,19 +41,19 @@ class ChangeLocaleBottomSheet(val type: String, val callback: (String) -> Unit) 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (type.equals("English", true)) {
+        if (type.equals("en", true)) {
             binding.rbEnglish.isChecked = true
         } else {
             binding.cbRussian.isChecked = true
         }
         binding.rbEnglish.setOnClick {
-            LocaleType = "English"
+            LocaleType = "en"
 
 
         }
         binding
         binding.cbRussian.setOnClick {
-            LocaleType = "Russian"
+            LocaleType = "ru"
 
         }
         binding.ok.setOnClick {

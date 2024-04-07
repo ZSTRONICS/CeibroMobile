@@ -26,6 +26,15 @@ object LocaleChanger {
         return Locale(local)
     }
 
+
+      @JvmStatic
+     fun getSavedLanguage(mContext: Context): String {
+        val local = mContext.getSharedPreferences(LOCAL_PREF, Context.MODE_PRIVATE)
+            .getString(KEY_LOCAL, "en")!!
+        return (local)
+    }
+
+
     @JvmStatic
     fun changeLanguage(mContext: Context, langCode: String) {
         mContext.getSharedPreferences(LOCAL_PREF, Context.MODE_PRIVATE)

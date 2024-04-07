@@ -108,12 +108,12 @@ class DashboardFragment :
 
             R.id.localeLayout -> {
                 closeDrawerLayout()
-                changeLocaleBottomSheet(viewModel.sessionManager.getLocaleValue()) { type ->
+                changeLocaleBottomSheet(LocaleChanger.getSavedLanguage((requireActivity()))) { type ->
                     if (type.isNotEmpty()) {
                         showChangeLocaleDialog { resp ->
                             if (resp.equals("yes", true)) {
                                 viewModel.sessionManager.setLocaleValue(type)
-                                if (type.equals("English", true)) {
+                                if (type.equals("en", true)) {
                                     setLocale(requireActivity(), "en")
                                 } else {
                                     setLocale(requireActivity(), "ru")
