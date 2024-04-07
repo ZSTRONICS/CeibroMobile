@@ -113,6 +113,7 @@ object LocalEvents {
     class InvitationRefreshEvent
 
     class LogoutUserEvent
+    class LogoutUnAuthorizedUser
     object UpdateConnections
     class RefreshTasksData
     class RefreshInboxData

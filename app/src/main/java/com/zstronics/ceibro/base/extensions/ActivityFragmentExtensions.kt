@@ -117,6 +117,18 @@ inline fun <reified T : Any> Activity.launchActivityWithFinishAffinity(
     if (clearPrevious) finishAffinity()
 
 }
+inline fun <reified T : Any> Activity.launchActivityWithFinishAffinityForActivity(
+    options: Bundle? = null,
+    clearPrevious: Boolean = false,
+    noinline init: Intent.() -> Unit = {}
+) {
+    val intent = newIntent<T>(this)
+    intent.init()
+    intent.putExtra(EXTRA, options)
+    startActivity(intent, options)
+    if (clearPrevious) finishAffinity()
+
+}
 
 //inline fun <reified T : Any> Fragment.launchActivity(
 //    options: Bundle? = null,
@@ -262,7 +274,7 @@ inline fun <reified a : AppCompatActivity> Fragment.startFragmentForResult(
 
     } catch (e: Exception) {
         if (e is ClassNotFoundException) {
-            toast("Something went wrong")
+//            toast("Something went wrong")
             startActivity(intent)
         }
     }

@@ -7,23 +7,46 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.work.WorkManager
+import com.bumptech.glide.Glide
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.KEY_LAST_OFFLINE
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinityForActivity
+import com.zstronics.ceibro.data.database.dao.ConnectionGroupV2Dao
+import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
+import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskDetailFilesV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.databinding.ActivityNavhostPresenterBinding
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
+import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.net.InetAddress
 import javax.inject.Inject
@@ -40,6 +63,31 @@ class NavHostPresenterActivity :
         get() = intent?.getIntExtra(NAVIGATION_Graph_START_DESTINATION_ID, 0) ?: 0
     override val viewModel: NavHostPresenterVM by viewModels()
     override val layoutResId: Int = R.layout.activity_navhost_presenter
+
+    @Inject
+    lateinit var taskRepository: TaskRepository
+    @Inject
+    lateinit var taskDao: TaskV2Dao
+    @Inject
+    lateinit var topicsV2Dao: TopicsV2Dao
+    @Inject
+    lateinit var projectsV2Dao: ProjectsV2Dao
+    @Inject
+    lateinit var floorV2Dao: FloorsV2Dao
+    @Inject
+    lateinit var inboxV2Dao: InboxV2Dao
+    @Inject
+    lateinit var groupV2Dao: GroupsV2Dao
+    @Inject
+    lateinit var connectionsV2Dao: ConnectionsV2Dao
+    @Inject
+    lateinit var connectionGroupV2Dao: ConnectionGroupV2Dao
+    @Inject
+    lateinit var taskDetailFilesV2Dao: TaskDetailFilesV2Dao
+    @Inject
+    lateinit var drawingPinsDao: DrawingPinsV2Dao
+    @Inject
+    lateinit var draftNewTaskV2Dao: DraftNewTaskV2Dao
 
     @Inject
     lateinit var networkConnectivityObserver: NetworkConnectivityObserver
@@ -274,6 +322,66 @@ class NavHostPresenterActivity :
                 }, 2600)
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLogoutUnAuthorizedUser(event: LocalEvents.LogoutUnAuthorizedUser) {
+        logoutUser()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        try {
+            EventBus.getDefault().register(this)
+        } catch (_: Exception) {
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            EventBus.getDefault().unregister(this)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun logoutUser() {
+        val sessionManager =
+            getSessionManager(SharedPreferenceManager(applicationContext))
+        val oneSignalPlayerId = OneSignal.getDeviceState()?.userId
+        SocketHandler.sendLogout(oneSignalPlayerId)
+        GlobalScope.launch {
+            taskRepository.eraseTaskTable()
+            taskRepository.eraseSubTaskTable()
+            taskDao.deleteAllEventsData()
+            taskDao.deleteAllTasksData()
+            topicsV2Dao.deleteAllData()
+            projectsV2Dao.deleteAll()
+            groupV2Dao.deleteAll()
+            floorV2Dao.deleteAll()
+            inboxV2Dao.deleteAll()
+            connectionsV2Dao.deleteAll()
+            connectionGroupV2Dao.deleteAll()
+            taskDetailFilesV2Dao.deleteAll()
+            draftNewTaskV2Dao.deleteAllData()
+            drawingPinsDao.deleteAll()
+        }
+        sessionManager.endUserSession()
+        // Cancel all periodic work with the tag "contactSync"
+        WorkManager.getInstance(this)
+            .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
+
+        launchActivityWithFinishAffinityForActivity<NavHostPresenterActivity>(
+            options = Bundle(),
+            clearPrevious = true
+        ) {
+            putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+            putExtra(
+                NAVIGATION_Graph_START_DESTINATION_ID,
+                R.id.loginFragment
+            )
+        }
+        Thread { this.let { Glide.get(it).clearDiskCache() } }.start()
     }
 
     private fun getSessionManager(

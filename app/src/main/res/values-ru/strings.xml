@@ -619,4 +619,5 @@
     <string name="all">Все</string>
     <string name="are_you_sure_you_want_to_change_language">Вы уверены, что хотите изменить язык?</string>
     <string name="change_language">Изменение языка</string>
+    <string name="token_expired_please_re_login">Срок действия токена истек, пожалуйста, повторно войдите в систему</string>
 </resources>
