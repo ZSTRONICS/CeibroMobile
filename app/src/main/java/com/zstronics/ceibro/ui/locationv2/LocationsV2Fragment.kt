@@ -1282,7 +1282,7 @@ class LocationsV2Fragment :
                 inViewPinsList.clear()
                 inViewPinsList.addAll(tempViewPinsList)
                 mViewDataBinding.pdfView.invalidate()
-            }, 300)
+            }, 400)
         }
 
         sheet.onCloseBtnClicked = {
