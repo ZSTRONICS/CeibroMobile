@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ceibro</string>
+    <!--<string name="app_name">Ceibro</string>
     <string name="done">Готово</string>
     <string name="ok">Хорошо</string>
     <string name="start_typing_your_comment_here">Начните вводить свой комментарий здесь</string>
@@ -24,7 +24,7 @@
     <string name="app_intent_name">PhotoEditor</string>
     <string name="msg_save_image_to_share">Пожалуйста, сохраните изображение, чтобы поделиться</string>
     <string name="msg_share_image">Поделиться изображением</string>
-    <string name="new_photo">Новая фотография</string>
+    <string name="new_photo">Новая фотография</string>-->
     <string name="error_message_date_validation">Неверный формат данных</string>
     <string name="error_message_id_validation">Значение должно содержать от 13 до 15 символов</string>
     <string name="error_message_regex_validation">Неверный формат</string>
