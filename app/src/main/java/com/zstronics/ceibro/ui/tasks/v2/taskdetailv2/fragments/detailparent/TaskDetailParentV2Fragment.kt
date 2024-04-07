@@ -16,6 +16,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -1041,6 +1042,26 @@ class TaskDetailParentV2Fragment :
         } catch (_: Exception) {
         }
     }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onScrollToPositionInParentFromTaskFiles(event: LocalEvents.ScrollToPositionInParentFromTaskFiles) {
+        val file = event.events
+
+        if (file.fileTag.equals(AttachmentTags.File.tagValue, true)) {
+            mViewDataBinding.nestedScrollDetailsV2.smoothScrollTo(0, mViewDataBinding.filesLayout.top)
+        }
+        else if (file.fileTag.equals(AttachmentTags.Image.tagValue, true)) {
+            mViewDataBinding.nestedScrollDetailsV2.smoothScrollTo(0, mViewDataBinding.onlyImages.top)
+        }
+        else if (file.fileTag.equals(AttachmentTags.ImageWithComment.tagValue, true)) {
+            mViewDataBinding.nestedScrollDetailsV2.smoothScrollTo(0, mViewDataBinding.imagesWithComment.top)
+        }
+        else if (file.fileTag.equals(AttachmentTags.Drawing.tagValue, true)) {
+            mViewDataBinding.nestedScrollDetailsV2.smoothScrollTo(0, mViewDataBinding.onlyDrawings.top)
+        }
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskSeenEvent(event: LocalEvents.TaskSeenEvent?) {

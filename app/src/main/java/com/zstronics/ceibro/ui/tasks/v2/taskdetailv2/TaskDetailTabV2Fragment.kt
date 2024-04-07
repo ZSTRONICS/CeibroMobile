@@ -333,6 +333,9 @@ class TaskDetailTabV2Fragment :
         tabAdapter.goToItemClickListener = {
             if (it.isTaskFile) {
                 mViewDataBinding.viewPager.setCurrentItem(0, true)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    EventBus.getDefault().post(LocalEvents.ScrollToPositionInParentFromTaskFiles(it))
+                }, 500)
             } else {
                 mViewDataBinding.viewPager.setCurrentItem(1, true)
                 Handler(Looper.getMainLooper()).postDelayed({

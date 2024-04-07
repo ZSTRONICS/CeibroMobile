@@ -146,6 +146,7 @@ object LocalEvents {
     class UpdateFileDownloadProgress
     class ScrollToPosition(val events: Events)
     class ScrollToPositionFromTaskFiles(val events: LocalTaskDetailFiles)
+    class ScrollToPositionInParentFromTaskFiles(val events: LocalTaskDetailFiles)
     class OpenKeyboard
     class GroupSelected(val group: CeibroGroupsV2)
     class ImageFile(val item: TaskFiles, val type: String)

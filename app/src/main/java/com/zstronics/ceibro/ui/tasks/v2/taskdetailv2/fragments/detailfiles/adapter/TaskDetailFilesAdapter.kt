@@ -385,15 +385,8 @@ class TaskDetailFilesAdapter constructor(
                             )
                         }else if (tag.equals("goTo",true)){
 
-
                             goToItemClickListener?.invoke(item)
-                            if (item.isTaskFile)
 
-                            cancelAndMakeToast(
-                                it.context,
-                                "Task file ${item.isTaskFile}",
-                                Toast.LENGTH_SHORT
-                            )
                         }
                     }
                 }, 30)
