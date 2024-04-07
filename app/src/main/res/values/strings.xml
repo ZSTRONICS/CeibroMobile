@@ -347,6 +347,7 @@
     <string name="filter_heading">Filter</string>
 
 
+    <string name="token_expired_please_re_login">Token expired, please re-login</string>
     <string name="users_heading">Users</string>
     <string name="avatar_heading">Avatar</string>
     <string name="id_heading">ID</string>

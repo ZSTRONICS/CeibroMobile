@@ -5,9 +5,11 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import org.greenrobot.eventbus.EventBus
 
 open class SessionValidator :
     TokenValidator, Interceptor {
@@ -26,38 +28,39 @@ open class SessionValidator :
         val originalRequest = chain.request()
         val refreshToken = sessionManager.getRefreshToken() ?: ""
         var response = chain.proceed(originalRequest)
-        if (CeibroApplication.CookiesManager.isLoggedIn && response.code == 401) {
-            if ((!tokenRefreshInProgress)) {
-                tokenRefreshInProgress = true
-                when (runBlocking {
-                    authRepository.refreshJWTToken(
-                        RefreshTokenRequest(
-                            refreshToken
-                        )
-                    )
-                }) {
-                    is ApiResponse.Success -> {
-                        val builder = originalRequest.newBuilder()
-                            .header(
-                                KEY_AUTHORIZATION,
-                                KEY_BEARER + CeibroApplication.CookiesManager.jwtToken
-                            )
-                            .method(originalRequest.method, originalRequest.body)
-                        try {
-                            response.close() // Close the previous response
-                        } catch (e: Exception) {
-
-                        }
-                        response = chain.proceed(builder.build())
-                    }
-
-                    is ApiResponse.Error -> {
-                        println("RefreshJWTError: ${response.message}")
-
-                    }
-                }
-                tokenRefreshInProgress = false
-            }
+        if (sessionManager.isLoggedIn() && response.code == 401) {
+            EventBus.getDefault().post(LocalEvents.LogoutUnAuthorizedUser())
+//            if ((!tokenRefreshInProgress)) {
+//                tokenRefreshInProgress = true
+//                when (runBlocking {
+//                    authRepository.refreshJWTToken(
+//                        RefreshTokenRequest(
+//                            refreshToken
+//                        )
+//                    )
+//                }) {
+//                    is ApiResponse.Success -> {
+//                        val builder = originalRequest.newBuilder()
+//                            .header(
+//                                KEY_AUTHORIZATION,
+//                                KEY_BEARER + CeibroApplication.CookiesManager.jwtToken
+//                            )
+//                            .method(originalRequest.method, originalRequest.body)
+//                        try {
+//                            response.close() // Close the previous response
+//                        } catch (e: Exception) {
+//
+//                        }
+//                        response = chain.proceed(builder.build())
+//                    }
+//
+//                    is ApiResponse.Error -> {
+//                        println("RefreshJWTError: ${response.message}")
+//
+//                    }
+//                }
+//                tokenRefreshInProgress = false
+//            }
         }
         return response
     }

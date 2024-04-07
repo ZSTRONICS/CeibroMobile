@@ -74,7 +74,7 @@ class CeibroDataLoadingFragment :
             viewModel.validateToken { isSuccess, code ->
                 if (code in 400..406) {
                     viewModel.endUserSession(requireContext())
-                    shortToastNow("Token expired, please re-login")
+                    shortToastNow(resources.getString(R.string.token_expired_please_re_login))
                     launchActivityWithFinishAffinity<NavHostPresenterActivity>(
                         options = Bundle(),
                         clearPrevious = true

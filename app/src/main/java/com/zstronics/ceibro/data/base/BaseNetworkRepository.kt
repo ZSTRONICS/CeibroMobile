@@ -60,7 +60,7 @@ abstract class BaseNetworkRepository : INetwork {
     private fun <T : BaseResponse> detectError(response: Response<T>): ApiError {
         val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
         return when (response.code()) {
-            401 -> getApiError(mapError(NetworkErrors.Unauthorized, response.code(), jsonObj.getString("message")))
+            401 -> getApiError(mapError(NetworkErrors.Unauthorized, response.code(), "User token expired, please re-login"))
             403 -> getApiError(mapError(NetworkErrors.Forbidden, response.code(), response.message()))
             404 -> getApiError(mapError(NetworkErrors.NotFound, response.code(), response.message()))
             502 -> getApiError(mapError(NetworkErrors.BadGateway, response.code(), "No response from server"))
