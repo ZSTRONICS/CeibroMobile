@@ -25,7 +25,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.*
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -82,11 +84,14 @@ class NetworkModule {
     @Provides
     @Singleton
     internal fun providesAppDatabase(@ApplicationContext context: Context): CeibroDatabase {
-        return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
-            .addCallback(object : RoomDatabase.Callback() {
+        val lock = Any()
+        synchronized(lock) {
+            return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
+                .addCallback(object : RoomDatabase.Callback() {
+                })
+                .fallbackToDestructiveMigration().build()
 
-            })
-            .fallbackToDestructiveMigration().build()
+        }
     }
 
     @Singleton

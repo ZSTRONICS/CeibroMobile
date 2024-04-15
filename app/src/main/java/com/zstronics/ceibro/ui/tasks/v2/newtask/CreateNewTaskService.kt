@@ -558,10 +558,13 @@ class CreateNewTaskService : Service() {
     }
 
     private fun providesAppDatabase(context: Context): CeibroDatabase {
+        val lock = Any()
+        synchronized(lock) {
         return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
-            .addCallback(object : RoomDatabase.Callback() {
-            })
-            .fallbackToDestructiveMigration().build()
+                .addCallback(object : RoomDatabase.Callback() {
+                })
+                .fallbackToDestructiveMigration().build()
+        }
     }
 
     private fun getSessionManager(
@@ -1110,8 +1113,12 @@ class CreateNewTaskService : Service() {
                         val rootClosedToMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
-                                            TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                        (it.toMeState.equals(
+                                            TaskStatus.DONE.name,
+                                            true
+                                        ) || it.toMeState.equals(
+                                            TaskDetailEvents.REJECT_CLOSED.eventValue, true
+                                        ))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1123,7 +1130,13 @@ class CreateNewTaskService : Service() {
                         val rootClosedFromMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                                        (it.fromMeState.equals(
+                                            TaskStatus.DONE.name,
+                                            true
+                                        ) || it.fromMeState.equals(
+                                            TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                            true
+                                        ))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1660,14 +1673,23 @@ class CreateNewTaskService : Service() {
             val rootClosedToMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                            (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
+                                TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                true
+                            ))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
             val rootClosedFromMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
+                            (it.fromMeState.equals(
+                                TaskStatus.DONE.name,
+                                true
+                            ) || it.fromMeState.equals(
+                                TaskDetailEvents.REJECT_CLOSED.eventValue,
+                                true
+                            ))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 

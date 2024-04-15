@@ -65,4 +65,34 @@ object Filer{
         }
         return output.path
     }
+    val fileMimeType = arrayOf(
+        "text/plain",
+        "text/csv",
+        "application/pdf",  //                        "application/rtf",
+        //                        "application/zip",
+        "application/vnd.oasis.opendocument.text",  // .odt
+        "application/vnd.oasis.opendocument.spreadsheet",  // .ods
+        "application/vnd.oasis.opendocument.presentation",  // .odp
+        //                        "application/x-rar-compressed",
+        //                        "application/vnd.android.package-archive",      //for APK file
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .docx
+        "application/vnd.ms-word.document.macroEnabled.12",  // .doc
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",  // .xlsx
+        "application/vnd.ms-excel.sheet.macroEnabled.12",  // .xls
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",  // .pptx
+        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",  // .ppt
+        //                        "image/vnd.dwg",    // AutoCAD Drawing Database (DWG)
+        //                        "application/acad"  // AutoCAD Drawing
+        //                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "image/bmp",
+        "image/*"
+    )
 }
