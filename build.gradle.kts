@@ -18,6 +18,7 @@ buildscript {
         classpath(BuildClassesConfig.NAVIGATION_SAFE_ARGS)
         classpath(BuildClassesConfig.HILT_GRADLE_PLUGIN)
         classpath("com.squareup:javapoet:1.13.0")
+        classpath("com.google.gms:google-services:4.4.1")
     }
 }
 

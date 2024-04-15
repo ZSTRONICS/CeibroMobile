@@ -1,11 +1,16 @@
 package com.zstronics.ceibro
 
 import android.app.Application
+import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import com.gu.toolargetool.TooLargeTool
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.base.KEY_Firebase_Token
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
@@ -22,6 +27,7 @@ import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.Executors
 import javax.inject.Inject
+
 
 @HiltAndroidApp
 open class CeibroApplication : Application() {
@@ -45,6 +51,7 @@ open class CeibroApplication : Application() {
         // OneSignal Initialization
         OneSignal.initWithContext(this)
         OneSignal.setAppId(BuildConfig.ONE_SIGNAL_ID)
+
         val customExecutor = Executors.newSingleThreadExecutor { runnable ->
             val thread = Thread(runnable)
             thread.priority = android.os.Process.THREAD_PRIORITY_BACKGROUND
@@ -76,6 +83,7 @@ open class CeibroApplication : Application() {
         var isLoggedIn: Boolean = false
         var tokens: Tokens? = null
         var secureUUID: String? = null
+        var firebaseToken: String = ""
         var deviceType: String? = null
         var androidId: String? = null
         var allInboxTasks: MutableLiveData<MutableList<CeibroInboxV2>> = MutableLiveData()

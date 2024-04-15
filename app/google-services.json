@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "671958287429",
+    "project_id": "ceibro",
+    "storage_bucket": "ceibro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671958287429:android:496e67aa3ea1226d840f2c",
+        "android_client_info": {
+          "package_name": "com.zstronics.ceibro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "671958287429-qdq6reg12f73kjt49rv5firml3jadgmk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBru26T7Pij-cYNba9vBJi74Qb9H5y03Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "671958287429-qdq6reg12f73kjt49rv5firml3jadgmk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671958287429:android:655f759fc4805ec4840f2c",
+        "android_client_info": {
+          "package_name": "com.zstronics.ceibro.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "671958287429-qdq6reg12f73kjt49rv5firml3jadgmk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBru26T7Pij-cYNba9vBJi74Qb9H5y03Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "671958287429-qdq6reg12f73kjt49rv5firml3jadgmk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -20,7 +20,7 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
         val body = notification.body
 
         val additionalData = notification.additionalData
-        println("NotificationContent:additionalData ${additionalData}")
+        println("FirebaseToken-OneSignalNotificationContent: ${additionalData}")
 
         val type = additionalData.getString("type")
         val taskObj = additionalData.getString("payload")

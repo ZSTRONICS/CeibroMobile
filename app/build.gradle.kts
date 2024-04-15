@@ -9,6 +9,7 @@ plugins {
     // Internal Script plugins
     id(ScriptPlugins.variants)
     id(ScriptPlugins.compilation)
+    id("com.google.gms.google-services")
 //    id("org.jetbrains.kotlin.android")
 }
 
@@ -60,6 +61,7 @@ dependencies {
     implementation(project(mapOf("path" to ":ceibrocamera")))
     implementation(project(mapOf("path" to ":mypdfviewer")))
     implementation("androidx.camera:camera-core:1.2.3")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
 
     kapt(DependenciesManager.hiltKapt)
     kapt(DependenciesManager.networkKapt)

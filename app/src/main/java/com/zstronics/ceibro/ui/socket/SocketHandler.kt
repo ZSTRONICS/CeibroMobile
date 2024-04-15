@@ -82,7 +82,7 @@ object SocketHandler {
             options.auth =
                 mapOf("token" to CeibroApplication.CookiesManager.jwtToken) // Use auth for token instead of query
             options.query =
-                "secureUUID=${CeibroApplication.CookiesManager.secureUUID}&deviceType=${CeibroApplication.CookiesManager.deviceType}&androidId=${CeibroApplication.CookiesManager.androidId}"
+                "secureUUID=${CeibroApplication.CookiesManager.secureUUID}&deviceType=${CeibroApplication.CookiesManager.deviceType}&androidId=${CeibroApplication.CookiesManager.androidId}&firebaseToken=${CeibroApplication.CookiesManager.firebaseToken}"
 //            println("QueryOnSocket: ${options.query}")
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)

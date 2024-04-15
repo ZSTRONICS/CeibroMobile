@@ -9,6 +9,7 @@ import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_DATA_SYNC_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_DEVICE_TYPE
 import com.zstronics.ceibro.base.KEY_DRAWING_OBJ
+import com.zstronics.ceibro.base.KEY_Firebase_Token
 import com.zstronics.ceibro.base.KEY_INBOX_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_IS_FIRST_TIME_LAUNCH
 import com.zstronics.ceibro.base.KEY_IS_FROM_ME_UNREAD
@@ -40,15 +41,20 @@ class SessionManager constructor(
         rememberMe: Boolean,
         secureUUID: String,
         deviceType: String,
-        androidId: String
+        androidId: String,
+        firebaseToken: String
     ) {
         sharedPreferenceManager.saveBoolean(
             KEY_IS_USER_LOGGED_IN,
             rememberMe
         )
+        val savedFirebaseToken = getStringValue(KEY_Firebase_Token)
         CeibroApplication.CookiesManager.isLoggedIn = true
         CeibroApplication.CookiesManager.jwtToken = tokens.access.token
         CeibroApplication.CookiesManager.secureUUID = secureUUID
+        CeibroApplication.CookiesManager.firebaseToken = savedFirebaseToken.ifEmpty {
+            firebaseToken
+        }
         CeibroApplication.CookiesManager.deviceType = deviceType
         CeibroApplication.CookiesManager.androidId = androidId
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
@@ -188,11 +194,13 @@ class SessionManager constructor(
         val secureUUID = sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
         val deviceType = sharedPreferenceManager.getValueString(KEY_DEVICE_TYPE) ?: ""
         val androidId = sharedPreferenceManager.getValueString(KEY_ANDROID_ID) ?: ""
+        val firebaseToken = getStringValue(KEY_Firebase_Token)
         CeibroApplication.CookiesManager.isLoggedIn = true
         CeibroApplication.CookiesManager.jwtToken = tokenPref?.access?.token
         CeibroApplication.CookiesManager.secureUUID = secureUUID
         CeibroApplication.CookiesManager.deviceType = deviceType
         CeibroApplication.CookiesManager.androidId = androidId
+        CeibroApplication.CookiesManager.firebaseToken = firebaseToken
     }
 
     private fun getTokens(): Tokens? {
