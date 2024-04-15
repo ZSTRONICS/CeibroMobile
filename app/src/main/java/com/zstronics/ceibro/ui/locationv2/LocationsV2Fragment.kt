@@ -471,6 +471,7 @@ class LocationsV2Fragment :
 
                                         CeibroApplication.CookiesManager.drawingFileForLocation.value =
                                             it
+                                        inViewPinsList.clear()
                                         viewModel.sessionManagerInternal.saveCompleteDrawingObj(it)
                                         viewModel.oldPosition = viewModel.index
                                         viewModel.index = position
