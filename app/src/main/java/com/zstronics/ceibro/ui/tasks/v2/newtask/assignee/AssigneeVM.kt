@@ -135,17 +135,24 @@ class AssigneeVM @Inject constructor(
                     val allContacts = newItemsList.groupDataByFirstLetter().toMutableList()
                     val oldSelectedContacts = selectedContacts.value
 
+                    var updatedAllContacts: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
+                    updatedAllContacts = if (isConfirmer.value == true || isViewer.value == true) {
+                        allContacts.filter { it.isCeiborUser }.toMutableList()
+                    } else {
+                        allContacts
+                    }
+
                     if (!oldSelectedContacts.isNullOrEmpty()) {
                         oldSelectedContacts.forEach { oldContact ->
-                            val matchingContact = allContacts.find { it.id == oldContact.id }
+                            val matchingContact = updatedAllContacts.find { it.id == oldContact.id }
                             matchingContact?.isChecked = true
                         }
-                        _recentAllConnections.postValue(allContacts)
-                        recentOriginalConnections = allContacts
+                        _recentAllConnections.postValue(updatedAllContacts)
+                        recentOriginalConnections = updatedAllContacts
                     } else {
-                        if (allContacts.isNotEmpty()) {
-                            recentOriginalConnections = allContacts
-                            _recentAllConnections.value = allContacts
+                        if (updatedAllContacts.isNotEmpty()) {
+                            recentOriginalConnections = updatedAllContacts
+                            _recentAllConnections.value = updatedAllContacts
                         } else {
                             _recentAllConnections.postValue(mutableListOf())
                         }
