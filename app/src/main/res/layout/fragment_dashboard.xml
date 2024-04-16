@@ -1065,7 +1065,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_10sdp"
                             android:fontFamily="@font/inter_semibold"
-                            android:text="Feedback Form"
+                            android:text="@string/feedback_form"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"

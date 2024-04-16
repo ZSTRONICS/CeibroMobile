@@ -114,11 +114,11 @@ class DashboardFragment :
                         showChangeLocaleDialog { resp ->
                             if (resp.equals("yes", true)) {
                                 viewModel.sessionManager.setLocaleValue(type)
-                                if (type.equals("en", true)) {
-                                    setLocale(requireActivity(), "en")
-                                } else {
-                                    setLocale(requireActivity(), "ru")
-                                }
+//                                if (type.equals("en", true)) {
+                                setLocale(requireActivity(), type)
+//                                } else {
+//                                    setLocale(requireActivity(), "ru")
+//                                }
                             }
                         }
                     }
@@ -1190,15 +1190,16 @@ class DashboardFragment :
 
     }
 
-    private fun setLocale(activity: Activity, languageCode: String?) {
+    private fun setLocale(activity: Activity, languageCode: String) {
         val langCode = languageCode ?: Locale.getDefault().language
         LocaleChanger.changeLanguage(activity, langCode)
-        restartActivity()
+        Handler(Looper.getMainLooper()).postDelayed({ restartActivity() }, 100)
+
     }
 
     private fun restartActivity() {
         val intent = requireActivity().intent
-        finish()
+        finishAffinity()
         startActivity(intent)
     }
 
