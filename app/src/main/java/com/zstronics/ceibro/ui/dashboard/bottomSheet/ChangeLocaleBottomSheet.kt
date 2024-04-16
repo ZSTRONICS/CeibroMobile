@@ -48,14 +48,12 @@ class ChangeLocaleBottomSheet(val type: String, val callback: (String) -> Unit) 
         }
         binding.rbEnglish.setOnClick {
             LocaleType = "en"
-
-
         }
-        binding
+
         binding.cbRussian.setOnClick {
             LocaleType = "ru"
-
         }
+
         binding.ok.setOnClick {
             if (!(type.equals(LocaleType, true))) {
                 callback.invoke(LocaleType)
