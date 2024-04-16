@@ -24,7 +24,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -37,12 +38,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+
+                <TextView
+                    android:id="@+id/eventDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center_horizontal"
+                    android:maxLength="18"
+                    android:maxLines="1"
+                    android:text="Yesterday 13:30"
+                    android:textColor="@color/black"
+                    android:textSize="11sp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/seenImg"
+                    app:layout_constraintEnd_toStartOf="@+id/seenImg"
+                    app:layout_constraintTop_toTopOf="@+id/seenImg" />
                 <TextView
                     android:id="@+id/otherEventText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="2dp"
-                    android:layout_marginVertical="3dp"
+                    android:layout_marginBottom="3dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
@@ -57,7 +75,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

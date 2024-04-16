@@ -616,6 +616,7 @@
     <string name="pins_and_logs">Пины и журналы</string>
     <string name="project">Проект</string>
     <string name="tags">Теги</string>
+    <string name="no_drawing_uploaded_yet">Ни один рисунок еще не загружен</string>
     <string name="all">Все</string>
     <string name="are_you_sure_you_want_to_change_language">Вы уверены, что хотите изменить язык?</string>
     <string name="change_language">Изменение языка</string>

@@ -207,7 +207,7 @@ class TaskDetailParentV2VM @Inject constructor(
                 }
             }
 
-            allEvents.sortByDescending { it.createdAt }
+            allEvents.sortBy { it.createdAt }
             originalPinnedEvents.postValue(allEvents)
             _taskPinnedEvents.postValue(allEvents)
         }

@@ -894,6 +894,11 @@ class EventsMultiViewRVAdapter constructor(
                 pinnedCommentClickListener?.invoke(item)
             }
 
+            binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustomForDetailFiles(
+                utcTime = item.createdAt,
+                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
+            )
+
             val creatorName =
                 if (item.initiator.firstName.isEmpty() && item.initiator.surName.isEmpty()) {
                     "${item.initiator.phoneNumber}"
