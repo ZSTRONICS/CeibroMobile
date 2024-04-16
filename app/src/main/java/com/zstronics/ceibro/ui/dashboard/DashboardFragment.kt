@@ -29,6 +29,7 @@ import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
 import com.zstronics.ceibro.base.extensions.finish
+import com.zstronics.ceibro.base.extensions.finishAffinity
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
@@ -1145,7 +1146,8 @@ class DashboardFragment :
             .setTitle(getString(R.string.close_app))
             .setMessage(getString(R.string.are_you_sure_you_want_to_close_the_app))
             .setPositiveButton(getString(R.string.yes)) { dialog: DialogInterface, _: Int ->
-                finishActivity()
+//                requireActivity().intent?.removeExtra("notificationTaskData")
+                finishAffinity()
                 dialog.dismiss()
             }
             .setNegativeButton(getString(R.string.no)) { dialog: DialogInterface, _: Int ->
@@ -1163,7 +1165,8 @@ class DashboardFragment :
 
     fun checkDrawer() {
         if (!closeDrawerLayout()) {
-            finish()
+            finishAffinity()
+//            showCloseAppDialog()
         }
     }
 

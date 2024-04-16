@@ -933,6 +933,7 @@ class TaskDetailTabV2Fragment :
     override fun onDestroy() {
         super.onDestroy()
         tabAdapter.onParentDestroyed()
+        CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = null
         EventBus.getDefault().unregister(this)
     }
 
