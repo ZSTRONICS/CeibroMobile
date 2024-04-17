@@ -44,6 +44,13 @@ android {
     buildFeatures {
         android.buildFeatures.buildConfig = true
     }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
 }
 
 dependencies {
