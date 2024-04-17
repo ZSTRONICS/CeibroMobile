@@ -172,7 +172,7 @@ class NewDrawingV2VM @Inject constructor(
             projectId = projectId,
             floorId = floorId,
             groupId = groupId,
-            filePath = filePath
+            filePath=filePath
         )
 
         val serviceIntent = Intent(context, UploadDrawingService::class.java)
@@ -180,7 +180,7 @@ class NewDrawingV2VM @Inject constructor(
         context.startService(serviceIntent)
 
 
-        loading(false, "")
+        loading(false,"")
         callback.invoke(projectId)
         /*launch {
             loading(true)
@@ -264,12 +264,10 @@ class NewDrawingV2VM @Inject constructor(
                     list?.forEachIndexed { index, ceibroGroupsV2 ->
                         if (ceibroGroupsV2._id == group._id) {
                             ceibroGroupsV2.groupName = group.groupName
-                            // viewState.groupName.value=group.groupName
-                            if (selectedGroup != null) {
-                                selectedGroup?.let { selectedGrp ->
-                                    if (selectedGrp._id == ceibroGroupsV2._id)
-                                        viewState.groupName.value = group.groupName
-                                    selectedGroup = ceibroGroupsV2
+                            selectedGroup?.let { selectedGrp ->
+                                if (selectedGrp._id == group._id) {
+                                    viewState.groupName.value = group.groupName
+                                    selectedGroup = group
                                 }
                             }
                         }
@@ -296,7 +294,7 @@ class NewDrawingV2VM @Inject constructor(
         list: List<CeibroFloorV2>,
         callback: (floor: CeibroFloorV2) -> Unit
     ) {
-        val list = ArrayList<String>()
+        val list=ArrayList<String>()
         list.add(floorName)
         val request = CreateNewFloorRequest(list)
         launch {
@@ -307,8 +305,8 @@ class NewDrawingV2VM @Inject constructor(
                     val floor = response.data.floor
                     floor?.let {
                         floorsV2Dao.insertMultipleFloors(it.filterNotNull())
-                        //     it.toMutableList().let { it1 -> _floorList.value?.addAll(it1) }
-                        //  callback.invoke(floor)
+                   //     it.toMutableList().let { it1 -> _floorList.value?.addAll(it1) }
+                      //  callback.invoke(floor)
                     }
 
 
