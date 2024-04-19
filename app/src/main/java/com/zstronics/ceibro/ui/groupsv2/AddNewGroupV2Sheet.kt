@@ -51,6 +51,7 @@ class AddNewGroupV2Sheet(
         null
     var onGroupEdited: ((status: String) -> Unit)? = null
 
+    var updateCallBack: ((groupName: String) -> Unit)? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,6 +80,86 @@ class AddNewGroupV2Sheet(
         super.onViewCreated(view, savedInstanceState)
 
 
+        viewModel.adminAssignToText.observe(viewLifecycleOwner) {
+            val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
+            binding.etGroupAdmin.text = editableText
+            if (editableText.isEmpty()) {
+                binding.groupAdminClearBtn.visibility = View.GONE
+            } else {
+                binding.groupAdminClearBtn.visibility = View.VISIBLE
+            }
+        }
+        binding.groupAdminClearBtn.setOnClickListener {
+            viewModel.adminSelfAssigned.value = null
+            viewModel.adminSelectedContacts.value = null
+            viewModel.adminAssignToText.value = ""
+        }
+
+        binding.assignClearBtn.setOnClickListener {
+            viewModel.assigneeSelfAssigned.value = null
+            viewModel.assigneeSelectedContacts.value = null
+            viewModel.assigneeAssignToText.value = ""
+        }
+        binding.confirmerClearBtn.setOnClickListener {
+            viewModel.confirmerSelfAssigned.value = null
+            viewModel.confirmerSelectedContacts.value = null
+            viewModel.confirmerAssignToText.value = ""
+        }
+        binding.viewerClearBtn.setOnClickListener {
+            viewModel.viewerSelfAssigned.value = null
+            viewModel.viewerSelectedContacts.value = null
+            viewModel.viewerAssignToText.value = ""
+        }
+        binding.shareWithClearBtn.setOnClickListener {
+            viewModel.shareSelfAssigned.value = null
+            viewModel.shareSelectedContacts.value = null
+            viewModel.shareAssignToText.value = ""
+        }
+
+        viewModel.assigneeAssignToText.observe(viewLifecycleOwner) {
+            val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
+            binding.etAssignTo.text = editableText
+
+            if (editableText.isEmpty()) {
+                binding.assignClearBtn.visibility = View.GONE
+            } else {
+                binding.assignClearBtn.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.confirmerAssignToText.observe(viewLifecycleOwner) {
+            val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
+            binding.etConfirmer.text = editableText
+
+            if (editableText.isEmpty()) {
+                binding.confirmerClearBtn.visibility = View.GONE
+            } else {
+                binding.confirmerClearBtn.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.viewerAssignToText.observe(viewLifecycleOwner) {
+            val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
+            binding.etViewer.text = editableText
+
+            if (editableText.isEmpty()) {
+                binding.viewerClearBtn.visibility = View.GONE
+            } else {
+                binding.viewerClearBtn.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.shareAssignToText.observe(viewLifecycleOwner) {
+            val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
+            binding.etShareWith.text = editableText
+
+            if (editableText.isEmpty()) {
+                binding.shareWithClearBtn.visibility = View.GONE
+            } else {
+                binding.shareWithClearBtn.visibility = View.VISIBLE
+            }
+        }
+
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
@@ -90,16 +171,36 @@ class AddNewGroupV2Sheet(
             oldGroup?.name?.let {
                 val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
 
-                binding.groupNameText.text = editableText
+                binding.etGroupName.text = editableText
                 binding.saveGroupBtn.text = "Update"
             }
         }
 
+
+        binding.etGroupAdmin.setOnClickListener {
+            updateCallBack?.invoke("Admin")
+        }
+        binding.etAssignTo.setOnClickListener {
+            updateCallBack?.invoke("Assign")
+        }
+        binding.etConfirmer.setOnClickListener {
+            updateCallBack?.invoke("Confirmer")
+        }
+        binding.etViewer.setOnClickListener {
+            updateCallBack?.invoke("Viewer")
+        }
+        binding.etShareWith.setOnClickListener {
+            updateCallBack?.invoke("ShareWith")
+        }
+
         binding.saveGroupBtn.setOnClickListener {
-            val groupName = binding.groupNameText.text.toString().trim()
+            val groupName = binding.etGroupName.text.toString().trim()
+            val assignTo = binding.etAssignTo.text.toString().trim()
             val selectedOnes = selectedContacts.value
             if (groupName.isEmpty()) {
                 shortToastNow("Group name required")
+            } else if (assignTo.isEmpty()) {
+                shortToastNow("Assignee required")
             } else if (selectedOnes.isNullOrEmpty()) {
                 shortToastNow("First select any contact to create group")
             } else {
@@ -143,7 +244,7 @@ class AddNewGroupV2Sheet(
                 adapter.setList(it)
                 if (isUpdating && isFirstRun) {
                     isFirstRun = false
-                    oldGroupContact?.let {contact->
+                    oldGroupContact?.let { contact ->
                         adapter.setSelectedList(contact)
                     }
 

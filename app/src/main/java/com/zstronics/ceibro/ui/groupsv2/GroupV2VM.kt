@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionGroupV2Dao
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionGroupUpdateWithoutNameRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
@@ -25,7 +26,7 @@ class GroupV2VM @Inject constructor(
     val connectionsV2Dao: ConnectionsV2Dao,
     val connectionGroupV2Dao: ConnectionGroupV2Dao
 ) : HiltBaseViewModel<IGroupV2.State>(), IGroupV2.ViewModel {
-
+    val user = sessionManager.getUser().value
 
     private val _connectionGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> =
         MutableLiveData()
@@ -38,6 +39,27 @@ class GroupV2VM @Inject constructor(
 
 
     var originalConnectionGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
+
+
+     var adminSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
+     var adminSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+     var adminAssignToText: MutableLiveData<String> = MutableLiveData()
+
+    var assigneeSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
+    var assigneeSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    var assigneeAssignToText: MutableLiveData<String> = MutableLiveData()
+
+    var confirmerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
+    var confirmerSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    var confirmerAssignToText: MutableLiveData<String> = MutableLiveData()
+
+    var viewerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
+    var viewerSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    var viewerAssignToText: MutableLiveData<String> = MutableLiveData()
+
+    var shareSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
+    var shareSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    var shareAssignToText: MutableLiveData<String> = MutableLiveData()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)

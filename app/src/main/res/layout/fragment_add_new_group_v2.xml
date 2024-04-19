@@ -3,170 +3,589 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/_10sdp">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/header"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_10sdp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/closeBtn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="13dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/headingText"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/headingText"
-                app:srcCompat="@drawable/icon_back"
-                app:tint="@color/appBlue" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/closeBtn"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="13dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/headingText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/headingText"
+                    app:srcCompat="@drawable/icon_back"
+                    app:tint="@color/appBlue" />
+
+                <TextView
+                    android:id="@+id/headingText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="@string/new_group"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/saveGroupBtn"
+                    android:layout_width="@dimen/_56sdp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/signin_button_back"
+                    android:fontFamily="@font/inter_semibold"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/headingText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/headingText" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tlGroupName"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_9sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/input_field_bottom_line"
+                android:hint="@string/group_name_required_heading"
+                android:textColorHint="@color/appTextGrey"
+                app:boxStrokeColor="@color/transparent"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="@color/appGrey3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/header">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etGroupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:inputType="none"
+                    android:maxLength="50"
+                    android:maxLines="2"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
+                    android:textSize="15sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clGroupAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tlGroupAdmin"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:background="@drawable/input_field_bottom_line"
+                    android:hint="@string/group_admin"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:boxStrokeWidth="0dp"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etGroupAdmin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="4"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/groupAdminEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/tlGroupAdmin"
+                    app:layout_constraintEnd_toEndOf="@+id/tlGroupAdmin"
+                    app:layout_constraintTop_toTopOf="@+id/tlGroupAdmin"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/groupAdminClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tlAssignTo"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:background="@drawable/input_field_bottom_line"
+                    android:hint="@string/assign_to_required_heading"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:boxStrokeWidth="0dp"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAssignTo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="4"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/assignToEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/tlAssignTo"
+                    app:layout_constraintEnd_toEndOf="@+id/tlAssignTo"
+                    app:layout_constraintTop_toTopOf="@+id/tlAssignTo"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/assignClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clConfirmer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tlConfirmer"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:background="@drawable/input_field_bottom_line"
+                    android:hint="Confirmer"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:boxStrokeWidth="0dp"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etConfirmer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="4"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/confirmerEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/tlConfirmer"
+                    app:layout_constraintEnd_toEndOf="@+id/tlConfirmer"
+                    app:layout_constraintTop_toTopOf="@+id/tlConfirmer"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/confirmerClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clViewer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tlViewer"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:background="@drawable/input_field_bottom_line"
+                    android:hint="Viewer"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:boxStrokeWidth="0dp"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etViewer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="4"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/clViewerEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/tlViewer"
+                    app:layout_constraintEnd_toEndOf="@+id/tlViewer"
+                    app:layout_constraintTop_toTopOf="@+id/tlViewer"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/viewerClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clShareWith"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tlShareWith"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:background="@drawable/input_field_bottom_line"
+                    android:hint="@string/share_with"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:boxStrokeWidth="0dp"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etShareWith"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="4"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/shareWithEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/tlShareWith"
+                    app:layout_constraintEnd_toEndOf="@+id/tlShareWith"
+                    app:layout_constraintTop_toTopOf="@+id/tlShareWith"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/shareWithClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="@dimen/_30sdp"
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/nextBtn"
+                    android:layout_width="75dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/signin_button_back"
+                    android:fontFamily="@font/inter_semibold"
+                    android:drawableBottom="@drawable/arrow_forward"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <android.widget.SearchView
+                android:id="@+id/groupSearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="@dimen/_9sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/input_field_bottom_line"
+                android:closeIcon="@drawable/icon_close_round_grey"
+                android:elevation="0dp"
+                android:iconifiedByDefault="false"
+                android:paddingStart="-12dp"
+                android:paddingEnd="1dp"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Start typing for search"
+                android:searchIcon="@null"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/ivSort"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/AppSearchView" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectedContactsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_9sdp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_4sdp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@+id/contactSearchBar"
+                app:layout_constraintStart_toStartOf="@+id/contactSearchBar"
+                app:layout_constraintTop_toBottomOf="@+id/contactSearchBar"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_item_assignee_chip" />
 
             <TextView
-                android:id="@+id/headingText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:fontFamily="@font/inter_bold"
-                android:text="@string/new_group"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/closeBtn"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/saveGroupBtn"
-                android:layout_width="@dimen/_56sdp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:background="@drawable/signin_button_back"
-                android:fontFamily="@font/inter_semibold"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:text="@string/save"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/headingText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/headingText" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/appLightGrey"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/groupNameField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_9sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:background="@drawable/input_field_bottom_line"
-            android:hint="@string/group_name_required_heading"
-            android:textColorHint="@color/appTextGrey"
-            app:boxStrokeColor="@color/transparent"
-            app:boxStrokeWidth="0dp"
-            app:hintTextColor="@color/appGrey3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/groupNameText"
+                android:id="@+id/textView5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
+                android:layout_marginHorizontal="@dimen/_9sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:fontFamily="@font/inter_regular"
-                android:inputType="none"
-                android:maxLines="2"
-                android:maxLength="50"
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:textSize="15sp" />
+                android:text="@string/my_connections_text"
+                android:textSize="13.5sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/contactSearchBar"
+                app:layout_constraintStart_toStartOf="@+id/contactSearchBar"
+                app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/allContactsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:paddingTop="@dimen/_2sdp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView5"
+                tools:itemCount="8"
+                tools:listitem="@layout/layout_item_group_member_selection" />
 
-        <android.widget.SearchView
-            android:id="@+id/groupSearchBar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="@dimen/_9sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:background="@drawable/input_field_bottom_line"
-            android:closeIcon="@drawable/icon_close_round_grey"
-            android:elevation="0dp"
-            android:iconifiedByDefault="false"
-            android:paddingStart="-12dp"
-            android:paddingEnd="1dp"
-            android:queryBackground="@android:color/transparent"
-            android:queryHint="Start typing for search"
-            android:searchIcon="@null"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="@+id/ivSort"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:theme="@style/AppSearchView" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/selectedContactsRV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_9sdp"
-            android:nestedScrollingEnabled="false"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/_4sdp"
-            android:visibility="visible"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="@+id/contactSearchBar"
-            app:layout_constraintStart_toStartOf="@+id/contactSearchBar"
-            app:layout_constraintTop_toBottomOf="@+id/contactSearchBar"
-            tools:itemCount="3"
-            tools:listitem="@layout/layout_item_assignee_chip" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_9sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:fontFamily="@font/inter_regular"
-            android:text="@string/my_connections_text"
-            android:textSize="13.5sp"
-            app:layout_constraintEnd_toEndOf="@+id/contactSearchBar"
-            app:layout_constraintStart_toStartOf="@+id/contactSearchBar"
-            app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/allContactsRV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:paddingTop="@dimen/_2sdp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"
-            tools:itemCount="8"
-            tools:listitem="@layout/layout_item_group_member_selection" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

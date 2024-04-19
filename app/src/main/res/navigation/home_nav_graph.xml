@@ -594,6 +594,10 @@
         android:id="@+id/tasksCanceledV3Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v3.canceled.TasksCanceledV3Fragment"
         android:label="TasksCanceledV3Fragment" />
+    <fragment
+        android:id="@+id/groupAssigneeFragment"
+        android:name="com.zstronics.ceibro.ui.groupsv2.fragment.GroupAssigneeFragment"
+        android:label="GroupAssigneeFragment" />
 
 
 </navigation>

@@ -424,6 +424,7 @@
     <string name="group_name_required_heading">Group name <font color="#D9000D">*</font></string>
     <string name="forward_to_required_heading">Forward to <font color="#D9000D">*</font></string>
     <string name="attach_heading">Attach</string>
+    <string name="group_admin">Group admin</string>
     <string name="done_requirements_heading">Done requirements</string>
     <string name="documents_heading">Documents</string>
     <string name="library_heading">Library</string>
@@ -713,4 +714,5 @@
     <string name="english">English</string>
     <string name="russian">Russian</string>
     <string name="feedback_form">Feedback Form</string>
+    <string name="share_with">Share with</string>
 </resources>

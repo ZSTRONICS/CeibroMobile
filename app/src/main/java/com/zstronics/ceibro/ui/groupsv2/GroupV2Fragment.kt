@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.groupsv2
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -17,7 +18,10 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
+import com.zstronics.ceibro.base.navgraph.BackNavigationResult
+import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
@@ -30,13 +34,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class GroupV2Fragment :
-    BaseNavViewModelFragment<FragmentGroupV2Binding, IGroupV2.State, GroupV2VM>() {
+    BaseNavViewModelFragment<FragmentGroupV2Binding, IGroupV2.State, GroupV2VM>(),
+    BackNavigationResultListener {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: GroupV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_group_v2
     override fun toolBarVisibility(): Boolean = false
+
+    private val GROUP_ADMIN_REQUEST_CODE = 1
+    private val ASSIGNEE_REQUEST_CODE = 2
+    private val CONFIRMER_REQUEST_CODE = 3
+    private val VIEWER_REQUEST_CODE = 4
+    private val SHARE_REQUEST_CODE = 5
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> {
@@ -318,6 +329,21 @@ class GroupV2Fragment :
                 }
             }
         }
+        sheet.updateCallBack = { type ->
+
+            if (type.equals("Admin", true)) {
+                navigateForResult(R.id.assigneeFragment, GROUP_ADMIN_REQUEST_CODE)
+            } else if (type.equals("Assign", true)) {
+                navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE)
+            } else if (type.equals("Confirmer", true)) {
+                navigateForResult(R.id.assigneeFragment, CONFIRMER_REQUEST_CODE)
+            } else if (type.equals("Viewer", true)) {
+                navigateForResult(R.id.assigneeFragment, VIEWER_REQUEST_CODE)
+            } else if (type.equals("ShareWith", true)) {
+                navigateForResult(R.id.assigneeFragment, SHARE_REQUEST_CODE)
+            }
+        }
+
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "AddNewGroupV2Sheet")
@@ -350,7 +376,12 @@ class GroupV2Fragment :
 
 
         sheet.updateGroupClickListener = { item, groupName, selectedContactIds, groupNameChanged ->
-            viewModel.updateConnectionGroup(item, groupName, selectedContactIds, groupNameChanged) { updatedGroup ->
+            viewModel.updateConnectionGroup(
+                item,
+                groupName,
+                selectedContactIds,
+                groupNameChanged
+            ) { updatedGroup ->
 
                 val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
@@ -403,6 +434,229 @@ class GroupV2Fragment :
 
         noBtn.setOnClickListener {
             alertDialog.dismiss()
+        }
+    }
+
+    override fun onNavigationResult(result: BackNavigationResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            when (result.requestCode) {
+
+                GROUP_ADMIN_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        viewModel.adminSelfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewModel.adminSelectedContacts.value = selectedContactList
+                    }
+                    viewModel.adminAssignToText.value = assigneeMembers
+                }
+
+                ASSIGNEE_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        viewModel.assigneeSelfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewModel.assigneeSelectedContacts.value = selectedContactList
+                    }
+                    viewModel.assigneeAssignToText.value = assigneeMembers
+                }
+
+                CONFIRMER_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        viewModel.confirmerSelfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewModel.confirmerSelectedContacts.value = selectedContactList
+                    }
+                    viewModel.confirmerAssignToText.value = assigneeMembers
+                }
+
+                VIEWER_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        viewModel.viewerSelfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewModel.viewerSelectedContacts.value = selectedContactList
+                    }
+                    viewModel.viewerAssignToText.value = assigneeMembers
+                }
+
+                SHARE_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        viewModel.shareSelfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewModel.shareSelectedContacts.value = selectedContactList
+                    }
+                    viewModel.shareAssignToText.value = assigneeMembers
+                }
+
+            }
         }
     }
 }
