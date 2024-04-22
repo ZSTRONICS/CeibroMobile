@@ -24,6 +24,7 @@ class LocationsV2VM @Inject constructor(
 
     var index = -10
     var oldPosition = -11
+    var drawingFirstLoad = true
 
     var _drawingFile: MutableLiveData<DrawingV2?> =
         MutableLiveData()

@@ -238,6 +238,10 @@ class LocationsV2Fragment :
                     id: Long
                 ) {
 
+                    if (viewModel.drawingFirstLoad) {
+                        viewModel.drawingFirstLoad = false
+                        return
+                    }
                     val drawing = viewModel.existingGroup.value?.drawings?.get(position)
 
                     drawing?.let {
@@ -1270,6 +1274,7 @@ class LocationsV2Fragment :
 
     override fun onResume() {
         super.onResume()
+        viewModel.drawingFirstLoad = true
         if (viewModel.drawingFile.value == null || CeibroApplication.CookiesManager.openingNewLocationFile) {
             viewModel.cameFromProject =
                 CeibroApplication.CookiesManager.cameToLocationViewFromProject
