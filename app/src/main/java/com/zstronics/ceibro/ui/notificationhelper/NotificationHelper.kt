@@ -384,7 +384,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = generateUniqueKey()
+        val requestCode = singleNotificationId + 1
         val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -412,7 +412,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = generateUniqueKey()
+        val requestCode = singleNotificationId + 2
         val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -436,7 +436,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = generateUniqueKey()
+        val requestCode = singleNotificationId + 3
         val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -458,7 +458,7 @@ class NotificationHelper(context: Context) {
 
     private fun generateUniqueKey(): Int {
         val uniqueId = UUID.randomUUID().toString()
-        val uniqueCode = System.currentTimeMillis().toInt() + uniqueId.hashCode() + requestCodeCounter++
+        val uniqueCode = System.currentTimeMillis().toInt() + 1 + requestCodeCounter++
 //        println("NotificationActivityFragmentCheck = uniqueCode ${uniqueCode}")
         return uniqueCode
     }
