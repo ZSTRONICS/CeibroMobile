@@ -421,6 +421,90 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <TextView
+                    android:id="@+id/allStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:background="@{viewState.isAllClicked() ? @drawable/status_blue_filled_new : @drawable/status_outline_white}"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/all"
+                    android:textColor="@{viewState.isAllClicked() ? @color/white : @color/appBlue}"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/ongoingStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:background="@{viewState.isOngoingClicked() ? @drawable/status_blue_filled_new : @drawable/status_outline_white}"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/ongoing_heading"
+                    android:textColor="@{viewState.isOngoingClicked() ? @color/white : @color/appBlue}"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/approvalStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:background="@{viewState.isApprovalClicked() ? @drawable/status_blue_filled_new : @drawable/status_outline_white}"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/approval_heading"
+                    android:textColor="@{viewState.isApprovalClicked() ? @color/white : @color/appBlue}"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/closedStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:background="@{viewState.isClosedClicked() ? @drawable/status_blue_filled_new : @drawable/status_outline_white}"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/closed"
+                    android:textColor="@{viewState.isClosedClicked() ? @color/white : @color/appBlue}"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
                     android:id="@+id/tvTo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -435,6 +519,7 @@
                     android:text="@string/to"
                     android:textColor="@color/black"
                     android:textSize="13sp"
+                    android:visibility="gone"
                     app:drawableEndCompat="@drawable/arrow_drop_up"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -446,7 +531,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
 
                     <TextView
@@ -529,6 +614,7 @@
                     android:text="@string/from"
                     android:textColor="@color/black"
                     android:textSize="13sp"
+                    android:visibility="gone"
                     app:drawableEndCompat="@drawable/arrow_drop_up"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -541,7 +627,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/fromUnredStateText"
@@ -625,6 +711,7 @@
                     android:text="@string/hidden"
                     android:textColor="@color/black"
                     android:textSize="13sp"
+                    android:visibility="gone"
                     app:drawableEndCompat="@drawable/icon_drop_down"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -712,7 +799,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tvCheckAll"
