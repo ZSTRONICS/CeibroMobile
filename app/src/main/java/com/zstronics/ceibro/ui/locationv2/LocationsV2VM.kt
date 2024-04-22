@@ -10,8 +10,6 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -70,151 +68,15 @@ class LocationsV2VM @Inject constructor(
         }
     }
 
-    fun checkFilter(filterList: ArrayList<Pair<String, String>>) {
-
+    fun checkFilter(filtersList: ArrayList<String>) {
         val list: ArrayList<CeibroDrawingPins> = arrayListOf()
-
-        if (filterList.isEmpty() || existingDrawingPins.value?.isEmpty() == true) {
-            _filterExistingDrawingPins.value = mutableListOf()
-            return
-        }
-
+        list.clear()
         existingDrawingPins.value?.forEach {
-            val rootState = it.taskData.rootState
-            val hiddenByMe = it.taskData.isHiddenByMe
-            val creatorState = it.taskData.creatorState.lowercase()
-            val userSubState = it.taskData.userSubState.lowercase()
             val taskRootState = it.taskData.taskRootState
-            val toMeState = it.taskData.toMeState.lowercase()
-            val fromMeState = it.taskData.fromMeState.lowercase()
-            val hiddenState = it.taskData.hiddenState.lowercase()
-
-            when {
-
-
-                rootState.equals(TaskRootStateTags.FromMe.tagValue, true) -> {
-                    if (hiddenByMe) {
-                        if (hiddenState.equals(TaskStatus.ONGOING.name, true)) {
-                            val pair =
-                                Pair(TaskRootStateTags.Hidden.tagValue.lowercase(), hiddenState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        } else if (hiddenState.equals(
-                                TaskStatus.DONE.name,
-                                true
-                            )
-                        ) {
-                            val pair =
-                                Pair(TaskRootStateTags.Hidden.tagValue.lowercase(), hiddenState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        }
-                    } else if (creatorState.equals(
-                            TaskStatus.CANCELED.name,
-                            true
-                        )
-                    ) {
-                        val pair = Pair(TaskRootStateTags.Hidden.tagValue.lowercase(), creatorState)
-                        if (filterList.contains(pair)) {
-                            list.add(it)
-                        }
-                    } else {
-                        if (fromMeState.equals(TaskStatus.UNREAD.name, true)) {
-                            val pair =
-                                Pair(TaskRootStateTags.FromMe.tagValue.lowercase(), fromMeState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        } else if (fromMeState.equals(
-                                TaskStatus.ONGOING.name,
-                                true
-                            )
-                        ) {
-                            val pair =
-                                Pair(TaskRootStateTags.FromMe.tagValue.lowercase(), fromMeState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        } else if (fromMeState.equals(
-                                TaskStatus.DONE.name,
-                                true
-                            )
-                        ) {
-                            val pair =
-                                Pair(TaskRootStateTags.FromMe.tagValue.lowercase(), fromMeState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        }
-                    }
+            if (filtersList.contains(taskRootState.lowercase())) {
+                if (!list.contains(it)) {
+                    list.add(it)
                 }
-
-
-                rootState.equals(TaskRootStateTags.ToMe.tagValue, true) -> {
-                    if (hiddenByMe) {
-                        if (hiddenState.equals(TaskStatus.ONGOING.name, true)) {
-                            val pair =
-                                Pair(TaskRootStateTags.Hidden.tagValue.lowercase(), hiddenState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        } else if (hiddenState.equals(
-                                TaskStatus.DONE.name,
-                                true
-                            )
-                        ) {
-                            val pair =
-                                Pair(TaskRootStateTags.Hidden.tagValue.lowercase(), hiddenState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        }
-                    } else if (userSubState.equals(
-                            TaskStatus.CANCELED.name,
-                            true
-                        )
-                    ) {
-                        val pair = Pair(TaskRootStateTags.Hidden.tagValue.lowercase(), userSubState)
-                        if (filterList.contains(pair)) {
-                            list.add(it)
-                        }
-                    } else {
-                        if (toMeState.equals(TaskStatus.NEW.name, true)) {
-                            val pair = Pair(TaskRootStateTags.ToMe.tagValue.lowercase(), toMeState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        } else if (toMeState.equals(
-                                TaskStatus.ONGOING.name,
-                                true
-                            )
-                        ) {
-                            val pair = Pair(TaskRootStateTags.ToMe.tagValue.lowercase(), toMeState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        } else if (toMeState.equals(
-                                TaskStatus.DONE.name,
-                                true
-                            )
-                        ) {
-                            val pair = Pair(TaskRootStateTags.ToMe.tagValue.lowercase(), toMeState)
-                            if (filterList.contains(pair)) {
-                                list.add(it)
-                            }
-                        }
-                    }
-                }
-
-
-                /*rootState.equals(TaskRootStateTags.Hidden.tagValue, true) -> {
-                    val pair = Pair(rootState, hiddenState)
-                    if (filterList.contains(pair)) {
-                        list.add(it)
-                    }
-                }*/
             }
         }
 

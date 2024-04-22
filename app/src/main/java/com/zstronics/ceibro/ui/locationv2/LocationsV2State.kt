@@ -21,4 +21,10 @@ class LocationsV2State @Inject constructor(
     override var isHiddenOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(true)
     override var isHiddenDoneClicked: MutableLiveData<Boolean> = MutableLiveData(true)
     override var isHiddenCancelled: MutableLiveData<Boolean> = MutableLiveData(true)
+    // logic
+    override var isAllClicked: MutableLiveData<Boolean> = MutableLiveData(true)
+    override var isOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(true)
+    override var isApprovalClicked: MutableLiveData<Boolean> = MutableLiveData(true)
+    override var isClosedClicked: MutableLiveData<Boolean> = MutableLiveData(true)
+
 }

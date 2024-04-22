@@ -20,6 +20,12 @@ interface ILocationsV2 {
         var isHiddenDoneClicked: MutableLiveData<Boolean>
         var isHiddenCancelled: MutableLiveData<Boolean>
 
+        // new logic
+        var isAllClicked: MutableLiveData<Boolean>
+        var isOngoingClicked: MutableLiveData<Boolean>
+        var isApprovalClicked: MutableLiveData<Boolean>
+        var isClosedClicked: MutableLiveData<Boolean>
+
     }
 
     interface ViewModel : IBase.ViewModel<State> {

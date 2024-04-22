@@ -80,7 +80,7 @@ class LocationsV2Fragment :
     override val layoutResId: Int = R.layout.fragment_locations_v2
     private var layoutPressed = ""
     private var isKeyboardShown = false
-    private val filtersList: ArrayList<Pair<String, String>> = arrayListOf()
+    private val filtersList: ArrayList<String> = arrayListOf()
 
     //    private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
     private var manager: DownloadManager? = null
@@ -108,8 +108,10 @@ class LocationsV2Fragment :
 
     companion object {
 
-        private const val llTo = "llTo"
-        private const val llFrom = "llFrom"
+        private const val all = "all"
+        private const val ongoing = "ongoing"
+        private const val approval = "approval"
+        private const val closed = "closed"
         private const val llHidden = "llHidden"
     }
 
@@ -121,15 +123,6 @@ class LocationsV2Fragment :
                     EventBus.getDefault().post(LocalEvents.LoadLocationProjectFragmentInLocation())
                 } else {
                     EventBus.getDefault().post(LocalEvents.LoadDrawingFragmentInLocation())
-                }
-            }
-
-            R.id.llCheckAll -> {
-                mViewDataBinding.cbSelectAll.isChecked = !mViewDataBinding.cbSelectAll.isChecked
-                if (mViewDataBinding.cbSelectAll.isChecked) {
-                    addFiltersToList()
-                } else {
-                    removeFiltersToList()
                 }
             }
 
@@ -145,241 +138,32 @@ class LocationsV2Fragment :
                 }
             }
 
-            R.id.tvTo -> {
-                layoutPressed = llTo
-                if (isKeyboardShown) {
-                    manageLayoutsVisibilityWithKeyboardShown()
-                } else {
-                    manageLayoutsVisibilityWithKeyboardHidden()
-                }
+            R.id.ongoingStateText -> {
+                layoutPressed = ongoing
+                manageLayoutsVisibility()
+                viewModel.checkFilter(filtersList)
             }
 
-            R.id.tvfrom -> {
-                layoutPressed = llFrom
-                if (isKeyboardShown) {
-                    manageLayoutsVisibilityWithKeyboardShown()
-                } else {
-                    manageLayoutsVisibilityWithKeyboardHidden()
-                }
+            R.id.approvalStateText -> {
+                layoutPressed = approval
+                manageLayoutsVisibility()
+                viewModel.checkFilter(filtersList)
             }
 
-            R.id.ToNewStateText -> {
-
-                if (viewState.isToNewClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.ToMe.tagValue.lowercase(),
-                            TaskStatus.NEW.name.lowercase()
-                        )
-                    )
-
-                } else {
-
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.ToMe.tagValue.lowercase(),
-                            TaskStatus.NEW.name.lowercase()
-                        )
-                    )
-                }
-                viewState.isToNewClicked.value = !(viewState.isToNewClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
+            R.id.closedStateText -> {
+                layoutPressed = closed
+                manageLayoutsVisibility()
+                viewModel.checkFilter(filtersList)
             }
 
-            R.id.ToOngoingStateText -> {
-
-                if (viewState.isToOngoingClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.ToMe.tagValue.lowercase(),
-                            TaskStatus.ONGOING.name.lowercase()
-                        )
-                    )
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.ToMe.tagValue.lowercase(),
-                            TaskStatus.ONGOING.name.lowercase()
-                        )
-                    )
-                }
-
-                viewState.isToOngoingClicked.value = !(viewState.isToOngoingClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.ToDoneStateText -> {
-
-                if (viewState.isToDoneClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.ToMe.tagValue.lowercase(),
-                            TaskStatus.DONE.name.lowercase()
-                        )
-                    )
-
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.ToMe.tagValue.lowercase(),
-                            TaskStatus.DONE.name.lowercase()
-                        )
-                    )
-                }
-                viewState.isToDoneClicked.value = !(viewState.isToDoneClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.fromUnredStateText -> {
-
-                if (viewState.isFromUnreadClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.FromMe.tagValue.lowercase(),
-                            TaskStatus.UNREAD.name.lowercase()
-                        )
-                    )
-
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.FromMe.tagValue.lowercase(),
-                            TaskStatus.UNREAD.name.lowercase()
-                        )
-                    )
-                }
-                viewState.isFromUnreadClicked.value = !(viewState.isFromUnreadClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.FromOngoingStateText -> {
-
-                if (viewState.isFromOngoingClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.FromMe.tagValue.lowercase(),
-                            TaskStatus.ONGOING.name.lowercase()
-                        )
-                    )
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.FromMe.tagValue.lowercase(),
-                            TaskStatus.ONGOING.name.lowercase()
-                        )
-                    )
-                }
-
-                viewState.isFromOngoingClicked.value = !(viewState.isFromOngoingClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.FromDoneStateText -> {
-
-                if (viewState.isFromDoneClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.FromMe.tagValue.lowercase(),
-                            TaskStatus.DONE.name.lowercase()
-                        )
-                    )
-
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.FromMe.tagValue.lowercase(),
-                            TaskStatus.DONE.name.lowercase()
-                        )
-                    )
-                }
-                viewState.isFromDoneClicked.value = !(viewState.isFromDoneClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.hiddenOngoingStateText -> {
-
-                if (viewState.isHiddenOngoingClicked.value == false) {
-
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.Hidden.tagValue.lowercase(),
-                            TaskStatus.ONGOING.name.lowercase()
-                        )
-                    )
-
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.Hidden.tagValue.lowercase(),
-                            TaskStatus.ONGOING.name.lowercase()
-                        )
-                    )
-                }
-                viewState.isHiddenOngoingClicked.value = !(viewState.isHiddenOngoingClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.hiddenDoneStateText -> {
-
-
-                if (viewState.isHiddenDoneClicked.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.Hidden.tagValue.lowercase(),
-                            TaskStatus.DONE.name.lowercase()
-                        )
-                    )
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.Hidden.tagValue.lowercase(),
-                            TaskStatus.DONE.name.lowercase()
-                        )
-                    )
-                }
-
-                viewState.isHiddenDoneClicked.value = !(viewState.isHiddenDoneClicked.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
-            }
-
-            R.id.hiddenCancelledStateText -> {
-
-
-                if (viewState.isHiddenCancelled.value == false) {
-                    filtersList.add(
-                        Pair(
-                            TaskRootStateTags.Hidden.tagValue.lowercase(),
-                            TaskStatus.CANCELED.name.lowercase()
-                        )
-                    )
-                } else {
-                    filtersList.remove(
-                        Pair(
-                            TaskRootStateTags.Hidden.tagValue.lowercase(),
-                            TaskStatus.CANCELED.name.lowercase()
-                        )
-                    )
-                }
-                viewState.isHiddenCancelled.value = !(viewState.isHiddenCancelled.value!!)
-                isAnyConditionFalse()
-                viewModel.checkFilter(filtersList);
+            R.id.allStateText -> {
+                layoutPressed = all
+                manageLayoutsVisibility()
+                viewModel.checkFilter(filtersList)
             }
 
             R.id.tvHidden -> {
                 layoutPressed = llHidden
-                if (isKeyboardShown) {
-                    manageLayoutsVisibilityWithKeyboardShown()
-                } else {
-                    manageLayoutsVisibilityWithKeyboardHidden()
-                }
             }
 
             R.id.cancelSearch -> {
@@ -477,6 +261,7 @@ class LocationsV2Fragment :
                                         viewModel.index = position
                                         viewModel.getDrawingPins(it._id)
                                         viewModel._drawingFile.postValue(it)
+                                        addFiltersToList()
                                     } else {
                                         viewModel.oldPosition = viewModel.index
                                         mViewDataBinding.locationSpinner.setSelection(viewModel.index)
@@ -768,14 +553,19 @@ class LocationsV2Fragment :
                                             yPoint >= (pinInfo.yPointToDisplay - (pinInfo.loadedBitmap.height / 2) / tappedPoint.third) && yPoint <= (pinInfo.yPointToDisplay + (pinInfo.loadedBitmap.height / 2) / tappedPoint.third)
                                         ) {
                                             if (pinInfo.loadedPinData?.taskData != null) {
-                                                requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                requireActivity().window.setFlags(
+                                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                                                )
                                                 viewModel.viewModelScope.launch {
-                                                    val task = viewModel.taskDao.getTaskByID(pinInfo.loadedPinData.taskData._id)
+                                                    val task =
+                                                        viewModel.taskDao.getTaskByID(pinInfo.loadedPinData.taskData._id)
                                                     if (task != null) {
                                                         showTaskCard(task)
                                                     } else {
-                                                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                        requireActivity().window.clearFlags(
+                                                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                                                        )
                                                         shortToastNow("Task doesn't exist locally")
                                                     }
                                                 }
@@ -929,7 +719,12 @@ class LocationsV2Fragment :
                         loadingOldData = false
 
 
-                        val foundNewPin = inViewPinsList.find { listPin -> listPin.isNewPoint.equals("new", true) }
+                        val foundNewPin = inViewPinsList.find { listPin ->
+                            listPin.isNewPoint.equals(
+                                "new",
+                                true
+                            )
+                        }
                         if (foundNewPin != null) {
                             val newPinIndex1 = inViewPinsList.indexOf(foundNewPin)
                             inViewPinsList.removeAt(newPinIndex1)
@@ -1392,92 +1187,54 @@ class LocationsV2Fragment :
     }
 
 
-    private fun manageLayoutsVisibilityWithKeyboardShown() {
-
-        if (layoutPressed == llTo) {
-            if (mViewDataBinding.llTo.isVisible()) {
-                mViewDataBinding.llTo.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
-                return
+    private fun manageLayoutsVisibility() {
+        if (layoutPressed == all) {
+            if (viewState.isAllClicked.value == true) {
+                viewState.isAllClicked.value = false
+                viewState.isOngoingClicked.value = false
+                viewState.isApprovalClicked.value = false
+                viewState.isClosedClicked.value = false
+                removeFiltersToList()
             } else {
-                mViewDataBinding.llTo.visibility = View.VISIBLE
-                updateLayoutCompoundDrawable(true, mViewDataBinding.tvTo)
+                addFilterToList(ongoing)
+                addFilterToList(approval)
+                addFilterToList(closed)
+                viewState.isAllClicked.value = true
+                viewState.isOngoingClicked.value = true
+                viewState.isApprovalClicked.value = true
+                viewState.isClosedClicked.value = true
             }
-            mViewDataBinding.llFrom.visibility = View.GONE
-            updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
-            mViewDataBinding.llHidden.visibility = View.GONE
-        } else if (layoutPressed == llFrom) {
-            if (mViewDataBinding.llFrom.isVisible()) {
-                mViewDataBinding.llFrom.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
-                return
-            } else {
-                mViewDataBinding.llFrom.visibility = View.VISIBLE
-                updateLayoutCompoundDrawable(true, mViewDataBinding.tvfrom)
-            }
-            mViewDataBinding.llTo.visibility = View.GONE
-            updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
-            mViewDataBinding.llHidden.visibility = View.GONE
-            updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
-        } else if (layoutPressed == llHidden) {
-            if (mViewDataBinding.llHidden.isVisible()) {
-                mViewDataBinding.llHidden.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
-                return
-            } else {
-                mViewDataBinding.llHidden.visibility = View.VISIBLE
-                updateLayoutCompoundDrawable(true, mViewDataBinding.tvHidden)
-            }
-
-            mViewDataBinding.llTo.visibility = View.GONE
-            updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
-            mViewDataBinding.llFrom.visibility = View.GONE
-            updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
-        }
-
-    }
-
-    private fun manageLayoutsVisibilityWithKeyboardHidden() {
-        if (layoutPressed == llTo) {
-            if (mViewDataBinding.llTo.isVisible()) {
-                mViewDataBinding.llTo.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
-                return
-            }
-            mViewDataBinding.llTo.visibility = View.VISIBLE
-            updateLayoutCompoundDrawable(true, mViewDataBinding.tvTo)
-            if (mViewDataBinding.llHidden.visibility == View.VISIBLE && mViewDataBinding.llFrom.visibility == View.VISIBLE)
-                mViewDataBinding.llHidden.visibility = View.GONE
-            updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
-        } else if (layoutPressed == llFrom) {
-            if (mViewDataBinding.llFrom.isVisible()) {
-                mViewDataBinding.llFrom.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
-                return
-            }
-
-            mViewDataBinding.llFrom.visibility = View.VISIBLE
-            updateLayoutCompoundDrawable(true, mViewDataBinding.tvfrom)
-            if (mViewDataBinding.llTo.visibility == View.VISIBLE && mViewDataBinding.llFrom.visibility == View.VISIBLE) {
-                mViewDataBinding.llHidden.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
-            }
-        } else if (layoutPressed == llHidden) {
-
-            if (mViewDataBinding.llHidden.isVisible()) {
-                mViewDataBinding.llHidden.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
-                return
-            }
-            mViewDataBinding.llHidden.visibility = View.VISIBLE
-            updateLayoutCompoundDrawable(true, mViewDataBinding.tvHidden)
-            if (mViewDataBinding.llTo.visibility == View.VISIBLE && mViewDataBinding.llHidden.visibility == View.VISIBLE) {
-                mViewDataBinding.llFrom.visibility = View.GONE
-                updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
-            }
+            areAllPropertiesTrue()
         } else {
-            return
+            if (layoutPressed == ongoing) {
+                if (viewState.isOngoingClicked.value == true) {
+                    viewState.isOngoingClicked.value = false
+                    filtersList.remove(ongoing)
+                } else {
+                    viewState.isOngoingClicked.value = true
+                    addFilterToList(ongoing)
+                }
+
+            } else if (layoutPressed == approval) {
+                if (viewState.isApprovalClicked.value == true) {
+                    viewState.isApprovalClicked.value = false
+                    filtersList.remove(approval)
+                } else {
+                    viewState.isApprovalClicked.value = true
+                    addFilterToList(approval)
+                }
+            } else if (layoutPressed == closed) {
+                if (viewState.isClosedClicked.value == true) {
+                    viewState.isClosedClicked.value = false
+                    filtersList.remove(closed)
+                } else {
+                    viewState.isClosedClicked.value = true
+                    addFilterToList(closed)
+                }
+            }
+            areAllPropertiesTrue()
         }
+
     }
 
     private fun checkLayoutsVisibility() {
@@ -1636,88 +1393,24 @@ class LocationsV2Fragment :
 
     private fun addFiltersToList() {
         filtersList.clear()
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.ToMe.tagValue.lowercase(),
-                TaskStatus.NEW.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.ToMe.tagValue.lowercase(),
-                TaskStatus.ONGOING.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.ToMe.tagValue.lowercase(),
-                TaskStatus.DONE.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.FromMe.tagValue.lowercase(),
-                TaskStatus.UNREAD.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.FromMe.tagValue.lowercase(),
-                TaskStatus.ONGOING.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.FromMe.tagValue.lowercase(),
-                TaskStatus.DONE.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.Hidden.tagValue.lowercase(),
-                TaskStatus.ONGOING.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.Hidden.tagValue.lowercase(),
-                TaskStatus.DONE.name.lowercase()
-            )
-        )
-        filtersList.add(
-            Pair(
-                TaskRootStateTags.Hidden.tagValue.lowercase(),
-                TaskStatus.CANCELED.name.lowercase()
-            )
-        )
+        filtersList.add(ongoing)
+        filtersList.add(approval)
+        filtersList.add(closed)
+        viewState.isAllClicked.value = true
+        viewState.isOngoingClicked.value = true
+        viewState.isApprovalClicked.value = true
+        viewState.isClosedClicked.value = true
 
+    }
 
-        viewModel.viewState.isToNewClicked.value = true
-        viewModel.viewState.isToOngoingClicked.value = true
-        viewModel.viewState.isToDoneClicked.value = true
-        viewModel.viewState.isFromUnreadClicked.value = true
-        viewModel.viewState.isFromOngoingClicked.value = true
-        viewModel.viewState.isFromDoneClicked.value = true
-        viewModel.viewState.isHiddenOngoingClicked.value = true
-        viewModel.viewState.isHiddenDoneClicked.value = true
-        viewModel.viewState.isHiddenCancelled.value = true
-
-        viewModel.checkFilter(filtersList)
-
+    private fun addFilterToList(item: String) {
+        if (!filtersList.contains(item)) {
+            filtersList.add(item)
+        }
     }
 
     private fun removeFiltersToList() {
         filtersList.clear()
-        viewModel.viewState.isToNewClicked.value = false
-        viewModel.viewState.isToOngoingClicked.value = false
-        viewModel.viewState.isToDoneClicked.value = false
-        viewModel.viewState.isFromUnreadClicked.value = false
-        viewModel.viewState.isFromOngoingClicked.value = false
-        viewModel.viewState.isFromDoneClicked.value = false
-        viewModel.viewState.isHiddenOngoingClicked.value = false
-        viewModel.viewState.isHiddenDoneClicked.value = false
-        viewModel.viewState.isHiddenCancelled.value = false
-        viewModel.checkFilter(filtersList)
     }
 
     private fun isAnyConditionFalse() {
@@ -1792,7 +1485,8 @@ class LocationsV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        requestPermissions(permissions,
+        requestPermissions(
+            permissions,
             DrawingsV2Fragment.permissionRequestCode
         )
     }
@@ -1951,5 +1645,15 @@ class LocationsV2Fragment :
                 delay(500)
             }
         }
+    }
+
+    private fun areAllPropertiesTrue(): Boolean {
+        val isAllTrue = viewState.isOngoingClicked.value == true &&
+                viewState.isApprovalClicked.value == true &&
+                viewState.isClosedClicked.value == true
+
+        viewState.isAllClicked.value = isAllTrue
+
+        return isAllTrue
     }
 }
