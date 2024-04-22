@@ -367,6 +367,7 @@ class LocationsV2Fragment :
 //            if (it.isNotEmpty()) {
             try {
                 inViewPinsList.clear()
+                loadExistingMarkerPoints.clear()
                 inViewPinsList = mutableListOf()
                 loadExistingMarkerPoints.addAll(it)
                 if (pdfFileLoaded) {
@@ -771,6 +772,25 @@ class LocationsV2Fragment :
             }
         }
 
+    }
+
+    private fun resetFilterUI() {
+        addFiltersToList()
+        isKeyboardShown = false
+        mViewDataBinding.projectSearchBar.hideKeyboard()
+        mViewDataBinding.projectsSearchCard.visibility = View.GONE
+        mViewDataBinding.projectSearchBtn.visibility = View.VISIBLE
+        mViewDataBinding.projectSearchBar.setQuery("", false)
+
+        viewState.isFilterVisible.value?.let { currentValue ->
+            val updateFlag = false
+            viewState.isFilterVisible.value = updateFlag
+            updateCompoundDrawable(
+                mViewDataBinding.filter,
+                mViewDataBinding.ivFilter,
+                updateFlag
+            )
+        }
     }
 
 
@@ -1340,9 +1360,9 @@ class LocationsV2Fragment :
 
     private fun addFiltersToList() {
         filtersList.clear()
-        filtersList.add(ongoing)
-        filtersList.add(approval)
-        filtersList.add(closed)
+        addFilterToList(ongoing)
+        addFilterToList(approval)
+        addFilterToList(closed)
         viewState.isAllClicked.value = true
         viewState.isOngoingClicked.value = true
         viewState.isApprovalClicked.value = true
@@ -1359,21 +1379,6 @@ class LocationsV2Fragment :
     private fun removeFiltersToList() {
         filtersList.clear()
     }
-
-    private fun isAnyConditionFalse() {
-        val viewState = viewModel.viewState
-        val flag = (viewState.isToNewClicked.value == true &&
-                viewState.isToOngoingClicked.value == true &&
-                viewState.isToDoneClicked.value == true &&
-                viewState.isFromUnreadClicked.value == true &&
-                viewState.isFromOngoingClicked.value == true &&
-                viewState.isFromDoneClicked.value == true &&
-                viewState.isHiddenOngoingClicked.value == true &&
-                viewState.isHiddenDoneClicked.value == true &&
-                viewState.isHiddenCancelled.value == true)
-        mViewDataBinding.cbSelectAll.isChecked = flag
-    }
-
 
     private fun checkDownloadFilePermission(
         url: DrawingV2,

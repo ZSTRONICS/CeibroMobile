@@ -72,16 +72,20 @@ class LocationsV2VM @Inject constructor(
     fun checkFilter(filtersList: ArrayList<String>) {
         val list: ArrayList<CeibroDrawingPins> = arrayListOf()
         list.clear()
-        existingDrawingPins.value?.forEach {
-            val taskRootState = it.taskData.taskRootState
-            if (filtersList.contains(taskRootState.lowercase())) {
-                if (!list.contains(it)) {
-                    list.add(it)
+        if (filtersList.isNotEmpty()) {
+            existingDrawingPins.value?.forEach {
+                val taskRootState = it.taskData.taskRootState
+                if (filtersList.contains(taskRootState.lowercase())) {
+                    if (!list.contains(it)) {
+                        list.add(it)
+                    }
                 }
             }
+            _filterExistingDrawingPins.value = list
+        } else {
+            _filterExistingDrawingPins.value = arrayListOf()
         }
-
-        _filterExistingDrawingPins.value = list
     }
+
 
 }
