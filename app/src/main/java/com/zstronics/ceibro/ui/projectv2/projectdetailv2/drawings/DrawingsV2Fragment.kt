@@ -154,10 +154,19 @@ class DrawingsV2Fragment :
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadCompleteReceiver = DownloadCompleteReceiver()
-        mainActivityDownloader?.registerReceiver(
-            downloadCompleteReceiver,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        )
+
+        //This if condition is required for android 14 to define that Receiver is RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mainActivityDownloader?.registerReceiver(
+                downloadCompleteReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            mainActivityDownloader?.registerReceiver(
+                downloadCompleteReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+        }
 
 
         sectionList.add(
