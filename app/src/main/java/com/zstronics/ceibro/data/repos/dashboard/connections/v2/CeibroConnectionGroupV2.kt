@@ -20,6 +20,8 @@ data class CeibroConnectionGroupV2(
     val name: String,
     @SerializedName("creator")
     val creator: TaskMemberDetail,
+    @SerializedName("contacts")
+    val contacts: List<GroupContact>,
     @SerializedName("confirmer")
     val confirmer: List<TaskMemberDetail>,
     @SerializedName("viewer")
