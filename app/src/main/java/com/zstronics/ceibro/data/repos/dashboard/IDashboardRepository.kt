@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBul
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
@@ -90,7 +91,7 @@ interface IDashboardRepository {
     ): ApiResponse<BlockUserResponse>
 
     suspend fun createConnectionGroup(
-        connectionGroupRequest: NewConnectionGroupRequest
+        connectionGroupRequest: CreateGroupRequest
     ): ApiResponse<CeibroConnectionGroupV2>
 
     suspend fun getConnectionGroups(): ApiResponse<GetConnectionGroupsResponse>
@@ -99,7 +100,7 @@ interface IDashboardRepository {
 
     suspend fun updateConnectionGroup(
         groupId: String,
-        connectionGroupRequest: NewConnectionGroupRequest
+        connectionGroupRequest: CreateGroupRequest
     ): ApiResponse<CeibroConnectionGroupV2>
 
     suspend fun updateConnectionGroupWithoutName(

@@ -46,8 +46,8 @@ class AddNewGroupV2Sheet(
     var selectedContacts: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>?> =
         MutableLiveData(mutableListOf())
 
-    var createGroupClickListener: ((groupName: String, contacts: List<String>) -> Unit)? = null
-    var updateGroupClickListener: ((item: CeibroConnectionGroupV2, groupName: String, contacts: List<String>, groupNameChanged: Boolean) -> Unit)? =
+    var createGroupClickListener: ((groupName: String) -> Unit)? = null
+    var updateGroupClickListener: ((item: CeibroConnectionGroupV2, groupName: String, groupNameChanged: Boolean) -> Unit)? =
         null
     var onGroupEdited: ((status: String) -> Unit)? = null
 
@@ -196,153 +196,141 @@ class AddNewGroupV2Sheet(
         binding.saveGroupBtn.setOnClickListener {
             val groupName = binding.etGroupName.text.toString().trim()
             val assignTo = binding.etAssignTo.text.toString().trim()
-            val selectedOnes = selectedContacts.value
             if (groupName.isEmpty()) {
                 shortToastNow("Group name required")
             } else if (assignTo.isEmpty()) {
                 shortToastNow("Assignee required")
-            } else if (selectedOnes.isNullOrEmpty()) {
-                shortToastNow("First select any contact to create group")
             } else {
-                val selectedContactIds = selectedOnes.map { it.connectionId }
                 if (isUpdating) {
-                    oldGroup?.name?.let { name ->
-                        oldGroupContact?.let { contact ->
-                            if (name == groupName && selectedOnes == contact) {
-                                shortToastNow("No data changed to update")
-                            } else {
-                                oldGroup?.let { item ->
-                                    updateGroupClickListener?.invoke(
-                                        item,
-                                        groupName,
-                                        selectedContactIds,
-                                        !name.equals(groupName, true)
-                                    )
-                                }
-                            }
-                        }
+                    oldGroup?.let { item ->
+                        updateGroupClickListener?.invoke(
+                            item,
+                            groupName,
+                            item.name.equals(groupName, true)
+                        )
                     }
-
                 } else {
-                    createGroupClickListener?.invoke(groupName, selectedContactIds)
+                    createGroupClickListener?.invoke(groupName)
                 }
-
-
             }
-        }
 
-        binding.allContactsRV.adapter = adapter
-        binding.selectedContactsRV.adapter = chipAdapter
+            binding.allContactsRV.adapter = adapter
+            binding.selectedContactsRV.adapter = chipAdapter
 
-        allLightConnections.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
+            allLightConnections.observe(viewLifecycleOwner)
+            {
+                if (!it.isNullOrEmpty()) {
 //                if (searchedContacts) {
 //                    searchedContacts = false
 //                    val searchQuery = mViewDataBinding.searchBar.text.toString()
 //                    viewModel.filterContacts(searchQuery)
 //                }
-                adapter.setList(it)
-                if (isUpdating && isFirstRun) {
-                    isFirstRun = false
-                    oldGroupContact?.let { contact ->
-                        adapter.setSelectedList(contact)
+                    adapter.setList(it)
+                    if (isUpdating && isFirstRun) {
+                        isFirstRun = false
+                        oldGroupContact?.let { contact ->
+                            adapter.setSelectedList(contact)
+                        }
+
                     }
-
-                }
-            } else {
-                adapter.setList(mutableListOf())
-            }
-        }
-        adapter.itemClickListener =
-            { _: View, position: Int, contact: SyncDBContactsList.CeibroDBContactsLight ->
-                val originalContacts = originalLightConnections
-                val index = originalContacts.indexOf(contact)
-                if (index > -1) {
-                    originalContacts[index].isChecked = contact.isChecked
-                }
-                originalLightConnections = originalContacts
-
-                val selectedOnes = selectedContacts.value ?: mutableListOf()
-                if (contact.isChecked) {
-                    selectedOnes.add(contact)
-                    selectedContacts.postValue(selectedOnes)
                 } else {
-                    val selectedIndex = selectedOnes.indexOf(contact)
-                    if (selectedIndex > -1) {
-                        selectedOnes.removeAt(selectedIndex)
+                    adapter.setList(mutableListOf())
+                }
+            }
+            adapter.itemClickListener =
+                { _: View, position: Int, contact: SyncDBContactsList.CeibroDBContactsLight ->
+                    val originalContacts = originalLightConnections
+                    val index = originalContacts.indexOf(contact)
+                    if (index > -1) {
+                        originalContacts[index].isChecked = contact.isChecked
                     }
-                    selectedContacts.postValue(selectedOnes)
+                    originalLightConnections = originalContacts
+
+                    val selectedOnes = selectedContacts.value ?: mutableListOf()
+                    if (contact.isChecked) {
+                        selectedOnes.add(contact)
+                        selectedContacts.postValue(selectedOnes)
+                    } else {
+                        val selectedIndex = selectedOnes.indexOf(contact)
+                        if (selectedIndex > -1) {
+                            selectedOnes.removeAt(selectedIndex)
+                        }
+                        selectedContacts.postValue(selectedOnes)
+                    }
+                }
+
+
+            selectedContacts.observe(viewLifecycleOwner)
+            {
+                if (!it.isNullOrEmpty()) {
+                    chipAdapter.setList(it)
+                } else {
+                    chipAdapter.setList(mutableListOf())
                 }
             }
 
-
-        selectedContacts.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-                chipAdapter.setList(it)
-            } else {
-                chipAdapter.setList(mutableListOf())
-            }
-        }
-
-        chipAdapter.removeItemClickListener =
-            { _: View, position: Int, data: SyncDBContactsList.CeibroDBContactsLight ->
-                val allContacts = originalLightConnections
-                val selectedOnes = selectedContacts.value
-                data.isChecked = false
-                /// Update All Contacts List
+            chipAdapter.removeItemClickListener =
+                { _: View, position: Int, data: SyncDBContactsList.CeibroDBContactsLight ->
+                    val allContacts = originalLightConnections
+                    val selectedOnes = selectedContacts.value
+                    data.isChecked = false
+                    /// Update All Contacts List
 
 
-                if (allContacts.isNotEmpty()) {
-                    val commonItem = allContacts.find { item1 ->
-                        item1.connectionId == data.connectionId
-                    }
-                    if (commonItem != null) {
-                        val index = allContacts.indexOf(commonItem)
-                        allContacts[index] =
-                            data            //set is used for updating the specific item
-                    }
+                    if (allContacts.isNotEmpty()) {
+                        val commonItem = allContacts.find { item1 ->
+                            item1.connectionId == data.connectionId
+                        }
+                        if (commonItem != null) {
+                            val index = allContacts.indexOf(commonItem)
+                            allContacts[index] =
+                                data            //set is used for updating the specific item
+                        }
 
-                    originalLightConnections = allContacts
+                        originalLightConnections = allContacts
 
-                    val searchQuery = binding.groupSearchBar.query.toString()
-                    if (searchQuery.isNotEmpty()) {
-                        filterContacts(searchQuery)
-                    } else {
-                        _allLightConnections.postValue(allContacts)
-                    }
+                        val searchQuery = binding.groupSearchBar.query.toString()
+                        if (searchQuery.isNotEmpty()) {
+                            filterContacts(searchQuery)
+                        } else {
+                            _allLightConnections.postValue(allContacts)
+                        }
 
 //                    if (searchedContacts) {
 //                        viewModel.filterContacts(searchQuery)
 //                    }
-                }
-
-                //selected contacts also updated so that exact list be sent back on done
-                if (!selectedOnes.isNullOrEmpty()) {
-                    val index = selectedOnes.indexOfFirst { it.connectionId == data.connectionId }
-                    if (index > -1) {
-                        selectedOnes.removeAt(index)
                     }
-                    selectedContacts.postValue(selectedOnes)
-                }
-            }
 
-        binding.groupSearchBar.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    filterContacts(query.trim())
+                    //selected contacts also updated so that exact list be sent back on done
+                    if (!selectedOnes.isNullOrEmpty()) {
+                        val index =
+                            selectedOnes.indexOfFirst { it.connectionId == data.connectionId }
+                        if (index > -1) {
+                            selectedOnes.removeAt(index)
+                        }
+                        selectedContacts.postValue(selectedOnes)
+                    }
                 }
-                return true
-            }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    filterContacts(newText.trim())
-                }
-                return true
-            }
-        })
+            binding.groupSearchBar.setOnQueryTextListener(
+                object :
+                    SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        if (query != null) {
+                            filterContacts(query.trim())
+                        }
+                        return true
+                    }
 
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        if (newText != null) {
+                            filterContacts(newText.trim())
+                        }
+                        return true
+                    }
+                })
+
+        }
     }
 
 
@@ -404,6 +392,7 @@ class AddNewGroupV2Sheet(
         else
             _allLightConnections.postValue(mutableListOf())
     }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)

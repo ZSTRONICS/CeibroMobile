@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBul
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
@@ -37,57 +38,38 @@ import javax.inject.Inject
 class DashboardRepository @Inject constructor(
     private val service: DashboardRepositoryService
 ) : IDashboardRepository, BaseNetworkRepository() {
-    override suspend fun getAllConnections(): ApiResponse<AllConnectionsResponse> = executeSafely(
-        call =
-        {
+    override suspend fun getAllConnections(): ApiResponse<AllConnectionsResponse> =
+        executeSafely(call = {
             service.getAllConnections()
-        }
-    )
+        })
 
-    override suspend fun getConnectionCount(): ApiResponse<CountResponse> = executeSafely(
-        call =
-        {
-            service.getConnectionCount()
-        }
-    )
+    override suspend fun getConnectionCount(): ApiResponse<CountResponse> = executeSafely(call = {
+        service.getConnectionCount()
+    })
 
-    override suspend fun getAllInvites(): ApiResponse<MyInvitations> = executeSafely(
-        call =
-        {
-            service.getAllInvites()
-        }
-    )
+    override suspend fun getAllInvites(): ApiResponse<MyInvitations> = executeSafely(call = {
+        service.getAllInvites()
+    })
 
     override suspend fun sendInvite(sendInviteRequest: SendInviteRequest): ApiResponse<GenericResponse> =
-        executeSafely(
-            call =
-            {
-                service.sendInvite(sendInviteRequest)
-            }
-        )
+        executeSafely(call = {
+            service.sendInvite(sendInviteRequest)
+        })
 
     override suspend fun acceptOrRejectInvitation(
-        accepted: Boolean,
-        inviteId: String
-    ): ApiResponse<GenericResponse> =
-        executeSafely(
-            call =
-            {
-                service.acceptOrRejectInvitation(accepted, inviteId)
-            }
-        )
+        accepted: Boolean, inviteId: String
+    ): ApiResponse<GenericResponse> = executeSafely(call = {
+        service.acceptOrRejectInvitation(accepted, inviteId)
+    })
 
     override suspend fun acceptOrRejectAllInvitations(accepted: Boolean): ApiResponse<GenericResponse> =
-        executeSafely(
-            call =
-            {
-                service.acceptOrRejectAllInvitations(accepted)
-            }
-        )
+        executeSafely(call = {
+            service.acceptOrRejectAllInvitations(accepted)
+        })
 
     override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadRequest): ApiResponse<UploadFilesResponse> {
-        val moduleName = attachmentUploadRequest.moduleName
-            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val moduleName =
+            attachmentUploadRequest.moduleName.toRequestBody("text/plain".toMediaTypeOrNull())
         val id = attachmentUploadRequest._id.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val parts = attachmentUploadRequest.files?.map { file ->
@@ -100,8 +82,8 @@ class DashboardRepository @Inject constructor(
     }
 
     override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadV2Request): ApiResponse<UploadFilesV2Response> {
-        val moduleName = attachmentUploadRequest.moduleName
-            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val moduleName =
+            attachmentUploadRequest.moduleName.toRequestBody("text/plain".toMediaTypeOrNull())
         val moduleId =
             attachmentUploadRequest.moduleId.toRequestBody("text/plain".toMediaTypeOrNull())
         val metadata =
@@ -122,8 +104,8 @@ class DashboardRepository @Inject constructor(
         hasFiles: Boolean,
         eventWithFileUploadV2Request: EventWithFileUploadV2Request
     ): ApiResponse<EventV2Response> {
-        val message = eventWithFileUploadV2Request.message
-            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val message =
+            eventWithFileUploadV2Request.message.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val metadata =
             eventWithFileUploadV2Request.metadata.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -150,156 +132,106 @@ class DashboardRepository @Inject constructor(
         hasFiles: Boolean,
         eventCommentOnlyUploadV2Request: EventCommentOnlyUploadV2Request
     ): ApiResponse<EventV2Response> {
-        val message = eventCommentOnlyUploadV2Request.message
-            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val message =
+            eventCommentOnlyUploadV2Request.message.toRequestBody("text/plain".toMediaTypeOrNull())
 
         return executeSafely(call = {
             service.uploadEventWithoutFilesV2(
-                event = event,
-                taskId = taskId,
-                hasFiles = hasFiles,
-                message = message
+                event = event, taskId = taskId, hasFiles = hasFiles, message = message
             )
         })
     }
 
     override suspend fun getFilesByModuleId(
-        module: String,
-        moduleId: String
-    ): ApiResponse<GetAllFilesResponse> =
-        executeSafely(call = {
-            service.getFilesByModuleId(module, moduleId)
-        })
+        module: String, moduleId: String
+    ): ApiResponse<GetAllFilesResponse> = executeSafely(call = {
+        service.getFilesByModuleId(module, moduleId)
+    })
 
 
     override suspend fun getAdminsOrUsersList(role: String): ApiResponse<AdminUsersResponse> =
-        executeSafely(
-            call =
-            {
-                service.getAdminsOrUsersList(role)
-            }
-        )
+        executeSafely(call = {
+            service.getAdminsOrUsersList(role)
+        })
 
     override suspend fun syncContacts(
         contacts: SyncContactsRequest
-    ): ApiResponse<GetContactsResponse> = executeSafely(
-        call =
-        {
-            service.syncContacts(contacts)
-        }
-    )
+    ): ApiResponse<GetContactsResponse> = executeSafely(call = {
+        service.syncContacts(contacts)
+    })
 
     override suspend fun syncDeletedContacts(
-        deleteAll: Boolean,
-        contacts: SyncContactsRequest
-    ): ApiResponse<GetContactsResponse> = executeSafely(
-        call =
-        {
-            service.syncDeletedContacts(deleteAll, contacts)
-        }
-    )
+        deleteAll: Boolean, contacts: SyncContactsRequest
+    ): ApiResponse<GetContactsResponse> = executeSafely(call = {
+        service.syncDeletedContacts(deleteAll, contacts)
+    })
 
     override suspend fun syncContactsEnabled(
-        phoneNumber: String,
-        enabled: Boolean
-    ): ApiResponse<ContactSyncEnableResponse> = executeSafely(
-        call =
-        {
-            service.syncContactsEnabled(phoneNumber, enabled)
-        }
-    )
+        phoneNumber: String, enabled: Boolean
+    ): ApiResponse<ContactSyncEnableResponse> = executeSafely(call = {
+        service.syncContactsEnabled(phoneNumber, enabled)
+    })
 
     override suspend fun getAllConnectionsV2(): ApiResponse<AllCeibroConnections> =
-        executeSafely(
-            call =
-            {
-                service.getAllConnectionsV2()
-            }
-        )
+        executeSafely(call = {
+            service.getAllConnectionsV2()
+        })
 
     override suspend fun blockUser(contactId: String): ApiResponse<BlockUserResponse> =
-        executeSafely(
-            call =
-            {
-                service.blockUser(contactId)
-            }
-        )
+        executeSafely(call = {
+            service.blockUser(contactId)
+        })
 
     override suspend fun unblockUser(contactId: String): ApiResponse<BlockUserResponse> =
-        executeSafely(
-            call =
-            {
-                service.unblockUser(contactId)
-            }
-        )
+        executeSafely(call = {
+            service.unblockUser(contactId)
+        })
 
     override suspend fun getRecentCeibroConnections(): ApiResponse<RecentCeibroConnections> =
-        executeSafely(
-            call =
-            {
-                service.getRecentCeibroConnections()
-            }
-        )
+        executeSafely(call = {
+            service.getRecentCeibroConnections()
+        })
 
 
-    override suspend fun createConnectionGroup(connectionGroupRequest: NewConnectionGroupRequest): ApiResponse<CeibroConnectionGroupV2> =
-        executeSafely(
-            call =
-            {
-                service.createConnectionGroup(connectionGroupRequest)
-            }
-        )
+    override suspend fun createConnectionGroup(connectionGroupRequest: CreateGroupRequest): ApiResponse<CeibroConnectionGroupV2> =
+        executeSafely(call = {
+            service.createConnectionGroup(connectionGroupRequest)
+        })
 
 
     override suspend fun getConnectionGroups(): ApiResponse<GetConnectionGroupsResponse> =
-        executeSafely(
-            call =
-            {
-                service.getConnectionGroups()
-            }
-        )
+        executeSafely(call = {
+            service.getConnectionGroups()
+        })
 
 
     override suspend fun deleteConnectionGroup(groupId: String): ApiResponse<GenericResponse> =
-        executeSafely(
-            call =
-            {
-                service.deleteConnectionGroup(groupId)
-            }
-        )
+        executeSafely(call = {
+            service.deleteConnectionGroup(groupId)
+        })
 
 
-    override suspend fun updateConnectionGroup(groupId: String, connectionGroupRequest: NewConnectionGroupRequest): ApiResponse<CeibroConnectionGroupV2> =
-        executeSafely(
-            call =
-            {
-                service.updateConnectionGroup(groupId, connectionGroupRequest)
-            }
-        )
+    override suspend fun updateConnectionGroup(
+        groupId: String, connectionGroupRequest: CreateGroupRequest
+    ): ApiResponse<CeibroConnectionGroupV2> = executeSafely(call = {
+        service.updateConnectionGroup(groupId, connectionGroupRequest)
+    })
 
 
-    override suspend fun updateConnectionGroupWithoutName(groupId: String, connectionGroupUpdateRequest: ConnectionGroupUpdateWithoutNameRequest): ApiResponse<CeibroConnectionGroupV2> =
-        executeSafely(
-            call =
-            {
-                service.updateConnectionGroupWithoutName(groupId, connectionGroupUpdateRequest)
-            }
-        )
+    override suspend fun updateConnectionGroupWithoutName(
+        groupId: String, connectionGroupUpdateRequest: ConnectionGroupUpdateWithoutNameRequest
+    ): ApiResponse<CeibroConnectionGroupV2> = executeSafely(call = {
+        service.updateConnectionGroupWithoutName(groupId, connectionGroupUpdateRequest)
+    })
 
-   override suspend fun deleteConnectionGroupInBulk( deleteBulkGroupRequest: DeleteGroupInBulkRequest): ApiResponse<GenericResponse> =
-        executeSafely(
-            call =
-            {
-                service.deleteConnectionGroupsInBulk(deleteBulkGroupRequest)
-            }
-        )
+    override suspend fun deleteConnectionGroupInBulk(deleteBulkGroupRequest: DeleteGroupInBulkRequest): ApiResponse<GenericResponse> =
+        executeSafely(call = {
+            service.deleteConnectionGroupsInBulk(deleteBulkGroupRequest)
+        })
 
-   override suspend fun validateUserToken(): ApiResponse<TokenValidityResponse> =
-        executeSafely(
-            call =
-            {
-                service.validateUserToken()
-            }
-        )
+    override suspend fun validateUserToken(): ApiResponse<TokenValidityResponse> =
+        executeSafely(call = {
+            service.validateUserToken()
+        })
 
 }

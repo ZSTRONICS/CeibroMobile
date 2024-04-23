@@ -89,12 +89,12 @@ class GroupAssigneeVM @Inject constructor(
         loadRecentConnections()
         launch {
             val connectionsData = connectionsV2Dao.getAll()
-            if (isConfirmer.value == true || isViewer.value == true) {
+         //   if (isConfirmer.value == true || isViewer.value == true) {
                 val list = connectionsData.filter { it.isCeiborUser }
                 processConnectionsData(list, callBack)
-            } else {
-                processConnectionsData(connectionsData, callBack)
-            }
+        //    } else {
+        //        processConnectionsData(connectionsData, callBack)
+        //    }
         }
     }
 
@@ -136,11 +136,8 @@ class GroupAssigneeVM @Inject constructor(
                     val oldSelectedContacts = selectedContacts.value
 
                     var updatedAllContacts: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
-                    updatedAllContacts = if (isConfirmer.value == true || isViewer.value == true) {
-                        allContacts.filter { it.isCeiborUser }.toMutableList()
-                    } else {
-                        allContacts
-                    }
+                    updatedAllContacts = allContacts.filter { it.isCeiborUser }.toMutableList()
+
 
                     if (!oldSelectedContacts.isNullOrEmpty()) {
                         oldSelectedContacts.forEach { oldContact ->

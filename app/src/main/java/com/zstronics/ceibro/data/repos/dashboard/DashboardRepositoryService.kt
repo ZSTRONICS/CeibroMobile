@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBul
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
@@ -136,7 +137,7 @@ interface DashboardRepositoryService {
 
     @POST("v2/users/groups")
     suspend fun createConnectionGroup(
-        @Body connectionGroupRequest: NewConnectionGroupRequest
+        @Body connectionGroupRequest: CreateGroupRequest
     ): Response<CeibroConnectionGroupV2>
 
     @GET("v2/users/groups")
@@ -150,7 +151,7 @@ interface DashboardRepositoryService {
     @PATCH("v2/users/groups/{groupId}")
     suspend fun updateConnectionGroup(
         @Path("groupId") groupId: String,
-        @Body connectionGroupRequest: NewConnectionGroupRequest
+        @Body connectionGroupRequest: CreateGroupRequest
     ): Response<CeibroConnectionGroupV2>
 
     @PATCH("v2/users/groups/{groupId}")

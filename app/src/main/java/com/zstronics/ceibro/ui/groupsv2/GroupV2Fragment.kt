@@ -198,6 +198,7 @@ class GroupV2Fragment :
             }
         }
         adapter.renameClickListener = { item ->
+            viewModel.updateGroupData(item)
             openUpdateGroupSheet(item)
         }
 
@@ -303,8 +304,8 @@ class GroupV2Fragment :
             false
         )
 
-        sheet.createGroupClickListener = { groupName, selectedContactIds ->
-            viewModel.createConnectionGroup(groupName, selectedContactIds) { createdGroup ->
+        sheet.createGroupClickListener = { groupName ->
+            viewModel.createConnectionGroup(groupName) { createdGroup ->
                 sheet.dismiss()
 
                 val allOriginalGroups = viewModel.originalConnectionGroups
@@ -332,15 +333,74 @@ class GroupV2Fragment :
         sheet.updateCallBack = { type ->
 
             if (type.equals("Admin", true)) {
-                navigateForResult(R.id.assigneeFragment, GROUP_ADMIN_REQUEST_CODE)
+                navigateForResult(R.id.groupAssigneeFragment, GROUP_ADMIN_REQUEST_CODE)
             } else if (type.equals("Assign", true)) {
-                navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE)
+
+                val viewerList = viewModel.viewerSelectedContacts.value ?: mutableListOf()
+
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewModel.selectedContacts.value?.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewModel.viewerSelfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", false)
+                bundle.putBoolean("isViewer", false)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    viewerList.toTypedArray()
+                )
+
+                navigateForResult(R.id.groupAssigneeFragment, ASSIGNEE_REQUEST_CODE)
             } else if (type.equals("Confirmer", true)) {
-                navigateForResult(R.id.assigneeFragment, CONFIRMER_REQUEST_CODE)
+                val list = mutableListOf<AllCeibroConnections.CeibroConnection>()
+                val viewerList = viewModel.viewerSelectedContacts.value ?: mutableListOf()
+
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    list.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewModel.confirmerSelfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", true)
+                bundle.putBoolean("isViewer", false)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    viewerList.toTypedArray()
+                )
+                navigateForResult(R.id.groupAssigneeFragment, CONFIRMER_REQUEST_CODE, bundle)
             } else if (type.equals("Viewer", true)) {
-                navigateForResult(R.id.assigneeFragment, VIEWER_REQUEST_CODE)
+
+                val selected = viewModel.selectedContacts.value ?: mutableListOf()
+                val assigneeList = mutableListOf<AllCeibroConnections.CeibroConnection>()
+                selected.forEach {
+                    assigneeList.add(it.copy())
+                }
+                val confirmer = viewModel.confirmerSelectedContacts.value
+                if (viewModel.confirmerSelfAssigned.value != true) {
+                    confirmer?.let {
+                        if (it.size > 0) {
+                            assigneeList.add(it[0].copy())
+                        }
+                    }
+                }
+
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewModel.viewerSelectedContacts.value?.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewModel.viewerSelfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", false)
+                bundle.putBoolean("isViewer", true)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    assigneeList.toTypedArray()
+                )
+
+                navigateForResult(R.id.groupAssigneeFragment, VIEWER_REQUEST_CODE, bundle)
             } else if (type.equals("ShareWith", true)) {
-                navigateForResult(R.id.assigneeFragment, SHARE_REQUEST_CODE)
+                navigateForResult(R.id.groupAssigneeFragment, SHARE_REQUEST_CODE)
             }
         }
 
@@ -375,12 +435,10 @@ class GroupV2Fragment :
         )
 
 
-        sheet.updateGroupClickListener = { item, groupName, selectedContactIds, groupNameChanged ->
+        sheet.updateGroupClickListener = { item, groupName, isGroupNameSame ->
             viewModel.updateConnectionGroup(
                 item,
-                groupName,
-                selectedContactIds,
-                groupNameChanged
+                groupName, isGroupNameSame
             ) { updatedGroup ->
 
                 val allOriginalGroups = viewModel.originalConnectionGroups
@@ -402,6 +460,80 @@ class GroupV2Fragment :
                 sheet.dismiss()
             }
         }
+        sheet.updateCallBack = { type ->
+
+            if (type.equals("Admin", true)) {
+                navigateForResult(R.id.groupAssigneeFragment, GROUP_ADMIN_REQUEST_CODE)
+            } else if (type.equals("Assign", true)) {
+
+                val viewerList = viewModel.viewerSelectedContacts.value ?: mutableListOf()
+
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewModel.selectedContacts.value?.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewModel.viewerSelfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", false)
+                bundle.putBoolean("isViewer", false)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    viewerList.toTypedArray()
+                )
+
+                navigateForResult(R.id.groupAssigneeFragment, ASSIGNEE_REQUEST_CODE)
+            } else if (type.equals("Confirmer", true)) {
+                val list = mutableListOf<AllCeibroConnections.CeibroConnection>()
+                val viewerList = viewModel.viewerSelectedContacts.value ?: mutableListOf()
+
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    list.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewModel.confirmerSelfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", true)
+                bundle.putBoolean("isViewer", false)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    viewerList.toTypedArray()
+                )
+                navigateForResult(R.id.groupAssigneeFragment, CONFIRMER_REQUEST_CODE, bundle)
+            } else if (type.equals("Viewer", true)) {
+
+                val selected = viewModel.selectedContacts.value ?: mutableListOf()
+                val assigneeList = mutableListOf<AllCeibroConnections.CeibroConnection>()
+                selected.forEach {
+                    assigneeList.add(it.copy())
+                }
+                val confirmer = viewModel.confirmerSelectedContacts.value
+                if (viewModel.confirmerSelfAssigned.value != true) {
+                    confirmer?.let {
+                        if (it.size > 0) {
+                            assigneeList.add(it[0].copy())
+                        }
+                    }
+                }
+
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewModel.viewerSelectedContacts.value?.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewModel.viewerSelfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", false)
+                bundle.putBoolean("isViewer", true)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    assigneeList.toTypedArray()
+                )
+
+                navigateForResult(R.id.groupAssigneeFragment, VIEWER_REQUEST_CODE, bundle)
+            } else if (type.equals("ShareWith", true)) {
+                navigateForResult(R.id.groupAssigneeFragment, SHARE_REQUEST_CODE)
+            }
+        }
+
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "AddNewGroupV2Sheet")

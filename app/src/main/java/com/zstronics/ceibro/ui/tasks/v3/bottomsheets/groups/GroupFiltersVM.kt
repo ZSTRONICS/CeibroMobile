@@ -9,9 +9,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionGroupUpdateWithoutNameRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -52,12 +50,12 @@ class GroupFiltersVM @Inject constructor(
         }
     }
 
-    fun createConnectionGroup(
+ /*   fun createConnectionGroup(
         name: String,
         contacts: List<String>,
         callBack: (createdGroup: CeibroConnectionGroupV2) -> Unit
     ) {
-        val requestBody = NewConnectionGroupRequest(
+        val requestBody = CreateGroupRequest(
             name = name,
             contacts = contacts
         )
@@ -126,7 +124,7 @@ class GroupFiltersVM @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
     fun deleteConnectionGroup(groupId: String, callBack: () -> Unit) {
         loading(true)
