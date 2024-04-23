@@ -53,26 +53,31 @@ class GroupV2VM @Inject constructor(
     var adminSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
     var adminAssignToText: MutableLiveData<String> = MutableLiveData()
+    var oldAdminAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var assigneeSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var assigneeSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
     var assigneeAssignToText: MutableLiveData<String> = MutableLiveData()
+    var oldAssigneeAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var confirmerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var confirmerSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
     var confirmerAssignToText: MutableLiveData<String> = MutableLiveData()
+    var oldConfirmerAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var viewerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var viewerSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
     var viewerAssignToText: MutableLiveData<String> = MutableLiveData()
+    var oldViewerAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var shareSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var shareSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
     var shareAssignToText: MutableLiveData<String> = MutableLiveData()
+    var oldShareAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
@@ -431,6 +436,7 @@ class GroupV2VM @Inject constructor(
         shareSelfAssigned.value = false
         shareSelectedContacts.value = mutableListOf()
         shareAssignToText.value = ""
+        resetOldStrings()
 
     }
 
@@ -471,6 +477,7 @@ class GroupV2VM @Inject constructor(
             }
             adminSelectedContacts.value = groupAdmins
             adminAssignToText.value = assigneeMembers
+            oldAdminAssignToText.value = assigneeMembers
 
         }
     }
@@ -510,6 +517,7 @@ class GroupV2VM @Inject constructor(
             }
             assigneeSelectedContacts.value = assigneeGroup
             assigneeAssignToText.value = assigneeMembers
+            oldAssigneeAssignToText.value = assigneeMembers
         }
     }
 
@@ -550,6 +558,7 @@ class GroupV2VM @Inject constructor(
             }
             confirmerSelectedContacts.value = confirmerGroup
             confirmerAssignToText.value = assigneeMembers
+            oldConfirmerAssignToText.value = assigneeMembers
         }
     }
 
@@ -590,6 +599,7 @@ class GroupV2VM @Inject constructor(
             }
             viewerSelectedContacts.value = viewerGroup
             viewerAssignToText.value = assigneeMembers
+            oldViewerAssignToText.value = assigneeMembers
         }
     }
 
@@ -629,6 +639,37 @@ class GroupV2VM @Inject constructor(
             }
             shareSelectedContacts.value = shareGroup
             shareAssignToText.value = assigneeMembers
+            oldShareAssignToText.value = assigneeMembers
         }
+    }
+
+    fun isOldAndNewDataSame(): Boolean {
+
+        val list = ArrayList<String>()
+        list.add(oldAdminAssignToText.value ?: "")
+        list.add(oldShareAssignToText.value ?: "")
+        list.add(oldViewerAssignToText.value ?: "")
+        list.add(oldConfirmerAssignToText.value ?: "")
+        list.add(oldAssigneeAssignToText.value ?: "")
+
+
+        val list1 = ArrayList<String>()
+        list1.add(adminAssignToText.value ?: "")
+        list1.add(shareAssignToText.value ?: "")
+        list1.add(viewerAssignToText.value ?: "")
+        list1.add(confirmerAssignToText.value ?: "")
+        list1.add(assigneeAssignToText.value ?: "")
+
+
+        return list == list1
+    }
+
+    fun resetOldStrings() {
+
+        oldAdminAssignToText.value = ""
+        oldShareAssignToText.value = ""
+        oldViewerAssignToText.value = ""
+        oldConfirmerAssignToText.value = ""
+        oldAssigneeAssignToText.value = ""
     }
 }

@@ -161,6 +161,7 @@ class AddNewGroupV2Sheet(
         }
 
         binding.closeBtn.setOnClickListener {
+            viewModel.resetOldStrings()
             dismiss()
         }
 
@@ -202,7 +203,13 @@ class AddNewGroupV2Sheet(
                 shortToastNow("Assignee required")
             } else {
                 if (isUpdating) {
+
                     oldGroup?.let { item ->
+                        if (item.name.equals(groupName, true) && viewModel.isOldAndNewDataSame()) {
+                            shortToastNow("Please update group data")
+                            return@let
+                        }
+
                         updateGroupClickListener?.invoke(
                             item,
                             groupName,
