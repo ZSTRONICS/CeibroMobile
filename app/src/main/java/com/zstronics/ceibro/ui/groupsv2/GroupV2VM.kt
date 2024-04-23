@@ -309,7 +309,7 @@ class GroupV2VM @Inject constructor(
 
 
         loading(true)
-        if (isGroupNameSame) {
+        if (!isGroupNameSame) {
 
             launch {
                 when (val response =
