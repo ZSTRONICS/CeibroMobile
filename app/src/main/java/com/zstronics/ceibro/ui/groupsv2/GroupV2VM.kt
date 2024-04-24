@@ -99,7 +99,7 @@ class GroupV2VM @Inject constructor(
         getAllConnectionGroups()
     }
 
-    private fun getAllConnectionGroups() {
+     fun getAllConnectionGroups() {
         launch {
             val connections = connectionsV2Dao.getAll()
             _connections.postValue(connections.toMutableList())

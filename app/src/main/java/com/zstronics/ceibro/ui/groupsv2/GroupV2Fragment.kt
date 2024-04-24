@@ -31,8 +31,6 @@ import com.zstronics.ceibro.ui.contacts.toLightGroupContactsFromTaskMember
 import com.zstronics.ceibro.ui.groupsv2.adapter.AllGroupsAdapterSectionRecycler
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupSectionHeader
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.AllDrawingsAdapterSectionRecycler
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingSectionHeader
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -73,7 +71,7 @@ class GroupV2Fragment :
                         mViewDataBinding.cbSelectAll.isChecked = false
                         mViewDataBinding.selectionHeader.visibility = View.VISIBLE
                         viewState.setAddTaskButtonVisibility.postValue(false)
-                        adapter.changeEditFlag(true)
+                        sectionedAdapter.changeEditFlag(true)
                     }
                 }
             }
@@ -82,8 +80,8 @@ class GroupV2Fragment :
                 mViewDataBinding.cbSelectAll.isChecked = false
                 mViewDataBinding.selectionHeader.visibility = View.GONE
                 viewState.setAddTaskButtonVisibility.postValue(true)
-                adapter.selectedGroup = arrayListOf()
-                adapter.changeEditFlag(false)
+                sectionedAdapter.unSelectAllGroups()
+                sectionedAdapter.changeEditFlag(false)
                 mViewDataBinding.deleteAll.isClickable = false
                 mViewDataBinding.deleteAll.isEnabled = false
                 mViewDataBinding.groupMenuBtn.isEnabled = true
@@ -93,9 +91,10 @@ class GroupV2Fragment :
 
             R.id.deleteAll -> {
                 deleteGroupDialog(requireContext()) {
-                    if (adapter.selectedGroup.size > 0) {
-                        viewModel.deleteConnectionGroupsInBulk(adapter.selectedGroup) { list ->
-                            list.forEach { item ->
+                    if (sectionedAdapter.selectedGroup.size > 0) {
+                        viewModel.deleteConnectionGroupsInBulk(sectionedAdapter.selectedGroup) { list ->
+                            viewModel.getAllConnectionGroups()
+                            /*    list.forEach { item ->
                                 val allOriginalGroups = viewModel.originalConnectionGroups
                                 val groupFound = allOriginalGroups.find { it._id == item }
                                 if (groupFound != null) {
@@ -105,14 +104,14 @@ class GroupV2Fragment :
                                 }
 
                                 val adapterItemFound =
-                                    adapter.groupListItems.find { it._id == item }
+                                    sectionedAdapter.groupListItems.find { it._id == item }
                                 if (adapterItemFound != null) {
-                                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                                    adapter.groupListItems.removeAt(index1)
-                                    adapter.notifyItemRemoved(index1)
+                                    val index1 = sectionedAdapter.groupListItems.indexOf(adapterItemFound)
+                                    sectionedAdapter.groupListItems.removeAt(index1)
+                                    sectionedAdapter.notifyItemRemoved(index1)
                                 }
 
-                            }
+                            }*/
 
 
                             mViewDataBinding.deleteAll.isClickable = false
@@ -120,8 +119,8 @@ class GroupV2Fragment :
                             mViewDataBinding.cbSelectAll.isChecked = false
                             mViewDataBinding.selectionHeader.visibility = View.GONE
                             viewState.setAddTaskButtonVisibility.postValue(true)
-                            adapter.selectedGroup = arrayListOf()
-                            adapter.changeEditFlag(false)
+                            sectionedAdapter.unSelectAllGroups()
+                            sectionedAdapter.changeEditFlag(false)
                             mViewDataBinding.groupMenuBtn.isEnabled = true
                             val newColor = ContextCompat.getColor(requireContext(), R.color.appBlue)
                             mViewDataBinding.groupMenuBtn.setColorFilter(
@@ -147,8 +146,7 @@ class GroupV2Fragment :
     }
 
 
-    @Inject
-    lateinit var adapter: GroupV2Adapter
+
 
     private lateinit var sectionedAdapter: AllGroupsAdapterSectionRecycler
     private var sectionList: MutableList<GroupSectionHeader> = mutableListOf()
@@ -304,7 +302,9 @@ class GroupV2Fragment :
 
         sectionedAdapter.deleteClickListener = { item ->
             viewModel.deleteConnectionGroup(item._id) {
-                val allOriginalGroups = viewModel.originalConnectionGroups
+
+                viewModel.getAllConnectionGroups()
+                /*val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == item._id }
                 if (groupFound != null) {
                     val index = allOriginalGroups.indexOf(groupFound)
@@ -312,12 +312,12 @@ class GroupV2Fragment :
                     viewModel.originalConnectionGroups = allOriginalGroups
                 }
 
-                val adapterItemFound = adapter.groupListItems.find { it._id == item._id }
+                val adapterItemFound = sectionedAdapter.groupListItems.find { it._id == item._id }
                 if (adapterItemFound != null) {
-                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                    adapter.groupListItems.removeAt(index1)
-                    adapter.notifyItemRemoved(index1)
-                }
+                    val index1 =  sectionedAdapter.groupListItems.indexOf(adapterItemFound)
+                    sectionedAdapter.groupListItems.removeAt(index1)
+                    sectionedAdapter.notifyItemRemoved(index1)
+                }*/
             }
         }
         sectionedAdapter.renameClickListener = { item ->
@@ -325,7 +325,7 @@ class GroupV2Fragment :
             openUpdateGroupSheet(item)
         }
 
-        adapter.itemClickListener = { list ->
+        sectionedAdapter.itemClickListener = { list ->
 
             mViewDataBinding.cbSelectAll.isChecked =
                 list.size == viewModel.originalConnectionGroups.size
@@ -343,14 +343,14 @@ class GroupV2Fragment :
         mViewDataBinding.cbSelectAll.setOnClickListener {
             if (mViewDataBinding.cbSelectAll.isChecked) {
 
-                adapter.selectAllGroups(viewModel.originalConnectionGroups)
+                sectionedAdapter.selectAllGroups(viewModel.originalConnectionGroups)
                 mViewDataBinding.deleteAll.isClickable = true
                 mViewDataBinding.deleteAll.isEnabled = true
             } else {
                 mViewDataBinding.deleteAll.isClickable = false
                 mViewDataBinding.deleteAll.isEnabled = false
-                adapter.selectedGroup = arrayListOf()
-                adapter.notifyDataSetChanged()
+                sectionedAdapter.unSelectAllGroups()
+                sectionedAdapter.notifyDataSetChanged()
             }
         }
 
@@ -457,14 +457,14 @@ class GroupV2Fragment :
                     viewModel.originalConnectionGroups = allOriginalGroups
                 }
 
-                val adapterItemFound = adapter.groupListItems.find { it._id == createdGroup._id }
+                val adapterItemFound = sectionedAdapter.groupListItems.find { it._id == createdGroup._id }
                 if (adapterItemFound != null) {
-                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                    adapter.groupListItems[index1] = createdGroup
-                    adapter.notifyItemChanged(index1)
+                    val index1 =  sectionedAdapter.groupListItems.indexOf(adapterItemFound)
+                    sectionedAdapter.groupListItems[index1] = createdGroup
+                    sectionedAdapter.notifyItemChanged(index1)
                 } else {
-                    adapter.groupListItems.add(0, createdGroup)
-                    adapter.notifyItemInserted(0)
+                    sectionedAdapter.groupListItems.add(0, createdGroup)
+                    sectionedAdapter.notifyItemInserted(0)
                 }
             }
         }
@@ -511,7 +511,8 @@ class GroupV2Fragment :
                 groupName, isGroupNameSame
             ) { updatedGroup ->
 
-                val allOriginalGroups = viewModel.originalConnectionGroups
+                viewModel.getAllConnectionGroups()
+         /*       val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
                 if (groupFound != null) {
                     val index = allOriginalGroups.indexOf(groupFound)
@@ -519,13 +520,13 @@ class GroupV2Fragment :
                     viewModel.originalConnectionGroups = allOriginalGroups
                 }
 
-                val adapterItemFound = adapter.groupListItems.find { it._id == updatedGroup._id }
+                val adapterItemFound = sectionedAdapter.groupListItems.find { it._id == updatedGroup._id }
                 if (adapterItemFound != null) {
-                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                    adapter.groupListItems[index1] = updatedGroup
-                    adapter.notifyItemChanged(index1)
+                    val index1 = sectionedAdapter.groupListItems.indexOf(adapterItemFound)
+                    sectionedAdapter.groupListItems[index1] = updatedGroup
+                    sectionedAdapter.notifyItemChanged(index1)
                 }
-
+*/
 
                 sheet.dismiss()
             }
@@ -807,7 +808,7 @@ class GroupV2Fragment :
     private fun getContactsFromNextScreen(type: String) {
         if (type.equals("Admin", true)) {
 
-            val selectedContacts= viewModel.adminSelectedContacts.value?: mutableListOf()
+            val selectedContacts = viewModel.adminSelectedContacts.value ?: mutableListOf()
             val bundle = Bundle()
             bundle.putParcelableArray(
                 "contacts",
@@ -820,7 +821,7 @@ class GroupV2Fragment :
             navigateForResult(R.id.groupAssigneeFragment, GROUP_ADMIN_REQUEST_CODE, bundle)
         } else if (type.equals("Assign", true)) {
 
-            val selectedContacts = viewModel.assigneeSelectedContacts.value?: mutableListOf()
+            val selectedContacts = viewModel.assigneeSelectedContacts.value ?: mutableListOf()
             val disabledContacts = viewModel.viewerSelectedContacts.value ?: mutableListOf()
 
             val bundle = Bundle()
@@ -836,10 +837,10 @@ class GroupV2Fragment :
                 disabledContacts.toTypedArray()
             )
 
-            navigateForResult(R.id.groupAssigneeFragment, ASSIGNEE_REQUEST_CODE,bundle)
+            navigateForResult(R.id.groupAssigneeFragment, ASSIGNEE_REQUEST_CODE, bundle)
         } else if (type.equals("Confirmer", true)) {
-            val selectedContacts = viewModel.confirmerSelectedContacts.value?: mutableListOf()
-            val disabledContacts = viewModel.viewerSelectedContacts.value?: mutableListOf()
+            val selectedContacts = viewModel.confirmerSelectedContacts.value ?: mutableListOf()
+            val disabledContacts = viewModel.viewerSelectedContacts.value ?: mutableListOf()
 
             val bundle = Bundle()
             bundle.putParcelableArray(
@@ -854,10 +855,10 @@ class GroupV2Fragment :
                 disabledContacts.toTypedArray()
             )
 
-            navigateForResult(R.id.groupAssigneeFragment, CONFIRMER_REQUEST_CODE,bundle)
+            navigateForResult(R.id.groupAssigneeFragment, CONFIRMER_REQUEST_CODE, bundle)
         } else if (type.equals("Viewer", true)) {
 
-            val selectedContacts = viewModel.viewerSelectedContacts.value?:mutableListOf()
+            val selectedContacts = viewModel.viewerSelectedContacts.value ?: mutableListOf()
 
 
             val assignee = viewModel.assigneeSelectedContacts.value ?: mutableListOf()
@@ -886,7 +887,7 @@ class GroupV2Fragment :
 
             navigateForResult(R.id.groupAssigneeFragment, VIEWER_REQUEST_CODE, bundle)
         } else if (type.equals("ShareWith", true)) {
-            val selectedContacts=viewModel.shareSelectedContacts.value?: mutableListOf()
+            val selectedContacts = viewModel.shareSelectedContacts.value ?: mutableListOf()
             val bundle = Bundle()
             bundle.putParcelableArray(
                 "contacts",

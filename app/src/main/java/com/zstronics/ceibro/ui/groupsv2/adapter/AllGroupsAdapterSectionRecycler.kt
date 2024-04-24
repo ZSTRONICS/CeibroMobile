@@ -1,16 +1,10 @@
 package com.zstronics.ceibro.ui.groupsv2.adapter
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.DownloadManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,27 +15,15 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
-import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.adapter.DrawingAdapter
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 
 class AllGroupsAdapterSectionRecycler(
     val context: Context,
@@ -56,12 +38,15 @@ class AllGroupsAdapterSectionRecycler(
     sectionList
 ) {
 
+    var groupListItems: MutableList<CeibroConnectionGroupV2> = mutableListOf()
+    var selectedGroup: ArrayList<CeibroConnectionGroupV2> = arrayListOf()
 
     var deleteClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var renameClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var openInfoClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var itemClickListener: ((list: ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
     private var editFlag = false
+    private var selectAllGroups = false
 
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -167,29 +152,57 @@ class AllGroupsAdapterSectionRecycler(
                     } else {
                         "(${item.contacts.size} member)"
                     }
+                    if (selectAllGroups) {
+                        if (!selectedGroup.contains(item)) {
+                            selectedGroup.add(item)
+                        }
+                    }
+                    groupCheckBox.isChecked = selectedGroup.contains(item)
+                    if (editFlag) {
+                        groupCheckBox.visibility = View.VISIBLE
+                        groupMenu.visibility = View.GONE
+                    } else {
+                        groupCheckBox.visibility = View.GONE
+                        groupMenu.visibility = View.VISIBLE
+                    }
+                    groupCheckBox.setOnClickListener {
+
+                        if (groupCheckBox.isChecked) {
+                            if (!selectedGroup.contains(groupListItems[position])) {
+                                selectedGroup.add(groupListItems[position])
+                            }
+                        } else {
+                            if (selectedGroup.contains(groupListItems[position])) {
+                                selectedGroup.remove(groupListItems[position])
+                            }
+                        }
+                        itemClickListener?.invoke(selectedGroup)
+                        notifyItemChanged(position)
+                    }
 
                     root.setOnClickListener {
 
-//                        if (editFlag) {
-//
-//
-//                            if (groupCheckBox.isChecked) {
-//                                groupCheckBox.isChecked = false
-//
-//                                if (selectedGroup.contains(groupListItems[position])) {
-//                                    selectedGroup.remove(groupListItems[position])
-//                                }
-//                            } else {
-//                                groupCheckBox.isChecked = true
-//                                if (!selectedGroup.contains(groupListItems[position])) {
-//                                    selectedGroup.add(groupListItems[position])
-//                                }
-//                            }
-//                            itemClickListener?.invoke(selectedGroup)
-//                            notifyItemChanged(position)
-//                        } else {
+                        if (editFlag) {
+
+
+                            if (groupCheckBox.isChecked) {
+                                groupCheckBox.isChecked = false
+
+                                if (selectedGroup.contains(groupListItems[position])) {
+                                    selectedGroup.remove(groupListItems[position])
+                                }
+                            } else {
+                                groupCheckBox.isChecked = true
+                                if (!selectedGroup.contains(groupListItems[position])) {
+                                    selectedGroup.add(groupListItems[position])
+                                }
+                            }
+                            itemClickListener?.invoke(selectedGroup)
+                            notifyItemChanged(position)
+                        } else {
                             openInfoClickListener?.invoke(item)
-//                        }
+                        }
+
                     }
 
                     groupMenu.setOnClickListener {
@@ -332,6 +345,20 @@ class AllGroupsAdapterSectionRecycler(
 
     fun changeEditFlag(editFlag: Boolean) {
         this.editFlag = editFlag
+        // selectAllGroups = editFlag
         notifyDataSetChanged()
     }
+
+    fun selectAllGroups(list: List<CeibroConnectionGroupV2>) {
+        this.selectedGroup.clear()
+        selectAllGroups = true
+        notifyDataSetChanged()
+    }
+
+    fun unSelectAllGroups() {
+        this.selectedGroup.clear()
+        selectAllGroups = false
+        notifyDataSetChanged()
+    }
+
 }
