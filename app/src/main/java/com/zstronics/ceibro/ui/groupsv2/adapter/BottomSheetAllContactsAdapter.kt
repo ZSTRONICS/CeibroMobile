@@ -44,7 +44,7 @@ class BottomSheetAllContactsAdapter @Inject constructor() :
 
     fun setSelectedList(contact: List<SyncDBContactsList.CeibroDBContactsLight>) {
         for (item in dataList) {
-            val matchingContact = contact.find { it.connectionId == item.connectionId || it.connectionId == item.userCeibroData?.id }
+            val matchingContact = contact.find { it.connectionId == item.connectionId || it.ceibroUserId == item.userCeibroData?.id }
             item.isChecked = matchingContact != null
         }
         notifyDataSetChanged()
