@@ -173,8 +173,8 @@ class GroupInfoBottomSheet(val groupData: CeibroConnectionGroupV2?) : BottomShee
                 var sharedWithMembers = ""
 
                 var index = 0
-                for (item in groupData.viewer) {
-                    sharedWithMembers += if (index == groupData.viewer.size - 1) {
+                for (item in groupData.sharedWith) {
+                    sharedWithMembers += if (index == groupData.sharedWith.size - 1) {
                         if (item.firstName.isNotEmpty()) {
                             "${item.firstName} ${item.surName}"
                         } else {
