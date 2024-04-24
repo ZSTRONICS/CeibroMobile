@@ -128,7 +128,6 @@ class GroupV2VM @Inject constructor(
 
 
         val groupName = name
-        val contacts = ArrayList<String>()
         val viewerlist = ArrayList<String>()
         val confirmer = ArrayList<String>()
         val assignToState = ArrayList<AssignedToStateNewEntity>()
@@ -139,24 +138,24 @@ class GroupV2VM @Inject constructor(
             user?.id?.let {
                 viewerlist.add(it)
             }
-            user?.let { contacts.add(it.id) }
+
         }
         viewerSelectedContacts.value?.forEach {
             it.userCeibroData?.let { user ->
                 viewerlist.add(user.id)
-                contacts.add(user.id)
+
             }
         }
         if (confirmerSelfAssigned.value == true) {
             user?.id?.let {
                 confirmer.add(it)
             }
-            user?.let { contacts.add(it.id) }
+
         }
         confirmerSelectedContacts.value?.forEach {
             it.userCeibroData?.let { user ->
                 confirmer.add(user.id)
-                contacts.add(user.id)
+
             }
 
         }
@@ -176,7 +175,7 @@ class GroupV2VM @Inject constructor(
                         userId = it.id
                     )
                 )
-                contacts.add(it.id)
+
             }
         }
         assigneeSelectedContacts.value?.forEach {
@@ -189,7 +188,7 @@ class GroupV2VM @Inject constructor(
                     )
                 )
             }
-            it.userCeibroData?.let { user -> contacts.add(user.id) }
+
         }
 
         if (shareSelfAssigned.value == true) {
@@ -203,7 +202,6 @@ class GroupV2VM @Inject constructor(
 
         val requestBody = CreateGroupRequest(
             name = groupName,
-            contacts = contacts.distinct(),
             viewer = viewerlist.distinct(),
             confirmer = confirmer.distinct(),
             assignedToState = assignToState.distinct(),
@@ -238,7 +236,6 @@ class GroupV2VM @Inject constructor(
     ) {
 
         val groupName = groupName
-        val contacts = ArrayList<String>()
         val viewerlist = ArrayList<String>()
         val confirmer = ArrayList<String>()
         val assignToState = ArrayList<AssignedToStateNewEntity>()
@@ -249,24 +246,24 @@ class GroupV2VM @Inject constructor(
             user?.id?.let {
                 viewerlist.add(it)
             }
-            user?.let { contacts.add(it.id) }
+
         }
         viewerSelectedContacts.value?.forEach {
             it.userCeibroData?.let { user ->
                 viewerlist.add(user.id)
-                contacts.add(user.id)
+
             }
         }
         if (confirmerSelfAssigned.value == true) {
             user?.id?.let {
                 confirmer.add(it)
             }
-            user?.let { contacts.add(it.id) }
+
         }
         confirmerSelectedContacts.value?.forEach {
             it.userCeibroData?.let { user ->
                 confirmer.add(user.id)
-                contacts.add(user.id)
+
             }
 
         }
@@ -286,7 +283,6 @@ class GroupV2VM @Inject constructor(
                         userId = it.id
                     )
                 )
-                contacts.add(it.id)
             }
         }
         assigneeSelectedContacts.value?.forEach {
@@ -299,7 +295,6 @@ class GroupV2VM @Inject constructor(
                     )
                 )
             }
-            it.userCeibroData?.let { user -> contacts.add(user.id) }
         }
 
         if (shareSelfAssigned.value == true) {
@@ -313,7 +308,6 @@ class GroupV2VM @Inject constructor(
 
         val requestBody = CreateGroupRequest(
             name = groupName,
-            contacts = contacts.distinct(),
             viewer = viewerlist.distinct(),
             confirmer = confirmer.distinct(),
             assignedToState = assignToState.distinct(),
@@ -324,7 +318,6 @@ class GroupV2VM @Inject constructor(
         )
 
         val requestBody1 = ConnectionGroupUpdateWithoutNameRequest(
-            contacts = contacts.distinct(),
             viewer = viewerlist.distinct(),
             confirmer = confirmer.distinct(),
             assignedToState = assignToState.distinct(),

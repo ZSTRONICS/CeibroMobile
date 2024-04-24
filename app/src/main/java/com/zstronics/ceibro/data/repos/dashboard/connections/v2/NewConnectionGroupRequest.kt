@@ -14,8 +14,6 @@ data class NewConnectionGroupRequest(
 data class CreateGroupRequest(
     @SerializedName("name")
     val name: String,
-    @SerializedName("contacts")
-    val contacts: List<String>,
     @SerializedName("viewer")
     val viewer: List<String>,
     @SerializedName("confirmer")
@@ -34,8 +32,6 @@ data class CreateGroupRequest(
     )
 
 data class ConnectionGroupUpdateWithoutNameRequest(
-    @SerializedName("contacts")
-    val contacts: List<String>,
     @SerializedName("viewer")
     val viewer: List<String>,
     @SerializedName("confirmer")
