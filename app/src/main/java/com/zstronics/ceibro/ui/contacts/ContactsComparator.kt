@@ -152,14 +152,15 @@ fun List<GroupContact>.toLightDBGroupContacts(): List<SyncDBContactsList.CeibroD
 fun List<TaskMemberDetail>.toLightGroupContactsFromTaskMember(): List<SyncDBContactsList.CeibroDBContactsLight> {
     return this.map { connection ->
         SyncDBContactsList.CeibroDBContactsLight(
-            connectionId = connection.id,
+            connectionId = "",
             contactFirstName = connection.firstName ?: "",
             contactSurName = connection.surName ?: "",
             phoneNumber = connection.phoneNumber ?: "",
             contactFullName = (connection.firstName + connection.surName),
             isCeibroUser = true,
             userCeibroData = null,
-            profilePic = connection.profilePic
+            profilePic = connection.profilePic,
+            ceibroUserId = connection.id
         )
     }
 }
