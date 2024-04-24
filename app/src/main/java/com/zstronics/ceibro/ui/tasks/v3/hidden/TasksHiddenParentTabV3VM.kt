@@ -624,7 +624,7 @@ class TasksHiddenParentTabV3VM @Inject constructor(
         }
 
         selectedGroups.forEach { group ->
-            groupConnections.addAll(group.contacts)
+//            groupConnections.addAll(group.contacts)
         }
 
         val lightConnectionContacts = connection.toLightDBContacts()

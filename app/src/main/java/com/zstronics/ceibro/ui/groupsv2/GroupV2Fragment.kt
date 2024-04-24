@@ -15,6 +15,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
@@ -26,7 +27,11 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnection
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
+import com.zstronics.ceibro.ui.groupsv2.adapter.AllGroupsAdapterSectionRecycler
+import com.zstronics.ceibro.ui.groupsv2.adapter.GroupSectionHeader
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.AllDrawingsAdapterSectionRecycler
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingSectionHeader
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -144,46 +149,159 @@ class GroupV2Fragment :
     @Inject
     lateinit var adapter: GroupV2Adapter
 
+    private lateinit var sectionedAdapter: AllGroupsAdapterSectionRecycler
+    private var sectionList: MutableList<GroupSectionHeader> = mutableListOf()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sectionList.add(
+            0,
+            GroupSectionHeader(
+                mutableListOf(),
+                getString(R.string.my_groups)
+            )
+        )
+        sectionList.add(
+            1,
+            GroupSectionHeader(
+                mutableListOf(),
+                getString(R.string.other_groups)
+            )
+        )
 
-        mViewDataBinding.groupsRV.adapter = adapter
+        sectionedAdapter = AllGroupsAdapterSectionRecycler(
+            requireContext(),
+            sectionList,
+            networkConnectivityObserver
+        )
+
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        mViewDataBinding.groupsRV.layoutManager = linearLayoutManager
+        mViewDataBinding.groupsRV.setHasFixedSize(true)
+        mViewDataBinding.groupsRV.adapter = sectionedAdapter
+
+
+        viewModel.myGroupData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                sectionList.removeAt(0)
+                sectionList.add(
+                    0, GroupSectionHeader(it, getString(R.string.my_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    GroupSectionHeader(
+                        it,
+                        getString(R.string.my_groups)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+
+            } else {
+                sectionList.removeAt(0)
+                sectionList.add(
+                    0, GroupSectionHeader(mutableListOf(), getString(R.string.my_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    GroupSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.my_groups)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.otherGroupsData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                val groupedByCreatorId = it.groupBy { group -> group.creator.id }
+
+                // Creating an array of arrays where each inner array contains groups with the same creator._id
+                val result = groupedByCreatorId.values.toList()
+
+                if (sectionList.size > 1) {
+                    val iterator = sectionList.iterator()
+                    var count = 0
+
+                    while (iterator.hasNext()) {
+                        if (count > 1) {
+                            iterator.remove()
+                        }
+
+                        iterator.next()
+                        count++
+                    }
+                }
+
+                result.mapIndexed { index, creatorGroups ->
+                    println("otherGroupsData: ${creatorGroups.size} groups: ${creatorGroups}")
+
+                    sectionList.add(
+                        index + 1,
+                        GroupSectionHeader(
+                            creatorGroups.toMutableList(),
+                            "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
+                        )
+                    )
+                    sectionedAdapter.insertNewSection(
+                        GroupSectionHeader(
+                            creatorGroups.toMutableList(),
+                            "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
+                        ), index + 1
+                    )
+                }
+                sectionedAdapter.notifyDataSetChanged()
+
+
+            } else {
+                if (sectionList.size > 1) {
+                    val iterator = sectionList.iterator()
+                    var count = 0
+
+                    while (iterator.hasNext()) {
+                        if (count > 1) {
+                            iterator.remove()
+                        }
+
+                        iterator.next()
+                        count++
+                    }
+                }
+                sectionList.add(
+                    1, GroupSectionHeader(mutableListOf(), getString(R.string.other_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    GroupSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.other_groups)
+                    ), 1
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
+
+//        mViewDataBinding.groupsRV.adapter = adapter
 
         viewModel.connectionGroups.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-                adapter.setList(it, false)
-            } else {
-                adapter.setList(mutableListOf(), false)
-            }
+//            if (!it.isNullOrEmpty()) {
+//                adapter.setList(it, false)
+//            } else {
+//                adapter.setList(mutableListOf(), false)
+//            }
         }
         viewModel.filteredGroups.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-                adapter.setList(it, false)
-            } else {
-                adapter.setList(mutableListOf(), false)
-            }
+//            if (!it.isNullOrEmpty()) {
+//                adapter.setList(it, false)
+//            } else {
+//                adapter.setList(mutableListOf(), false)
+//            }
         }
 
-        adapter.openInfoClickListener = { group ->
+        sectionedAdapter.openInfoClickListener = { group ->
             showGroupInfoBottomSheet(group)
         }
 
-        adapter.itemClickListener = { list ->
-
-            mViewDataBinding.cbSelectAll.isChecked =
-                list.size == viewModel.originalConnectionGroups.size
-            if (list.size > 0) {
-                mViewDataBinding.deleteAll.isClickable = true
-                mViewDataBinding.deleteAll.isEnabled = true
-
-            } else {
-                mViewDataBinding.deleteAll.isClickable = false
-                mViewDataBinding.deleteAll.isEnabled = false
-
-            }
-        }
-        adapter.deleteClickListener = { item ->
+        sectionedAdapter.deleteClickListener = { item ->
             viewModel.deleteConnectionGroup(item._id) {
                 val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == item._id }
@@ -201,9 +319,24 @@ class GroupV2Fragment :
                 }
             }
         }
-        adapter.renameClickListener = { item ->
+        sectionedAdapter.renameClickListener = { item ->
             viewModel.updateGroupData(item)
             openUpdateGroupSheet(item)
+        }
+
+        adapter.itemClickListener = { list ->
+
+            mViewDataBinding.cbSelectAll.isChecked =
+                list.size == viewModel.originalConnectionGroups.size
+            if (list.size > 0) {
+                mViewDataBinding.deleteAll.isClickable = true
+                mViewDataBinding.deleteAll.isEnabled = true
+
+            } else {
+                mViewDataBinding.deleteAll.isClickable = false
+                mViewDataBinding.deleteAll.isEnabled = false
+
+            }
         }
 
         mViewDataBinding.cbSelectAll.setOnClickListener {
@@ -354,13 +487,13 @@ class GroupV2Fragment :
 
         val allOriginalGroups1 = viewModel.originalConnectionGroups
         val groupFound1 = allOriginalGroups1.find { it._id == oldGroup._id }
-        if (groupFound1 != null) {
-            groupToSendToSheet = groupFound1
-            contactToSendToSheet = groupFound1.contacts.toLightDBGroupContacts()
-        } else {
-            groupToSendToSheet = oldGroup
-            contactToSendToSheet = oldGroup.contacts.toLightDBGroupContacts()
-        }
+//        if (groupFound1 != null) {
+//            groupToSendToSheet = groupFound1
+//            contactToSendToSheet = groupFound1.contacts.toLightDBGroupContacts()
+//        } else {
+//            groupToSendToSheet = oldGroup
+//            contactToSendToSheet = oldGroup.contacts.toLightDBGroupContacts()
+//        }
 
         val sheet = AddNewGroupV2Sheet(
             viewModel.connectionsV2Dao,

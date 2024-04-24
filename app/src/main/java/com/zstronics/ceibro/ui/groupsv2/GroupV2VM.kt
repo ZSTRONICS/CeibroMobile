@@ -1,12 +1,14 @@
 package com.zstronics.ceibro.ui.groupsv2
 
 import android.os.Bundle
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionGroupV2Dao
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -82,6 +84,16 @@ class GroupV2VM @Inject constructor(
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
 
+
+    private var originalMyGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
+    private var originalOtherGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
+
+    private val _myGroupData: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = MutableLiveData(mutableListOf())
+    val myGroupData: LiveData<MutableList<CeibroConnectionGroupV2>> = _myGroupData
+
+    private val _otherGroupsData: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = MutableLiveData(mutableListOf())
+    val otherGroupsData: LiveData<MutableList<CeibroConnectionGroupV2>> = _otherGroupsData
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         getAllConnectionGroups()
@@ -94,6 +106,18 @@ class GroupV2VM @Inject constructor(
             val groups = connectionGroupV2Dao.getAllConnectionGroup()
             _connectionGroups.postValue(groups.toMutableList())
             originalConnectionGroups = groups.toMutableList()
+
+            if (groups.isNotEmpty()) {
+
+                val creatorGroups = groups.filter { (it.creator.id == user?.id) } ?: listOf()
+                originalMyGroups = creatorGroups.toMutableList()
+
+                val otherGroups = groups.filter { (it.creator.id != user?.id) } ?: listOf()
+                originalOtherGroups = otherGroups.toMutableList()
+
+                _myGroupData.value = creatorGroups.toMutableList()
+                _otherGroupsData.value = otherGroups.toMutableList()
+            }
         }
     }
 
