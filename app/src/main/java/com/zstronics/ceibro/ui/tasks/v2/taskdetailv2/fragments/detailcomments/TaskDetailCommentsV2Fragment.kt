@@ -1357,7 +1357,7 @@ class TaskDetailCommentsV2Fragment :
     ) {
 
         GlobalScope.launch(Dispatchers.Main) {
-            delay(500)
+            delay(200)
             val drawingObject =
                 downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(triplet.first)
             drawingObject?.let {

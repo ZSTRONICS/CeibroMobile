@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -64,24 +65,26 @@ class ImageViewerFragment :
                     "images" -> {
                         val item =
                             imagePagerAdapter.listItems[imagePagerAdapter.currentVisibleIndex]
-                        EventBus.getDefault().post(LocalEvents.ImageFile(item,it))
                         navigateBack()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            EventBus.getDefault().post(LocalEvents.ImageFile(item, it))
+                        }, 100)
                     }
 
                     "localImages" -> {
                         val item =
                             localImagePagerAdapter.listItems[localImagePagerAdapter.currentVisibleIndex]
+                        navigateBack()
                         item.fileUri?.let {
                             EventBus.getDefault().post(LocalEvents.ImageUri(it))
                         }
-                        navigateBack()
                     }
 
                     "detailViewImages" -> {
                         val item =
                             detailsImagePagerAdapter.listItems[detailsImagePagerAdapter.currentVisibleIndex]
-                        EventBus.getDefault().post(LocalEvents.LocalImageFile(item,it))
                         navigateBack()
+                        EventBus.getDefault().post(LocalEvents.LocalImageFile(item, it))
                     }
                 }
 
