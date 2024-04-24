@@ -168,16 +168,17 @@ class AllGroupsAdapterSectionRecycler(
                     groupCheckBox.setOnClickListener {
 
                         if (groupCheckBox.isChecked) {
-                            if (!selectedGroup.contains(groupListItems[position])) {
-                                selectedGroup.add(groupListItems[position])
+                            if (!selectedGroup.contains(item)) {
+                                selectedGroup.add(item)
                             }
                         } else {
-                            if (selectedGroup.contains(groupListItems[position])) {
-                                selectedGroup.remove(groupListItems[position])
+                            if (selectedGroup.contains(item)) {
+                                selectedGroup.remove(item)
+                                selectAllGroups=false
                             }
                         }
                         itemClickListener?.invoke(selectedGroup)
-                        notifyItemChanged(position)
+                       notifyDataSetChanged()
                     }
 
                     root.setOnClickListener {
@@ -188,17 +189,17 @@ class AllGroupsAdapterSectionRecycler(
                             if (groupCheckBox.isChecked) {
                                 groupCheckBox.isChecked = false
 
-                                if (selectedGroup.contains(groupListItems[position])) {
-                                    selectedGroup.remove(groupListItems[position])
+                                if (selectedGroup.contains(item)) {
+                                    selectedGroup.remove(item)
                                 }
                             } else {
                                 groupCheckBox.isChecked = true
-                                if (!selectedGroup.contains(groupListItems[position])) {
-                                    selectedGroup.add(groupListItems[position])
+                                if (!selectedGroup.contains(item)) {
+                                    selectedGroup.add(item)
                                 }
                             }
                             itemClickListener?.invoke(selectedGroup)
-                            notifyItemChanged(position)
+                          notifyDataSetChanged()
                         } else {
                             openInfoClickListener?.invoke(item)
                         }

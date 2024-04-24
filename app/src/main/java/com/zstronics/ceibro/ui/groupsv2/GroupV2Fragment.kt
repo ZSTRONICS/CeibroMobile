@@ -93,7 +93,7 @@ class GroupV2Fragment :
                 deleteGroupDialog(requireContext()) {
                     if (sectionedAdapter.selectedGroup.size > 0) {
                         viewModel.deleteConnectionGroupsInBulk(sectionedAdapter.selectedGroup) { list ->
-                            viewModel.getAllConnectionGroups()
+                            viewModel.getMyConnectionGroups()
                             /*    list.forEach { item ->
                                 val allOriginalGroups = viewModel.originalConnectionGroups
                                 val groupFound = allOriginalGroups.find { it._id == item }
@@ -303,7 +303,7 @@ class GroupV2Fragment :
         sectionedAdapter.deleteClickListener = { item ->
             viewModel.deleteConnectionGroup(item._id) {
 
-                viewModel.getAllConnectionGroups()
+                viewModel.getMyConnectionGroups()
                 /*val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == item._id }
                 if (groupFound != null) {
@@ -445,7 +445,8 @@ class GroupV2Fragment :
         sheet.createGroupClickListener = { groupName ->
             viewModel.createConnectionGroup(groupName) { createdGroup ->
                 sheet.dismiss()
-
+                viewModel.getMyConnectionGroups()
+                /*
                 val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == createdGroup._id }
                 if (groupFound != null) {
@@ -465,7 +466,7 @@ class GroupV2Fragment :
                 } else {
                     sectionedAdapter.groupListItems.add(0, createdGroup)
                     sectionedAdapter.notifyItemInserted(0)
-                }
+                }*/
             }
         }
         sheet.updateCallBack = { type ->
@@ -511,7 +512,7 @@ class GroupV2Fragment :
                 groupName, isGroupNameSame
             ) { updatedGroup ->
 
-                viewModel.getAllConnectionGroups()
+                viewModel.getMyConnectionGroups()
          /*       val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
                 if (groupFound != null) {

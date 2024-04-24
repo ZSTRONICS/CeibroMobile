@@ -99,7 +99,7 @@ class GroupV2VM @Inject constructor(
         getAllConnectionGroups()
     }
 
-     fun getAllConnectionGroups() {
+     private fun getAllConnectionGroups() {
         launch {
             val connections = connectionsV2Dao.getAll()
             _connections.postValue(connections.toMutableList())
@@ -120,6 +120,26 @@ class GroupV2VM @Inject constructor(
             }
         }
     }
+    fun getMyConnectionGroups() {
+        launch {
+            val groups = connectionGroupV2Dao.getAllConnectionGroup()
+            _connectionGroups.postValue(groups.toMutableList())
+            originalConnectionGroups = groups.toMutableList()
+
+            if (groups.isNotEmpty()) {
+
+                val creatorGroups = groups.filter { (it.creator.id == user?.id) } ?: listOf()
+                originalMyGroups = creatorGroups.toMutableList()
+
+                val otherGroups = groups.filter { (it.creator.id != user?.id) } ?: listOf()
+                originalOtherGroups = otherGroups.toMutableList()
+
+                _myGroupData.value = creatorGroups.toMutableList()
+                _otherGroupsData.value = otherGroups.toMutableList()
+            }
+        }
+    }
+
 
     fun createConnectionGroup(
         name: String,
