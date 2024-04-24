@@ -165,6 +165,10 @@ class GroupV2Fragment :
             }
         }
 
+        adapter.openInfoClickListener = { group ->
+            showGroupInfoBottomSheet(group)
+        }
+
         adapter.itemClickListener = { list ->
 
             mViewDataBinding.cbSelectAll.isChecked =
@@ -430,6 +434,18 @@ class GroupV2Fragment :
             alertDialog.dismiss()
         }
     }
+
+    private fun showGroupInfoBottomSheet(group: CeibroConnectionGroupV2) {
+        val sheet = GroupInfoBottomSheet(group)
+//        sheet.dialog?.window?.setSoftInputMode(
+//            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+//                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+//        );
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "GroupInfoBottomSheet")
+    }
+
 
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == Activity.RESULT_OK) {

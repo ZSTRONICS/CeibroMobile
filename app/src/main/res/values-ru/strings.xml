@@ -330,6 +330,7 @@
     <string name="add_status_heading">Добавить статус</string>
     <string name="update_status_heading">Обновить статус</string>
     <string name="group_name_heading1">Имя группы</string>
+    <string name="group_name_heading2">Имя группы</string>
     <string name="add_group_heading">Добавить группу</string>
     <string name="edit_group_heading">Редактировать группу</string>
     <string name="group_heading">Группа</string>
@@ -431,6 +432,7 @@
     <string name="forward_to_required_heading">Переслать <font color="#D9000D">*</font></string>
     <string name="unable_to_access_new_pin_data">Невозможно получить доступ к новым данным PIN-кода.</string>
     <string name="attach_heading">Прикрепить</string>
+    <string name="group_admin">Администратор группы</string>
     <string name="done_requirements_heading">Выполненные требования</string>
     <string name="documents_heading">Документы</string>
     <string name="library_heading">Библиотека</string>
@@ -442,6 +444,7 @@
     <string name="details_view">Подробности</string>
     <string name="added_details">Добавлена подробная информация</string>
     <string name="task_details_info">Информация о деталях задачи</string>
+    <string name="group_details_info">Информация о деталях группы</string>
     <string name="invited_members">Приглашенные участники</string>
     <string name="added_by">Добавлено</string>
     <string name="forwarded_by">Передано</string>
@@ -622,4 +625,5 @@
     <string name="change_language">Изменение языка</string>
     <string name="token_expired_please_re_login">Срок действия токена истек, пожалуйста, повторно войдите в систему</string>
     <string name="feedback_form">Форма для обратной связи</string>
+    <string name="share_with">Поделиться с</string>
 </resources>

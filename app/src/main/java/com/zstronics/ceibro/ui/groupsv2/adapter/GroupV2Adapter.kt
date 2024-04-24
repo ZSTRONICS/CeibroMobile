@@ -28,6 +28,7 @@ class GroupV2Adapter @Inject constructor() :
 
     var deleteClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var renameClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
+    var openInfoClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var itemClickListener: ((list: ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
     private var editFlag = false
 
@@ -130,6 +131,8 @@ class GroupV2Adapter @Inject constructor() :
                         }
                         itemClickListener?.invoke(selectedGroup)
                         notifyItemChanged(position)
+                    } else {
+                        openInfoClickListener?.invoke(item)
                     }
 
                 }

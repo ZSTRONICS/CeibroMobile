@@ -321,6 +321,7 @@
     <string name="add_status_heading">Add Status</string>
     <string name="update_status_heading">Update Status</string>
     <string name="group_name_heading1">Group Name</string>
+    <string name="group_name_heading2">Group name</string>
     <string name="add_group_heading">Add Group</string>
     <string name="edit_group_heading">Edit Group</string>
     <string name="group_heading">Group</string>
@@ -437,6 +438,7 @@
     <string name="details_view">Details view</string>
     <string name="added_details">Added details</string>
     <string name="task_details_info">Task details info</string>
+    <string name="group_details_info">Group details info</string>
     <string name="invited_members">Invited members</string>
     <string name="added_by">Added by</string>
     <string name="forwarded_by">Forwarded by</string>
