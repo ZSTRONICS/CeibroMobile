@@ -60,7 +60,7 @@ class GroupSelectedContactsChipsAdapter @Inject constructor() :
 
 
             if (item.isCeibroUser) {
-                if (item.userCeibroData?.profilePic.isNullOrEmpty()) {
+                if (item.profilePic.isNullOrEmpty()) {
                     binding.contactInitials.visibility = View.VISIBLE
                     binding.contactImage.visibility = View.GONE
                     var initials = ""

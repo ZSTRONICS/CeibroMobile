@@ -27,6 +27,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnection
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
+import com.zstronics.ceibro.ui.contacts.toLightGroupContactsFromTaskMember
 import com.zstronics.ceibro.ui.groupsv2.adapter.AllGroupsAdapterSectionRecycler
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupSectionHeader
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
@@ -487,13 +488,13 @@ class GroupV2Fragment :
 
         val allOriginalGroups1 = viewModel.originalConnectionGroups
         val groupFound1 = allOriginalGroups1.find { it._id == oldGroup._id }
-//        if (groupFound1 != null) {
-//            groupToSendToSheet = groupFound1
-//            contactToSendToSheet = groupFound1.contacts.toLightDBGroupContacts()
-//        } else {
-//            groupToSendToSheet = oldGroup
-//            contactToSendToSheet = oldGroup.contacts.toLightDBGroupContacts()
-//        }
+        if (groupFound1 != null) {
+            groupToSendToSheet = groupFound1
+            contactToSendToSheet = groupFound1.contacts.toLightGroupContactsFromTaskMember()
+        } else {
+            groupToSendToSheet = oldGroup
+            contactToSendToSheet = oldGroup.contacts.toLightGroupContactsFromTaskMember()
+        }
 
         val sheet = AddNewGroupV2Sheet(
             viewModel.connectionsV2Dao,

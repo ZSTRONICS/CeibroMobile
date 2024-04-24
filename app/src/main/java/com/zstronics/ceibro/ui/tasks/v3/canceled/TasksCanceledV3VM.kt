@@ -24,6 +24,7 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -39,6 +40,7 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.toLightDBContacts
 import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
+import com.zstronics.ceibro.ui.contacts.toLightGroupContactsFromTaskMember
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -546,7 +548,7 @@ class TasksCanceledV3VM @Inject constructor(
 
         val roles = userConnectionAndRoleList.second
         val connection = userConnectionAndRoleList.first
-        val groupConnections: MutableList<GroupContact> = mutableListOf()
+        val groupConnections: MutableList<TaskMemberDetail> = mutableListOf()
 
         if (selectedGroups.isNotEmpty() && roles.isEmpty()) {
             if (!roles.contains("Confirmer")) {
@@ -564,11 +566,11 @@ class TasksCanceledV3VM @Inject constructor(
         }
 
         selectedGroups.forEach { group ->
-//            groupConnections.addAll(group.contacts)
+            groupConnections.addAll(group.contacts)
         }
 
         val lightConnectionContacts = connection.toLightDBContacts()
-        val lightGroupContacts = groupConnections.toLightDBGroupContacts()
+        val lightGroupContacts = groupConnections.toLightGroupContactsFromTaskMember()
 
 
         val combinedList: MutableList<SyncDBContactsList.CeibroDBContactsLight> = mutableListOf()

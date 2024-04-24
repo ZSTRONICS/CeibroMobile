@@ -23,6 +23,8 @@ data class SyncDBContactsList(
         val isCeibroUser: Boolean = false,
         @SerializedName("userCeibroData")
         val userCeibroData: AllCeibroConnections.CeibroConnection.UserCeibroData?,
+        @SerializedName("profilePic")
+        val profilePic: String? = "",
         @Transient
         var beneficiaryPictureUrl: String = "",
         @Transient

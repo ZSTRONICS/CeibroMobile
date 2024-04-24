@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.contacts
 
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GroupContact
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
@@ -144,6 +145,21 @@ fun List<GroupContact>.toLightDBGroupContacts(): List<SyncDBContactsList.CeibroD
             contactFullName = connection.contactFullName,
             isCeibroUser = connection.isCeibroUser,
             userCeibroData = connection.userCeibroData
+        )
+    }
+}
+
+fun List<TaskMemberDetail>.toLightGroupContactsFromTaskMember(): List<SyncDBContactsList.CeibroDBContactsLight> {
+    return this.map { connection ->
+        SyncDBContactsList.CeibroDBContactsLight(
+            connectionId = connection.id,
+            contactFirstName = connection.firstName ?: "",
+            contactSurName = connection.surName ?: "",
+            phoneNumber = connection.phoneNumber ?: "",
+            contactFullName = (connection.firstName + connection.surName),
+            isCeibroUser = true,
+            userCeibroData = null,
+            profilePic = connection.profilePic
         )
     }
 }
