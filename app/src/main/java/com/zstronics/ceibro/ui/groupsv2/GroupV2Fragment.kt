@@ -26,14 +26,11 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
-import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import com.zstronics.ceibro.ui.contacts.toLightGroupContactsFromTaskMember
 import com.zstronics.ceibro.ui.groupsv2.adapter.AllGroupsAdapterSectionRecycler
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupSectionHeader
-import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -144,8 +141,6 @@ class GroupV2Fragment :
             }
         }
     }
-
-
 
 
     private lateinit var sectionedAdapter: AllGroupsAdapterSectionRecycler
@@ -513,21 +508,21 @@ class GroupV2Fragment :
             ) { updatedGroup ->
 
                 viewModel.getMyConnectionGroups()
-         /*       val allOriginalGroups = viewModel.originalConnectionGroups
-                val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
-                if (groupFound != null) {
-                    val index = allOriginalGroups.indexOf(groupFound)
-                    allOriginalGroups[index] = updatedGroup
-                    viewModel.originalConnectionGroups = allOriginalGroups
-                }
+                /*       val allOriginalGroups = viewModel.originalConnectionGroups
+                       val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
+                       if (groupFound != null) {
+                           val index = allOriginalGroups.indexOf(groupFound)
+                           allOriginalGroups[index] = updatedGroup
+                           viewModel.originalConnectionGroups = allOriginalGroups
+                       }
 
-                val adapterItemFound = sectionedAdapter.groupListItems.find { it._id == updatedGroup._id }
-                if (adapterItemFound != null) {
-                    val index1 = sectionedAdapter.groupListItems.indexOf(adapterItemFound)
-                    sectionedAdapter.groupListItems[index1] = updatedGroup
-                    sectionedAdapter.notifyItemChanged(index1)
-                }
-*/
+                       val adapterItemFound = sectionedAdapter.groupListItems.find { it._id == updatedGroup._id }
+                       if (adapterItemFound != null) {
+                           val index1 = sectionedAdapter.groupListItems.indexOf(adapterItemFound)
+                           sectionedAdapter.groupListItems[index1] = updatedGroup
+                           sectionedAdapter.notifyItemChanged(index1)
+                       }
+       */
 
                 sheet.dismiss()
             }
