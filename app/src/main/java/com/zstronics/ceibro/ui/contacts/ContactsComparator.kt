@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.contacts
 
+import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GroupContact
@@ -57,8 +58,7 @@ fun compareExistingAndNewContacts(
                 updatedAndNewContacts.add(phoneContact)
             }
             //in else case, room contact and phone contact are same, so it is skipped
-        }
-        else {
+        } else {
             //add new contact that does not exist in room
             updatedAndNewContacts.add(phoneContact)
         }
@@ -161,6 +161,32 @@ fun List<TaskMemberDetail>.toLightGroupContactsFromTaskMember(): List<SyncDBCont
             userCeibroData = null,
             profilePic = connection.profilePic,
             ceibroUserId = connection.id
+        )
+    }
+}
+
+fun List<AllCeibroConnections.CeibroConnection>.dbCeibroUserToLightTaskMembers(): List<TaskMemberDetail> {
+    return this.map { connection ->
+        TaskMemberDetail(
+            id = connection.userCeibroData?.id ?: "",
+            firstName = connection.contactFirstName ?: connection.userCeibroData?.firstName ?: "",
+            surName = connection.contactSurName ?: connection.userCeibroData?.surName ?: "",
+            phoneNumber = connection.phoneNumber,
+            profilePic = connection.userCeibroData?.profilePic,
+            companyName = connection.userCeibroData?.companyName
+        )
+    }
+}
+
+fun List<AssignedToState>.assignedToStateToLightTaskMembers(): List<TaskMemberDetail> {
+    return this.map { connection ->
+        TaskMemberDetail(
+            id = connection.userId ?: "",
+            firstName = connection.firstName,
+            surName = connection.surName,
+            phoneNumber = connection.phoneNumber,
+            profilePic = connection.profilePic,
+            companyName = ""
         )
     }
 }

@@ -8,7 +8,6 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionGroupV2Dao
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -19,6 +18,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionGroupU
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.assignedToStateToLightTaskMembers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -52,46 +52,47 @@ class GroupV2VM @Inject constructor(
 
 
     var adminSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
-    var adminSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var adminSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var adminAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldAdminAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var assigneeSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
-    var assigneeSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var assigneeSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var assigneeAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldAssigneeAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var confirmerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
-    var confirmerSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var confirmerSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var confirmerAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldConfirmerAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var viewerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
-    var viewerSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var viewerSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var viewerAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldViewerAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var shareSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
-    var shareSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var shareSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var shareAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldShareAssignToText: MutableLiveData<String> = MutableLiveData()
 
-    var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
-        MutableLiveData()
+    //  var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
 
 
     private var originalMyGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
     private var originalOtherGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
 
-    private val _myGroupData: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = MutableLiveData(mutableListOf())
+    private val _myGroupData: MutableLiveData<MutableList<CeibroConnectionGroupV2>> =
+        MutableLiveData(mutableListOf())
     val myGroupData: LiveData<MutableList<CeibroConnectionGroupV2>> = _myGroupData
 
-    private val _otherGroupsData: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = MutableLiveData(mutableListOf())
+    private val _otherGroupsData: MutableLiveData<MutableList<CeibroConnectionGroupV2>> =
+        MutableLiveData(mutableListOf())
     val otherGroupsData: LiveData<MutableList<CeibroConnectionGroupV2>> = _otherGroupsData
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -99,7 +100,7 @@ class GroupV2VM @Inject constructor(
         getAllConnectionGroups()
     }
 
-     private fun getAllConnectionGroups() {
+    private fun getAllConnectionGroups() {
         launch {
             val connections = connectionsV2Dao.getAll()
             _connections.postValue(connections.toMutableList())
@@ -120,6 +121,7 @@ class GroupV2VM @Inject constructor(
             }
         }
     }
+
     fun getMyConnectionGroups() {
         launch {
             val groups = connectionGroupV2Dao.getAllConnectionGroup()
@@ -161,7 +163,7 @@ class GroupV2VM @Inject constructor(
 
         }
         viewerSelectedContacts.value?.forEach {
-            it.userCeibroData?.let { user ->
+            it.let { user ->
                 viewerlist.add(user.id)
 
             }
@@ -173,7 +175,7 @@ class GroupV2VM @Inject constructor(
 
         }
         confirmerSelectedContacts.value?.forEach {
-            it.userCeibroData?.let { user ->
+            it.let { user ->
                 confirmer.add(user.id)
 
             }
@@ -185,7 +187,7 @@ class GroupV2VM @Inject constructor(
             }
         }
         adminSelectedContacts.value?.forEach {
-            it.userCeibroData?.id?.let { userId -> groupAdmins.add(userId) }
+            it.id.let { userId -> groupAdmins.add(userId) }
         }
         if (assigneeSelfAssigned.value == true) {
             user?.let {
@@ -200,10 +202,10 @@ class GroupV2VM @Inject constructor(
         }
         assigneeSelectedContacts.value?.forEach {
 
-            it.userCeibroData?.let { user ->
+            it.let { user ->
                 assignToState.add(
                     AssignedToStateNewEntity(
-                        phoneNumber = user.phoneNumber,
+                        phoneNumber = user.phoneNumber ?: "",
                         userId = user.id,
                     )
                 )
@@ -217,7 +219,7 @@ class GroupV2VM @Inject constructor(
             }
         }
         shareSelectedContacts.value?.forEach {
-            it.userCeibroData?.let { user -> sharedWith.add(user.id) }
+            it.let { user -> sharedWith.add(user.id) }
         }
 
         val requestBody = CreateGroupRequest(
@@ -269,7 +271,7 @@ class GroupV2VM @Inject constructor(
 
         }
         viewerSelectedContacts.value?.forEach {
-            it.userCeibroData?.let { user ->
+            it.let { user ->
                 viewerlist.add(user.id)
 
             }
@@ -281,7 +283,7 @@ class GroupV2VM @Inject constructor(
 
         }
         confirmerSelectedContacts.value?.forEach {
-            it.userCeibroData?.let { user ->
+            it.let { user ->
                 confirmer.add(user.id)
 
             }
@@ -293,7 +295,7 @@ class GroupV2VM @Inject constructor(
             }
         }
         adminSelectedContacts.value?.forEach {
-            it.userCeibroData?.id?.let { userId -> groupAdmins.add(userId) }
+            it.id.let { userId -> groupAdmins.add(userId) }
         }
         if (assigneeSelfAssigned.value == true) {
             user?.let {
@@ -307,10 +309,10 @@ class GroupV2VM @Inject constructor(
         }
         assigneeSelectedContacts.value?.forEach {
 
-            it.userCeibroData?.let { user ->
+            it.let { user ->
                 assignToState.add(
                     AssignedToStateNewEntity(
-                        phoneNumber = user.phoneNumber,
+                        phoneNumber = user.phoneNumber ?: "",
                         userId = user.id,
                     )
                 )
@@ -323,7 +325,7 @@ class GroupV2VM @Inject constructor(
             }
         }
         shareSelectedContacts.value?.forEach {
-            it.userCeibroData?.let { user -> sharedWith.add(user.id) }
+            it.let { user -> sharedWith.add(user.id) }
         }
 
         val requestBody = CreateGroupRequest(
@@ -478,7 +480,7 @@ class GroupV2VM @Inject constructor(
     }
 
     private fun updateAdmin(admin: List<TaskMemberDetail>) {
-        val groupAdmins = ArrayList<AllCeibroConnections.CeibroConnection>()
+        val groupAdmins = ArrayList<TaskMemberDetail>()
         admin.let { groupAdminConnectionList ->
             if (groupAdminConnectionList.isNotEmpty()) {
 
@@ -486,13 +488,14 @@ class GroupV2VM @Inject constructor(
                     adminSelfAssigned.value = true
                 }
 
-                connections.value?.forEach { connectionFromList ->
-                    connectionFromList.userCeibroData?.let { userCeibroData ->
-                        if (groupAdminConnectionList.find { it.id == userCeibroData.id } != null) {
-                            groupAdmins.add(connectionFromList)
-                        }
-                    }
-                }
+                groupAdmins.addAll(admin)
+//                connections.value?.forEach { connectionFromList ->
+//                    connectionFromList.userCeibroData?.let { userCeibroData ->
+//                        if (groupAdminConnectionList.find { it.id == userCeibroData.id } != null) {
+//                            groupAdmins.add(connectionFromList)
+//                        }
+//                    }
+//                }
             }
             var index = 0
             var assigneeMembers = ""
@@ -506,9 +509,9 @@ class GroupV2VM @Inject constructor(
 
             for (item in groupAdmins) {
                 assigneeMembers += if (index == groupAdmins.size - 1) {
-                    "${item.contactFirstName} ${item.contactSurName}"
+                    "${item.firstName} ${item.surName}"
                 } else {
-                    "${item.contactFirstName} ${item.contactSurName}; "
+                    "${item.firstName} ${item.surName}; "
                 }
                 index++
             }
@@ -519,20 +522,22 @@ class GroupV2VM @Inject constructor(
         }
     }
 
-    private fun updateAssignTo(assignee: List<AssignedToState>) {
-        val assigneeGroup = ArrayList<AllCeibroConnections.CeibroConnection>()
+    private fun updateAssignTo(assigne: List<AssignedToState>) {
+        val assigneeGroup = ArrayList<TaskMemberDetail>()
+        val assignee = assigne.assignedToStateToLightTaskMembers()
         assignee.let { groupassigneeConnectionList ->
             if (groupassigneeConnectionList.isNotEmpty()) {
                 if (groupassigneeConnectionList.find { it.id == user?.id } != null) {
                     assigneeSelfAssigned.value = true
                 }
-                connections.value?.forEach { connectionFromList ->
-                    connectionFromList.userCeibroData?.let { userCeibroData ->
-                        if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
-                            assigneeGroup.add(connectionFromList)
-                        }
-                    }
-                }
+                assigneeGroup.addAll(assignee)
+//                connections.value?.forEach { connectionFromList ->
+//                    connectionFromList.userCeibroData?.let { userCeibroData ->
+//                        if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
+//                            assigneeGroup.add(connectionFromList)
+//                        }
+//                    }
+//                }
             }
             var index = 0
             var assigneeMembers = ""
@@ -546,9 +551,9 @@ class GroupV2VM @Inject constructor(
 
             for (item in assigneeGroup) {
                 assigneeMembers += if (index == assigneeGroup.size - 1) {
-                    "${item.contactFirstName} ${item.contactSurName}"
+                    "${item.firstName} ${item.surName}"
                 } else {
-                    "${item.contactFirstName} ${item.contactSurName}; "
+                    "${item.firstName} ${item.surName}; "
                 }
                 index++
             }
@@ -559,21 +564,22 @@ class GroupV2VM @Inject constructor(
     }
 
     private fun updateConfirmer(confrmer: List<TaskMemberDetail>) {
-        val confirmerGroup = ArrayList<AllCeibroConnections.CeibroConnection>()
+        val confirmerGroup = ArrayList<TaskMemberDetail>()
         confrmer.let { groupassigneeConnectionList ->
             if (groupassigneeConnectionList.isNotEmpty()) {
                 if (groupassigneeConnectionList.find { it.id == user?.id } != null) {
                     confirmerSelfAssigned.value = true
                 }
 
-                connections.value?.forEach { connectionFromList ->
-                    connectionFromList.userCeibroData?.let { userCeibroData ->
-                        if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
-
-                            confirmerGroup.add(connectionFromList)
-                        }
-                    }
-                }
+                confirmerGroup.addAll(confrmer)
+//                connections.value?.forEach { connectionFromList ->
+//                    connectionFromList.userCeibroData?.let { userCeibroData ->
+//                        if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
+//
+//                            confirmerGroup.add(connectionFromList)
+//                        }
+//                    }
+//                }
             }
             var index = 0
             var assigneeMembers = ""
@@ -587,9 +593,9 @@ class GroupV2VM @Inject constructor(
 
             for (item in confirmerGroup) {
                 assigneeMembers += if (index == confirmerGroup.size - 1) {
-                    "${item.contactFirstName} ${item.contactSurName}"
+                    "${item.firstName} ${item.surName}"
                 } else {
-                    "${item.contactFirstName} ${item.contactSurName}; "
+                    "${item.firstName} ${item.surName}; "
                 }
                 index++
             }
@@ -600,7 +606,7 @@ class GroupV2VM @Inject constructor(
     }
 
     private fun updateViewer(viewer: List<TaskMemberDetail>) {
-        val viewerGroup = ArrayList<AllCeibroConnections.CeibroConnection>()
+        val viewerGroup = ArrayList<TaskMemberDetail>()
         viewer.let { groupassigneeConnectionList ->
             if (groupassigneeConnectionList.isNotEmpty()) {
 
@@ -608,13 +614,14 @@ class GroupV2VM @Inject constructor(
                     viewerSelfAssigned.value = true
                 }
 
-                connections.value?.forEach { connectionFromList ->
-                    connectionFromList.userCeibroData?.let { userCeibroData ->
-                        if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
-                            viewerGroup.add(connectionFromList)
-                        }
-                    }
-                }
+                viewerGroup.addAll(viewer)
+                /* connections.value?.forEach { connectionFromList ->
+                     connectionFromList.userCeibroData?.let { userCeibroData ->
+                         if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
+                             viewerGroup.add(connectionFromList)
+                         }
+                     }
+                 }*/
             }
             var index = 0
             var assigneeMembers = ""
@@ -628,9 +635,9 @@ class GroupV2VM @Inject constructor(
 
             for (item in viewerGroup) {
                 assigneeMembers += if (index == viewerGroup.size - 1) {
-                    "${item.contactFirstName} ${item.contactSurName}"
+                    "${item.firstName} ${item.surName}"
                 } else {
-                    "${item.contactFirstName} ${item.contactSurName}; "
+                    "${item.firstName} ${item.surName}; "
                 }
                 index++
             }
@@ -641,20 +648,21 @@ class GroupV2VM @Inject constructor(
     }
 
     private fun updateShareWith(share: List<TaskMemberDetail>) {
-        val shareGroup = ArrayList<AllCeibroConnections.CeibroConnection>()
+        val shareGroup = ArrayList<TaskMemberDetail>()
         share.let { groupassigneeConnectionList ->
             if (groupassigneeConnectionList.isNotEmpty()) {
                 if (groupassigneeConnectionList.find { it.id == user?.id } != null) {
                     shareSelfAssigned.value = true
                 }
 
-                connections.value?.forEach { connectionFromList ->
-                    connectionFromList.userCeibroData?.let { userCeibroData ->
-                        if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
-                            shareGroup.add(connectionFromList)
+                shareGroup.addAll(share)
+                /*    connections.value?.forEach { connectionFromList ->
+                        connectionFromList.userCeibroData?.let { userCeibroData ->
+                            if (groupassigneeConnectionList.find { it.id == userCeibroData.id } != null) {
+                                shareGroup.add(connectionFromList)
+                            }
                         }
-                    }
-                }
+                    }*/
             }
             var index = 0
             var assigneeMembers = ""
@@ -668,9 +676,9 @@ class GroupV2VM @Inject constructor(
 
             for (item in shareGroup) {
                 assigneeMembers += if (index == shareGroup.size - 1) {
-                    "${item.contactFirstName} ${item.contactSurName}"
+                    "${item.firstName} ${item.surName}"
                 } else {
-                    "${item.contactFirstName} ${item.contactSurName}; "
+                    "${item.firstName} ${item.surName}; "
                 }
                 index++
             }

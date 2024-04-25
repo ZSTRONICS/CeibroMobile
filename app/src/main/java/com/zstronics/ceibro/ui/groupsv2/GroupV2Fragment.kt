@@ -22,7 +22,7 @@ import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
@@ -587,7 +587,7 @@ class GroupV2Fragment :
                     val selfAssigned = result.data?.getBoolean("self-assign")
                     val selectedContact = result.data?.getParcelableArray("contacts")
                     val selectedContactList =
-                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                        selectedContact?.map { it as TaskMemberDetail }
                             ?.toMutableList()
                     val selectedItem = selectedContactList?.find { item1 ->
                         item1.id == viewModel.user?.id
@@ -614,9 +614,9 @@ class GroupV2Fragment :
                     if (selectedContactList != null) {
                         for (item in selectedContactList) {
                             assigneeMembers += if (index == selectedContactList.size - 1) {
-                                "${item.contactFirstName} ${item.contactSurName}"
+                                "${item.firstName} ${item.surName}"
                             } else {
-                                "${item.contactFirstName} ${item.contactSurName}; "
+                                "${item.firstName} ${item.surName}; "
                             }
                             index++
                         }
@@ -630,7 +630,7 @@ class GroupV2Fragment :
                     val selfAssigned = result.data?.getBoolean("self-assign")
                     val selectedContact = result.data?.getParcelableArray("contacts")
                     val selectedContactList =
-                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                        selectedContact?.map { it as TaskMemberDetail }
                             ?.toMutableList()
                     val selectedItem = selectedContactList?.find { item1 ->
                         item1.id == viewModel.user?.id
@@ -657,9 +657,9 @@ class GroupV2Fragment :
                     if (selectedContactList != null) {
                         for (item in selectedContactList) {
                             assigneeMembers += if (index == selectedContactList.size - 1) {
-                                "${item.contactFirstName} ${item.contactSurName}"
+                                "${item.firstName} ${item.surName}"
                             } else {
-                                "${item.contactFirstName} ${item.contactSurName}; "
+                                "${item.firstName} ${item.surName}; "
                             }
                             index++
                         }
@@ -673,7 +673,7 @@ class GroupV2Fragment :
                     val selfAssigned = result.data?.getBoolean("self-assign")
                     val selectedContact = result.data?.getParcelableArray("contacts")
                     val selectedContactList =
-                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                        selectedContact?.map { it as TaskMemberDetail }
                             ?.toMutableList()
                     val selectedItem = selectedContactList?.find { item1 ->
                         item1.id == viewModel.user?.id
@@ -700,9 +700,9 @@ class GroupV2Fragment :
                     if (selectedContactList != null) {
                         for (item in selectedContactList) {
                             assigneeMembers += if (index == selectedContactList.size - 1) {
-                                "${item.contactFirstName} ${item.contactSurName}"
+                                "${item.firstName} ${item.surName}"
                             } else {
-                                "${item.contactFirstName} ${item.contactSurName}; "
+                                "${item.firstName} ${item.surName}; "
                             }
                             index++
                         }
@@ -716,7 +716,7 @@ class GroupV2Fragment :
                     val selfAssigned = result.data?.getBoolean("self-assign")
                     val selectedContact = result.data?.getParcelableArray("contacts")
                     val selectedContactList =
-                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                        selectedContact?.map { it as TaskMemberDetail }
                             ?.toMutableList()
                     val selectedItem = selectedContactList?.find { item1 ->
                         item1.id == viewModel.user?.id
@@ -743,9 +743,9 @@ class GroupV2Fragment :
                     if (selectedContactList != null) {
                         for (item in selectedContactList) {
                             assigneeMembers += if (index == selectedContactList.size - 1) {
-                                "${item.contactFirstName} ${item.contactSurName}"
+                                "${item.firstName} ${item.surName}"
                             } else {
-                                "${item.contactFirstName} ${item.contactSurName}; "
+                                "${item.firstName} ${item.surName}; "
                             }
                             index++
                         }
@@ -759,7 +759,7 @@ class GroupV2Fragment :
                     val selfAssigned = result.data?.getBoolean("self-assign")
                     val selectedContact = result.data?.getParcelableArray("contacts")
                     val selectedContactList =
-                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                        selectedContact?.map { it as TaskMemberDetail }
                             ?.toMutableList()
                     val selectedItem = selectedContactList?.find { item1 ->
                         item1.id == viewModel.user?.id
@@ -786,9 +786,9 @@ class GroupV2Fragment :
                     if (selectedContactList != null) {
                         for (item in selectedContactList) {
                             assigneeMembers += if (index == selectedContactList.size - 1) {
-                                "${item.contactFirstName} ${item.contactSurName}"
+                                "${item.firstName} ${item.surName}"
                             } else {
-                                "${item.contactFirstName} ${item.contactSurName}; "
+                                "${item.firstName} ${item.surName}; "
                             }
                             index++
                         }
@@ -858,7 +858,7 @@ class GroupV2Fragment :
 
 
             val assignee = viewModel.assigneeSelectedContacts.value ?: mutableListOf()
-            val disabledContacts = mutableListOf<AllCeibroConnections.CeibroConnection>()
+            val disabledContacts = mutableListOf<TaskMemberDetail>()
             assignee.forEach {
                 disabledContacts.add(it.copy())
             }
