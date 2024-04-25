@@ -176,7 +176,11 @@ data class TaskMemberDetail(
     @SerializedName("phoneNumber") val phoneNumber: String?,
     @SerializedName("companyName") val companyName: String?,
     @SerializedName("_id") val id: String,
-) : Parcelable
+    @SerializedName("_id")
+    var jobTitle: String = "",
+    @Transient
+    var isChecked: Boolean = false,
+    ) : Parcelable
 
 
 @Parcelize

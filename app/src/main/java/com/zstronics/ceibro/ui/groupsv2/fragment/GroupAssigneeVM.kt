@@ -7,9 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.dbCeibroUserToLightTaskMembers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,20 +26,20 @@ class GroupAssigneeVM @Inject constructor(
 ) : HiltBaseViewModel<IGroupAssignee.State>(), IGroupAssignee.ViewModel {
     val user = sessionManager.getUser().value
 
-    private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    private var _allConnections: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
-    val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    val allConnections: MutableLiveData<MutableList<TaskMemberDetail>> =
         _allConnections
-    var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
-    private var _recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+    var originalConnections = listOf<TaskMemberDetail>()
+    private var _recentAllConnections: MutableLiveData<MutableList<TaskMemberDetail>?> =
         MutableLiveData(mutableListOf())
-    val recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+    val recentAllConnections: MutableLiveData<MutableList<TaskMemberDetail>?> =
         _recentAllConnections
-    var recentOriginalConnections = listOf<AllCeibroConnections.CeibroConnection>()
+    var recentOriginalConnections = listOf<TaskMemberDetail>()
 
-    var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var selectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
-    var disableSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    var disableSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var isConfirmer: MutableLiveData<Boolean> = MutableLiveData(false)
     var isViewer: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -61,20 +63,20 @@ class GroupAssigneeVM @Inject constructor(
 
         val disabledContacts = bundle?.getParcelableArray("disabledContacts")
         val disabledContactList =
-            disabledContacts?.map { it as AllCeibroConnections.CeibroConnection }
+            disabledContacts?.map { it as TaskMemberDetail }
                 ?.toMutableList()
         if (!disabledContactList.isNullOrEmpty()) {
-            disableSelectedContacts.postValue(disabledContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
+            disableSelectedContacts.postValue(disabledContactList as MutableList<TaskMemberDetail>?)
         }
 
         val selectedContact = bundle?.getParcelableArray("contacts")
         val selectedContactList =
-            selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+            selectedContact?.map { it as TaskMemberDetail }
                 ?.toMutableList()
         if (!selectedContactList.isNullOrEmpty()) {
 
             val list = selectedContactList.distinctBy { it.phoneNumber }
-            selectedContacts.postValue(list as MutableList<AllCeibroConnections.CeibroConnection>?)
+            selectedContacts.postValue(list as MutableList<TaskMemberDetail>?)
         }
         val handler = Handler()
         handler.postDelayed(Runnable {
@@ -86,12 +88,13 @@ class GroupAssigneeVM @Inject constructor(
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
-        loadRecentConnections()
+       // loadRecentConnections()
         launch {
             val connectionsData = connectionsV2Dao.getAll()
          //   if (isConfirmer.value == true || isViewer.value == true) {
                 val list = connectionsData.filter { it.isCeiborUser }
-                processConnectionsData(list, callBack)
+            val taskMemberDetail=list.dbCeibroUserToLightTaskMembers()
+                processConnectionsData(taskMemberDetail, callBack)
         //    } else {
         //        processConnectionsData(connectionsData, callBack)
         //    }
@@ -99,7 +102,7 @@ class GroupAssigneeVM @Inject constructor(
     }
 
     private fun processConnectionsData(
-        contactsResponse: List<AllCeibroConnections.CeibroConnection>,
+        contactsResponse: List<TaskMemberDetail>,
         callBack: () -> Unit
     ) {
 
@@ -109,7 +112,7 @@ class GroupAssigneeVM @Inject constructor(
         if (!oldSelectedContacts.isNullOrEmpty()) {
             oldSelectedContacts.forEach { oldContact ->
                 val matchingContact = allContacts.find { it.id == oldContact.id }
-                matchingContact?.isChecked = true
+            //    matchingContact?.isChecked = true
             }
             _allConnections.value = allContacts
             originalConnections = allContacts
@@ -125,7 +128,7 @@ class GroupAssigneeVM @Inject constructor(
         }
     }
 
-    private fun loadRecentConnections() {
+   /* private fun loadRecentConnections() {
         launch {
             when (val response = dashboardRepository.getRecentCeibroConnections()) {
                 is ApiResponse.Success -> {
@@ -135,7 +138,7 @@ class GroupAssigneeVM @Inject constructor(
                     val allContacts = newItemsList.groupDataByFirstLetter().toMutableList()
                     val oldSelectedContacts = selectedContacts.value
 
-                    var updatedAllContacts: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
+                    var updatedAllContacts: MutableList<TaskMemberDetail> = mutableListOf()
                     updatedAllContacts = allContacts.filter { it.isCeiborUser }.toMutableList()
 
 
@@ -163,28 +166,28 @@ class GroupAssigneeVM @Inject constructor(
                 }
             }
         }
+    }*/
+
+    fun updateContacts(allContacts: MutableList<TaskMemberDetail>) {
+        _allConnections.postValue(allContacts as MutableList<TaskMemberDetail>?)
     }
 
-    fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
-        _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
-    }
-
-    fun updateOriginalContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+    fun updateOriginalContacts(allContacts: MutableList<TaskMemberDetail>) {
         originalConnections = allContacts
     }
 
-    fun updateRecentContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
-        _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    fun updateRecentContacts(allContacts: MutableList<TaskMemberDetail>) {
+        _recentAllConnections.postValue(allContacts as MutableList<TaskMemberDetail>?)
     }
 
-    fun updateRecentOriginalContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+    fun updateRecentOriginalContacts(allContacts: MutableList<TaskMemberDetail>) {
         recentOriginalConnections = allContacts
     }
 
     fun filterContacts(search: String) {
-        if (search.isEmpty()) {
+        /*if (search.isEmpty()) {
             if (originalConnections.isNotEmpty()) {
-                _allConnections.postValue(originalConnections as MutableList<AllCeibroConnections.CeibroConnection>?)
+                _allConnections.postValue(originalConnections as MutableList<TaskMemberDetail>?)
             }
 
             return
@@ -198,15 +201,15 @@ class GroupAssigneeVM @Inject constructor(
                         .contains(search, true))
         }
         if (filtered.isNotEmpty())
-            _allConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)
+            _allConnections.postValue(filtered as MutableList<TaskMemberDetail>?)
         else
-            _allConnections.postValue(mutableListOf())
+            _allConnections.postValue(mutableListOf())*/
     }
 
     fun filterRecentContacts(search: String) {
-        if (search.isEmpty()) {
+/*        if (search.isEmpty()) {
             if (recentOriginalConnections.isNotEmpty()) {
-                _recentAllConnections.postValue(recentOriginalConnections as MutableList<AllCeibroConnections.CeibroConnection>?)
+                _recentAllConnections.postValue(recentOriginalConnections as MutableList<TaskMemberDetail>?)
             }
             return
         }
@@ -219,15 +222,15 @@ class GroupAssigneeVM @Inject constructor(
                         .contains(search, true))
         }
         if (filtered.isNotEmpty())
-            _recentAllConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)
+            _recentAllConnections.postValue(filtered as MutableList<TaskMemberDetail>?)
         else
-            _recentAllConnections.postValue(mutableListOf())
+            _recentAllConnections.postValue(mutableListOf())*/
     }
 
-    fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<AllCeibroConnections.CeibroConnection> {
+    fun List<TaskMemberDetail>.groupDataByFirstLetter(): List<TaskMemberDetail> {
         val groupedData = this.groupBy {
-            if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
-                it.contactFirstName.first().lowercase()
+            if (it.firstName.firstOrNull()?.isLetter() == true) {
+                it.firstName.first().lowercase()
             } else {
                 '#'.toString()
             }
@@ -237,10 +240,10 @@ class GroupAssigneeVM @Inject constructor(
                 .then(compareByDescending { it == "#" })
         )
 
-        val sortedItems = mutableListOf<AllCeibroConnections.CeibroConnection>()
+        val sortedItems = mutableListOf<TaskMemberDetail>()
         for (mapKey in groupedData.keys) {
             val sortedGroupItems =
-                groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
+                groupedData[mapKey]?.sortedBy { it.firstName?.lowercase() }
                     ?: emptyList()
             sortedItems.addAll(sortedGroupItems)
         }

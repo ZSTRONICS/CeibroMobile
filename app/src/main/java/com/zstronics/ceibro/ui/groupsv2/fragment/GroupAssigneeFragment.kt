@@ -14,13 +14,14 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.databinding.FragmentAssigneeBinding
 import com.zstronics.ceibro.databinding.FragmentGroupAssigneeBinding
+import com.zstronics.ceibro.ui.contacts.dbCeibroUserToLightTaskMembers
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeChipsAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionAdapterSectionRecycler
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionsSectionHeader
+import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.GroupAssigneeChipsAdapter
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.GroupConnectionAdapterSectionRecycler
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.GroupConnectionsSectionHeader
 import com.zstronics.ceibro.utils.getDefaultCountryCode
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
@@ -87,11 +88,11 @@ class GroupAssigneeFragment :
     }
 
 
-    lateinit var adapter: ConnectionAdapterSectionRecycler
+    lateinit var adapter: GroupConnectionAdapterSectionRecycler
 
     @Inject
-    lateinit var chipAdapter: AssigneeChipsAdapter
-    private var sectionList: MutableList<ConnectionsSectionHeader> = mutableListOf()
+    lateinit var chipAdapter: GroupAssigneeChipsAdapter
+    private var sectionList: MutableList<GroupConnectionsSectionHeader> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -105,13 +106,13 @@ class GroupAssigneeFragment :
 
         sectionList.add(
             0,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
+            GroupConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
         )
         sectionList.add(
             1,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
+            GroupConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
         )
-        adapter = ConnectionAdapterSectionRecycler(requireContext(), sectionList)
+        adapter = GroupConnectionAdapterSectionRecycler(requireContext(), sectionList)
 
         viewModel.isConfirmer.observe(viewLifecycleOwner) {
             if (it) {
@@ -146,14 +147,14 @@ class GroupAssigneeFragment :
                 } else {
                     sectionList.removeAt(1)
                     sectionList.add(
-                        1, ConnectionsSectionHeader(
+                        1, GroupConnectionsSectionHeader(
                             it,
                             getString(R.string.all_connections),
                             false
                         )
                     )
                     adapter.insertNewSection(
-                        ConnectionsSectionHeader(
+                        GroupConnectionsSectionHeader(
                             it,
                             getString(R.string.all_connections),
                             false
@@ -175,10 +176,14 @@ class GroupAssigneeFragment :
                     sectionList.removeAt(0)
                     sectionList.add(
                         0,
-                        ConnectionsSectionHeader(it, getString(R.string.recent_connections), false)
+                        GroupConnectionsSectionHeader(
+                            it,
+                            getString(R.string.recent_connections),
+                            false
+                        )
                     )
                     adapter.insertNewSection(
-                        ConnectionsSectionHeader(
+                        GroupConnectionsSectionHeader(
                             it,
                             getString(R.string.recent_connections), false
                         ), 0
@@ -191,6 +196,8 @@ class GroupAssigneeFragment :
 
         viewModel.disableSelectedContacts.observe(viewLifecycleOwner) { disabledContacts ->
             disabledContacts?.let { list ->
+
+
                 adapter.disableContacts(list)
             }
         }
@@ -223,7 +230,7 @@ class GroupAssigneeFragment :
 
         }
         chipAdapter.removeItemClickListener =
-            { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
+            { childView: View, position: Int, data: TaskMemberDetail ->
                 val allContacts = viewModel.originalConnections.toMutableList()
                 val selectedOnes = viewModel.selectedContacts.value?.toMutableList()
                 data.isChecked = false
@@ -287,13 +294,13 @@ class GroupAssigneeFragment :
             }
 
         adapter.itemClickListener =
-            { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+            { childView: View, position: Int, contact: TaskMemberDetail ->
                 fullItemClickedForDone = false
                 connectionsAdapterClickListener.invoke(childView, position, contact)
             }
 
         adapter.fullItemClickListener =
-            { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+            { childView: View, position: Int, contact: TaskMemberDetail ->
                 fullItemClickedForDone = true
                 connectionsAdapterClickListener.invoke(childView, position, contact)
             }
@@ -335,9 +342,15 @@ class GroupAssigneeFragment :
                         )
                     )
 
-                    val currentContactList: ArrayList<AllCeibroConnections.CeibroConnection> =
+                    val currentContactList: ArrayList<TaskMemberDetail> =
                         arrayListOf()
-                    currentContactList.add(userContact)
+                    val list: List<AllCeibroConnections.CeibroConnection> = listOf(userContact)
+                    val reqList = list.dbCeibroUserToLightTaskMembers()
+                    if (reqList.isNotEmpty()) {
+                        val contactToUse = reqList[0]
+                        currentContactList.add(contactToUse)
+                    }
+
                     val selectedContacts = viewModel.selectedContacts.value?.toMutableList()
                     if (selectedContacts.isNullOrEmpty()) {
                         viewModel.selectedContacts.postValue(currentContactList)
@@ -393,7 +406,7 @@ class GroupAssigneeFragment :
     }
 
     private val connectionsAdapterClickListener =
-        { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+        { childView: View, position: Int, contact: TaskMemberDetail ->
             // all connections click handling
             val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
             if (searchQuery.isNotEmpty()) {
@@ -401,7 +414,7 @@ class GroupAssigneeFragment :
                 searchedRecentContacts = true
             }
 
-            var selectedContacts: MutableList<AllCeibroConnections.CeibroConnection> =
+            var selectedContacts: MutableList<TaskMemberDetail> =
                 mutableListOf()
             val selected = adapter.sectionList[1].childItems.filter { it.isChecked }.map { it }
             val selectedRecent =
