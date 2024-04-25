@@ -540,6 +540,7 @@
     <string name="no_connections">No Connections</string>
     <string name="please_select_contacts_to_forward">Please select contacts to forward</string>
     <string name="recent_connections">Recent Connections</string>
+    <string name="existing_connections">Existing Connections</string>
     <string name="all_connections">All Connections</string>
     <string name="connections_loading">Connections loading</string>
     <string name="contacts_permission">"Contacts permission not granted"</string>

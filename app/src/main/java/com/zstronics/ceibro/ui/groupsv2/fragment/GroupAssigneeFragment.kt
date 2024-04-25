@@ -106,7 +106,7 @@ class GroupAssigneeFragment :
 
         sectionList.add(
             0,
-            GroupConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
+            GroupConnectionsSectionHeader(mutableListOf(), getString(R.string.existing_connections))
         )
         sectionList.add(
             1,
@@ -169,6 +169,7 @@ class GroupAssigneeFragment :
         viewModel.recentAllConnections.observe(viewLifecycleOwner) {
             if (it != null) {
                 if (searchedRecentContacts) {
+                    viewModel.updateAllConnections()
                     searchedRecentContacts = false
                     val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
                     viewModel.filterRecentContacts(searchQuery)
@@ -178,14 +179,14 @@ class GroupAssigneeFragment :
                         0,
                         GroupConnectionsSectionHeader(
                             it,
-                            getString(R.string.recent_connections),
+                            getString(R.string.existing_connections),
                             false
                         )
                     )
                     adapter.insertNewSection(
                         GroupConnectionsSectionHeader(
                             it,
-                            getString(R.string.recent_connections), false
+                            getString(R.string.existing_connections), false
                         ), 0
                     )
                     adapter.notifyDataChanged(sectionList)
@@ -360,10 +361,13 @@ class GroupAssigneeFragment :
                         }
                         if (selectedItem != null) {       //if not null then current user contact is already part of selected contact list
                             val combinedList = selectedContacts + currentContactList
-                            val distinctList = combinedList.distinct().toMutableList()
-                            selectedContacts.clear()
-                            selectedContacts.addAll(distinctList)
-                            viewModel.selectedContacts.postValue(distinctList)
+                            if (combinedList != null && currentContactList != null) {
+                                val distinctList = combinedList.distinct().toMutableList()
+                                selectedContacts.clear()
+                                selectedContacts.addAll(distinctList)
+                                viewModel.selectedContacts.postValue(distinctList)
+                            }
+
                         } else {
                             selectedContacts.addAll(currentContactList)
                         }
@@ -422,7 +426,8 @@ class GroupAssigneeFragment :
 
             selectedContacts.addAll(selectedRecent)
             selectedContacts.addAll(selected)
-            selectedContacts = selectedContacts.distinct().toMutableList()
+            selected.distinct()
+            selectedContacts = selectedContacts.toMutableList()
 
             val oldSelected =
                 viewModel.selectedContacts.value?.toMutableList() ?: mutableListOf()

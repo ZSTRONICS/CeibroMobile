@@ -51,7 +51,7 @@ class AddNewGroupV2Sheet(
         null
     var onGroupEdited: ((status: String) -> Unit)? = null
 
-    var updateCallBack: ((groupName: String) -> Unit)? = null
+    var updateCallBack: ((groupName: String,isUpdating:Boolean) -> Unit)? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -161,7 +161,7 @@ class AddNewGroupV2Sheet(
         }
 
         binding.closeBtn.setOnClickListener {
-            viewModel.resetOldStrings()
+            viewModel.clearGroupData()
             dismiss()
         }
 
@@ -179,19 +179,19 @@ class AddNewGroupV2Sheet(
 
 
         binding.etGroupAdmin.setOnClickListener {
-            updateCallBack?.invoke("Admin")
+            updateCallBack?.invoke("Admin",isUpdating)
         }
         binding.etAssignTo.setOnClickListener {
-            updateCallBack?.invoke("Assign")
+            updateCallBack?.invoke("Assign",isUpdating)
         }
         binding.etConfirmer.setOnClickListener {
-            updateCallBack?.invoke("Confirmer")
+            updateCallBack?.invoke("Confirmer",isUpdating)
         }
         binding.etViewer.setOnClickListener {
-            updateCallBack?.invoke("Viewer")
+            updateCallBack?.invoke("Viewer",isUpdating)
         }
         binding.etShareWith.setOnClickListener {
-            updateCallBack?.invoke("ShareWith")
+            updateCallBack?.invoke("ShareWith",isUpdating)
         }
 
         binding.saveGroupBtn.setOnClickListener {

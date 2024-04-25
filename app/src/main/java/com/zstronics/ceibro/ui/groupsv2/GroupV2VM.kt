@@ -54,11 +54,15 @@ class GroupV2VM @Inject constructor(
     var adminSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var adminSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
+    var oldAdminSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
+        MutableLiveData()
     var adminAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldAdminAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var assigneeSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var assigneeSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
+        MutableLiveData()
+    var oldAssigneeSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var assigneeAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldAssigneeAssignToText: MutableLiveData<String> = MutableLiveData()
@@ -66,17 +70,23 @@ class GroupV2VM @Inject constructor(
     var confirmerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var confirmerSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
+    var oldConfirmerSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
+        MutableLiveData()
     var confirmerAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldConfirmerAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var viewerSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var viewerSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
+    var oldViewerSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
+        MutableLiveData()
     var viewerAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldViewerAssignToText: MutableLiveData<String> = MutableLiveData()
 
     var shareSelfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     var shareSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
+        MutableLiveData()
+    var oldShareSelectedContacts: MutableLiveData<MutableList<TaskMemberDetail>> =
         MutableLiveData()
     var shareAssignToText: MutableLiveData<String> = MutableLiveData()
     var oldShareAssignToText: MutableLiveData<String> = MutableLiveData()
@@ -455,26 +465,37 @@ class GroupV2VM @Inject constructor(
         updateShareWith(data.sharedWith)
     }
 
-    private fun clearGroupData() {
+    fun clearGroupData() {
         adminSelfAssigned.value = false
         adminSelectedContacts.value = mutableListOf()
         adminAssignToText.value = ""
+        oldAdminAssignToText.value = ""
+        oldAdminSelectedContacts.value = mutableListOf()
 
         assigneeSelfAssigned.value = false
         assigneeSelectedContacts.value = mutableListOf()
         assigneeAssignToText.value = ""
+        oldAssigneeAssignToText.value = ""
+        oldAssigneeSelectedContacts.value = mutableListOf()
 
         confirmerSelfAssigned.value = false
         confirmerSelectedContacts.value = mutableListOf()
         confirmerAssignToText.value = ""
+        oldConfirmerAssignToText.value = ""
+        oldConfirmerSelectedContacts.value = mutableListOf()
 
         viewerSelfAssigned.value = false
         viewerSelectedContacts.value = mutableListOf()
         viewerAssignToText.value = ""
+        oldViewerAssignToText.value = ""
+        oldViewerSelectedContacts.value = mutableListOf()
 
         shareSelfAssigned.value = false
         shareSelectedContacts.value = mutableListOf()
         shareAssignToText.value = ""
+        oldShareAssignToText.value = ""
+        oldShareSelectedContacts.value = mutableListOf()
+
         resetOldStrings()
 
     }
@@ -516,6 +537,7 @@ class GroupV2VM @Inject constructor(
                 index++
             }
             adminSelectedContacts.value = groupAdmins
+            oldAdminSelectedContacts.value = groupAdmins
             adminAssignToText.value = assigneeMembers
             oldAdminAssignToText.value = assigneeMembers
 
@@ -558,6 +580,7 @@ class GroupV2VM @Inject constructor(
                 index++
             }
             assigneeSelectedContacts.value = assigneeGroup
+            oldAssigneeSelectedContacts.value = assigneeGroup
             assigneeAssignToText.value = assigneeMembers
             oldAssigneeAssignToText.value = assigneeMembers
         }
@@ -600,6 +623,7 @@ class GroupV2VM @Inject constructor(
                 index++
             }
             confirmerSelectedContacts.value = confirmerGroup
+            oldConfirmerSelectedContacts.value = confirmerGroup
             confirmerAssignToText.value = assigneeMembers
             oldConfirmerAssignToText.value = assigneeMembers
         }
@@ -642,6 +666,7 @@ class GroupV2VM @Inject constructor(
                 index++
             }
             viewerSelectedContacts.value = viewerGroup
+            oldViewerSelectedContacts.value = viewerGroup
             viewerAssignToText.value = assigneeMembers
             oldViewerAssignToText.value = assigneeMembers
         }
@@ -683,6 +708,7 @@ class GroupV2VM @Inject constructor(
                 index++
             }
             shareSelectedContacts.value = shareGroup
+            oldShareSelectedContacts.value = shareGroup
             shareAssignToText.value = assigneeMembers
             oldShareAssignToText.value = assigneeMembers
         }

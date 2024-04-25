@@ -235,7 +235,7 @@ class GroupConnectionAdapterSectionRecycler constructor(
                         contactName.setTextColor(context.resources.getColor(R.color.appGrey3))
                     }
 
-                    val disable = disableContscts.find { it.id == item.id }
+                    val disable = disableContscts.find { it.phoneNumber == item.phoneNumber }
                     disable?.let {
                         contactCheckBox.isChecked = false
                         contactCheckBox.isClickable = false
