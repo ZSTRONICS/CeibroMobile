@@ -176,7 +176,7 @@ data class TaskMemberDetail(
     @SerializedName("phoneNumber") val phoneNumber: String?,
     @SerializedName("companyName") val companyName: String?,
     @SerializedName("_id") val id: String,
-    @SerializedName("_id")
+    @SerializedName("jobTitle")
     var jobTitle: String = "",
     @Transient
     var isChecked: Boolean = false,
