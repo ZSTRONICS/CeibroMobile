@@ -79,11 +79,11 @@ class TasksHiddenParentTabV3Fragment :
                     if (viewModel.selectedTaskTypeOngoingState.value != type) {
                         viewModel._selectedTaskTypeOngoingState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "All"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.all_heading)
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "From Me"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.from_me_heading)
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "To Me "
+                            viewModel.typeToShowOngoing = resources.getString(R.string.to_me_heading)
                         }
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
                     }
@@ -95,11 +95,11 @@ class TasksHiddenParentTabV3Fragment :
                     if (viewModel.selectedTaskTypeClosedState.value != type) {
                         viewModel._selectedTaskTypeClosedState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowClosed = "All"
+                            viewModel.typeToShowClosed = resources.getString(R.string.all_heading)
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            viewModel.typeToShowClosed = "From Me"
+                            viewModel.typeToShowClosed = resources.getString(R.string.from_me_heading)
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowClosed = "To Me "
+                            viewModel.typeToShowClosed =resources.getString(R.string.to_me_heading)
                         }
                         mViewDataBinding.closedTypeText.text = viewModel.typeToShowClosed
                     }

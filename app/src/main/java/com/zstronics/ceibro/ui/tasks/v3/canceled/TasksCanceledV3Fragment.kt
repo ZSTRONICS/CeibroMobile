@@ -90,11 +90,11 @@ class TasksCanceledV3Fragment :
                     if (viewModel.selectedTaskTypeCanceledState.value != type) {
                         viewModel._selectedTaskTypeCanceledState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowCanceled = "All"
+                            viewModel.typeToShowCanceled = resources.getString(R.string.all_heading)
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            viewModel.typeToShowCanceled = "From Me"
+                            viewModel.typeToShowCanceled = resources.getString(R.string.from_me_heading)
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowCanceled = "To Me "
+                            viewModel.typeToShowCanceled = resources.getString(R.string.to_me_heading)
                         }
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowCanceled
                     }

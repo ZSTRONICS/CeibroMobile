@@ -167,11 +167,11 @@ class LocationsV2Fragment :
 
                     if (viewModel.selectedTaskTypeOngoingState.value != type) {
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "All"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.all_heading)
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "From Me"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.from_me_heading)
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "To Me"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.to_me_heading)
                         }
                         viewModel._selectedTaskTypeOngoingState.value = type
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing

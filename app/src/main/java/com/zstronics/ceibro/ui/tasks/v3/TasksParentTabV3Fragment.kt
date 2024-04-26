@@ -79,21 +79,21 @@ class TasksParentTabV3Fragment :
                     if (viewModel.selectedTaskTypeOngoingState.value != type) {
                         viewModel._selectedTaskTypeOngoingState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "All"
+                            viewModel.typeToShowOngoing =resources.getString(R.string.all_heading)
                         } else if (type.equals(
                                 TaskRootStateTags.AllWithoutViewOnly.tagValue,
                                 true
                             )
                         ) {
-                            viewModel.typeToShowOngoing = "All - Without Viewer"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.all_without_viewer)
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "From Me"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.from_me_heading)
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "To Me"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.to_me_heading)
                         } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "View Only"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.view_only)
                         } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "Approver"
+                            viewModel.typeToShowOngoing = resources.getString(R.string.approver)
                         }
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
                     }
@@ -105,21 +105,21 @@ class TasksParentTabV3Fragment :
                     if (viewModel.selectedTaskTypeClosedState.value != type) {
                         viewModel._selectedTaskTypeClosedState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowClosed = "All"
+                            viewModel.typeToShowClosed = resources.getString(R.string.all_heading)
                         } else if (type.equals(
                                 TaskRootStateTags.AllWithoutViewOnly.tagValue,
                                 true
                             )
                         ) {
-                            viewModel.typeToShowClosed = "All - Without Viewer"
+                            viewModel.typeToShowClosed = resources.getString(R.string.all_without_viewer)
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            viewModel.typeToShowClosed = "From Me"
+                            viewModel.typeToShowClosed = resources.getString(R.string.from_me_heading)
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            viewModel.typeToShowClosed = "To Me "
+                            viewModel.typeToShowClosed = resources.getString(R.string.to_me_heading)
                         } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
-                            viewModel.typeToShowClosed = "View Only"
+                            viewModel.typeToShowClosed = resources.getString(R.string.view_only)
                         } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
-                            viewModel.typeToShowClosed = "Approver"
+                            viewModel.typeToShowClosed = resources.getString(R.string.approver)
                         }
                         mViewDataBinding.closedTypeText.text = viewModel.typeToShowClosed
                     }
@@ -132,11 +132,11 @@ class TasksParentTabV3Fragment :
                         viewModel._selectedTaskTypeApprovalState.value = type
 
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            viewModel.typeToShowApproval = "All"
+                            viewModel.typeToShowApproval =resources.getString(R.string.all_heading)
                         } else if (type.equals(TaskRootStateTags.ToReview.tagValue, true)) {
-                            viewModel.typeToShowApproval = "To Review"
+                            viewModel.typeToShowApproval = resources.getString(R.string.to_review)
                         } else if (type.equals(TaskRootStateTags.InReview.tagValue, true)) {
-                            viewModel.typeToShowApproval = "Pending"
+                            viewModel.typeToShowApproval = resources.getString(R.string.pending)
                         }
                         mViewDataBinding.approvalTypeText.text = viewModel.typeToShowApproval
                     }
