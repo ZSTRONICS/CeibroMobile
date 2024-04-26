@@ -19,6 +19,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toCamelCase
@@ -191,6 +192,7 @@ class TaskDetailParentV2Fragment :
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
         onlyImageAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
+                CeibroApplication.CookiesManager.openImageViewerFromDetails = true
                 val bundle = Bundle()
                 val onlyImagesOriginal = viewModel.onlyImages.value
                 val imagesWithCommentOriginal = viewModel.imagesWithComments.value
@@ -201,6 +203,7 @@ class TaskDetailParentV2Fragment :
                 if (!imagesWithCommentOriginal.isNullOrEmpty()) {
                     allImages.addAll(imagesWithCommentOriginal)
                 }
+
                 //position will remain same as the first items in the al;l list is only image, so no need to change the position
                 bundle.putParcelableArray("images", allImages.toTypedArray())
                 bundle.putInt("position", position)
@@ -221,6 +224,7 @@ class TaskDetailParentV2Fragment :
         mViewDataBinding.onlyDrawingRV.adapter = onlyDrawingAdapter
         onlyDrawingAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
+                CeibroApplication.CookiesManager.openImageViewerFromDetails = true
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", viewModel.drawingFile.value?.toTypedArray())
                 bundle.putInt("position", position)
@@ -239,6 +243,7 @@ class TaskDetailParentV2Fragment :
         mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
+                CeibroApplication.CookiesManager.openImageViewerFromDetails = true
                 val bundle = Bundle()
                 val onlyImagesOriginal = viewModel.onlyImages.value
                 val imagesWithCommentOriginal = viewModel.imagesWithComments.value
@@ -386,6 +391,7 @@ class TaskDetailParentV2Fragment :
 
         pinnedEventsAdapter.openEventImageClickListener =
             { _: View, position: Int, imageFiles: List<TaskFiles> ->
+                CeibroApplication.CookiesManager.openImageViewerFromDetails = true
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", imageFiles.toTypedArray())
                 bundle.putInt("position", position)

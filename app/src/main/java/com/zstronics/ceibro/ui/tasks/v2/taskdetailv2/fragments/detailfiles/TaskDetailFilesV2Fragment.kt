@@ -195,6 +195,7 @@ class TaskDetailFilesV2Fragment :
                         val index = allPhotos.indexOf(foundImage)
                         newPosition = index
 
+                        CeibroApplication.CookiesManager.openImageViewerFromDetailFiles = true
                         val bundle = Bundle()
                         bundle.putParcelableArray("images", allPhotos.toTypedArray())
                         bundle.putInt("position", newPosition)

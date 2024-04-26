@@ -305,6 +305,7 @@ class TaskDetailCommentsV2Fragment :
 
         eventsAdapter.openEventImageClickListener =
             { _: View, position: Int, imageFiles: List<TaskFiles> ->
+                CeibroApplication.CookiesManager.openImageViewerFromDetailComments = true
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", imageFiles.toTypedArray())
                 bundle.putInt("position", position)

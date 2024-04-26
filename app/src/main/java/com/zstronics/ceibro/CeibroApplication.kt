@@ -128,6 +128,10 @@ open class CeibroApplication : Application() {
         var openingNewLocationFile: Boolean = false
         var openKeyboardWithLocalFile: OpenKeyboardWithLocalFile? = null
         var openKeyboardWithFile: OpenKeyboardWithFile? = null
+        var openImageViewerFromDetails: Boolean = false
+        var openImageViewerFromDetailComments: Boolean = false
+        var openImageViewerFromDetailFiles: Boolean = false
+        var backActionFromImageViewer: Boolean = false
     }
 
     class OpenKeyboardWithLocalFile(val item: LocalTaskDetailFiles, val type: String)

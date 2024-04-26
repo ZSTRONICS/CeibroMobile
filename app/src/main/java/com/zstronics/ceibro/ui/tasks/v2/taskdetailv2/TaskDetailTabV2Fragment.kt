@@ -334,7 +334,8 @@ class TaskDetailTabV2Fragment :
             if (it.isTaskFile) {
                 mViewDataBinding.viewPager.setCurrentItem(0, true)
                 Handler(Looper.getMainLooper()).postDelayed({
-                    EventBus.getDefault().post(LocalEvents.ScrollToPositionInParentFromTaskFiles(it))
+                    EventBus.getDefault()
+                        .post(LocalEvents.ScrollToPositionInParentFromTaskFiles(it))
                 }, 500)
             } else {
                 mViewDataBinding.viewPager.setCurrentItem(1, true)
@@ -1022,7 +1023,32 @@ class TaskDetailTabV2Fragment :
 
         //This was done to fix the crash when opening an image and reply is tapped then comment fragment do not get its viewmodel, so before going to image viewer
         //we set viewpager fragment to details and when user tap on reply then comment fragment is set again which calls its onResume to access viewmodel and data
-        mViewDataBinding.viewPager.setCurrentItem(0, true)
+        if (CeibroApplication.CookiesManager.openImageViewerFromDetailComments || CeibroApplication.CookiesManager.openImageViewerFromDetailFiles) {
+            mViewDataBinding.viewPager.setCurrentItem(0, true)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //This back action will be true only if user goes to image viewer and then pressed back button
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (CeibroApplication.CookiesManager.backActionFromImageViewer) {
+                if (CeibroApplication.CookiesManager.openImageViewerFromDetailComments) {
+                    if (mViewDataBinding.viewPager.currentItem != 1) {
+                        mViewDataBinding.viewPager.setCurrentItem(1, true)
+                    }
+                } else if (CeibroApplication.CookiesManager.openImageViewerFromDetailFiles) {
+                    if (mViewDataBinding.viewPager.currentItem != 2) {
+                        mViewDataBinding.viewPager.setCurrentItem(2, true)
+                    }
+                }
+            }
+
+            CeibroApplication.CookiesManager.openImageViewerFromDetails = false
+            CeibroApplication.CookiesManager.openImageViewerFromDetailComments = false
+            CeibroApplication.CookiesManager.openImageViewerFromDetailFiles = false
+            CeibroApplication.CookiesManager.backActionFromImageViewer = false
+        }, 140)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

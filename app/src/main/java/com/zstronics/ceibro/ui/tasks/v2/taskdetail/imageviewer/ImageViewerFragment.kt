@@ -13,6 +13,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -33,13 +34,25 @@ class ImageViewerFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> navigateBack()
+            R.id.closeBtn -> {
+                CeibroApplication.CookiesManager.backActionFromImageViewer = true
+                navigateBack()
+            }
         }
     }
 
     private var activeAdapter = ""
     private var index = 0
+    private var anyActionPerformed = false
 
+//    override fun onPause() {
+//        super.onPause()
+//        if (anyActionPerformed) {
+//            CeibroApplication.CookiesManager.backActionFromImageViewer = false
+//        } else {
+//            CeibroApplication.CookiesManager.backActionFromImageViewer = true
+//        }
+//    }
 
     @Inject
     lateinit var imagePagerAdapter: ImagePagerAdapter
@@ -53,6 +66,8 @@ class ImageViewerFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //this is done true so that system back press will also work. if any action is performed we'll do it false
+        CeibroApplication.CookiesManager.backActionFromImageViewer = true
 
         mViewDataBinding.viewPager.adapter = imagePagerAdapter
         mViewDataBinding.localViewPager.adapter = localImagePagerAdapter
@@ -63,6 +78,7 @@ class ImageViewerFragment :
             replyPopUp(mViewDataBinding.ivMenu) {
                 when (activeAdapter) {
                     "images" -> {
+                        CeibroApplication.CookiesManager.backActionFromImageViewer = false
                         val item =
                             imagePagerAdapter.listItems[imagePagerAdapter.currentVisibleIndex]
                         navigateBack()
@@ -72,6 +88,7 @@ class ImageViewerFragment :
                     }
 
                     "localImages" -> {
+                        CeibroApplication.CookiesManager.backActionFromImageViewer = false
                         val item =
                             localImagePagerAdapter.listItems[localImagePagerAdapter.currentVisibleIndex]
                         navigateBack()
@@ -81,6 +98,7 @@ class ImageViewerFragment :
                     }
 
                     "detailViewImages" -> {
+                        CeibroApplication.CookiesManager.backActionFromImageViewer = false
                         val item =
                             detailsImagePagerAdapter.listItems[detailsImagePagerAdapter.currentVisibleIndex]
                         navigateBack()
