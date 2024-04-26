@@ -726,4 +726,6 @@
     <string name="russian">Русский</string>
     <string name="feedback_form">Форма для обратной связи</string>
     <string name="share_with">Поделиться с</string>
+    <string name="state">Состояние</string>
+    <string name="clear">Проясняться</string>
 </resources>
