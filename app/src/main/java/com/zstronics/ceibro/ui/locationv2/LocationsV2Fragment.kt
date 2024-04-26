@@ -58,10 +58,9 @@ import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
-import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
-import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeParentBottomSheet
-import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.LocationUsersBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.LocationsTagsBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -128,15 +127,15 @@ class LocationsV2Fragment :
 
             R.id.tagFilter -> {
 
-               /* chooseTagsType(viewModel) {
+                chooseTagsType(viewModel) {
                     mViewDataBinding.tagFilterCounter.text = it
                     viewModel.tagFilterCounter = it
                     viewModel._applyFilter.value = true
-                }*/
+                }
             }
 
             R.id.userFilter -> {
-          /*      chooseUserType(
+             chooseUserType(
                     viewModel,
                     { userConnectionAndRoleList ->
                         viewModel.userConnectionAndRoleList = userConnectionAndRoleList
@@ -158,7 +157,7 @@ class LocationsV2Fragment :
 
 
                     viewModel._applyFilter.value = true
-                }*/
+                }
             }
 
             R.id.taskType -> {
@@ -167,20 +166,10 @@ class LocationsV2Fragment :
                         viewModel._selectedTaskTypeOngoingState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             viewModel.typeToShowOngoing = "All"
-                        } else if (type.equals(
-                                TaskRootStateTags.AllWithoutViewOnly.tagValue,
-                                true
-                            )
-                        ) {
-                            viewModel.typeToShowOngoing = "All - Without Viewer"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                             viewModel.typeToShowOngoing = "From Me"
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
                             viewModel.typeToShowOngoing = "To Me"
-                        } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "View Only"
-                        } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
-                            viewModel.typeToShowOngoing = "Approver"
                         }
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
                     }
@@ -1678,7 +1667,7 @@ class LocationsV2Fragment :
     }
 
     private fun chooseTaskType(type: String, callback: (String) -> Unit) {
-        val sheet = TaskTypeParentBottomSheet(type) {
+        val sheet = TaskTypeBottomSheet(type) {
             callback.invoke(it)
         }
 
@@ -1687,11 +1676,11 @@ class LocationsV2Fragment :
     }
 
     private fun chooseUserType(
-        viewModel: TasksParentTabV3VM,
+        viewModel: LocationsV2VM,
         userConnectionAndRoleCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>) -> Unit,
         groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
     ) {
-        val sheet = UsersBottomSheet(viewModel, {
+        val sheet = LocationUsersBottomSheet(viewModel, {
             userConnectionAndRoleCallBack.invoke(it)
         }) {
             groupsCallBack.invoke(it)
@@ -1701,8 +1690,8 @@ class LocationsV2Fragment :
         sheet.show(childFragmentManager, "UsersBottomSheet")
     }
 
-    private fun chooseTagsType(model: TasksParentTabV3VM, callback: (String) -> Unit) {
-        val sheet = TagsBottomSheet(model) {
+    private fun chooseTagsType(model: LocationsV2VM, callback: (String) -> Unit) {
+        val sheet = LocationsTagsBottomSheet(model) {
 
             callback.invoke(viewModel.selectedTagsForFilter.size.toString())
         }
