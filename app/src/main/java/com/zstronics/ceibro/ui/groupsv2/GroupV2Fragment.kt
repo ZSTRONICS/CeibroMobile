@@ -168,7 +168,8 @@ class GroupV2Fragment :
         sectionedAdapter = AllGroupsAdapterSectionRecycler(
             requireContext(),
             sectionList,
-            networkConnectivityObserver
+            networkConnectivityObserver,
+            viewModel.sessionManager.getUserObj()
         )
 
         val linearLayoutManager = LinearLayoutManager(requireContext())

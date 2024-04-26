@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
@@ -28,7 +29,8 @@ import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 class AllGroupsAdapterSectionRecycler(
     val context: Context,
     sectionList: MutableList<GroupSectionHeader>,
-    val networkConnectivityObserver: NetworkConnectivityObserver
+    val networkConnectivityObserver: NetworkConnectivityObserver,
+    val userObj: User?
 ) : SectionRecyclerViewAdapter<
         GroupSectionHeader,
         CeibroConnectionGroupV2,
@@ -147,10 +149,10 @@ class AllGroupsAdapterSectionRecycler(
             binding.apply {
                 if (item != null) {
                     groupName.text = item.name
-                    groupMemberCount.text = if (item.contacts.size > 1) {
-                        "(${item.contacts.size} members)"
+                    groupMemberCount.text = if ((item.assignedToState.size + item.confirmer.size + item.viewer.size) > 1) {
+                        "(${(item.assignedToState.size + item.confirmer.size + item.viewer.size)} members)"
                     } else {
-                        "(${item.contacts.size} member)"
+                        "(${(item.assignedToState.size + item.confirmer.size + item.viewer.size)} member)"
                     }
                     if (selectAllGroups) {
                         if (!selectedGroup.contains(item)) {
@@ -165,6 +167,13 @@ class AllGroupsAdapterSectionRecycler(
                         groupCheckBox.visibility = View.GONE
                         groupMenu.visibility = View.VISIBLE
                     }
+
+                    if (item.creator.id.equals(userObj?.id, true) || item.groupAdmins.any { it.id == userObj?.id }) {
+                        groupMenu.visibility = View.VISIBLE
+                    } else {
+                        groupMenu.visibility = View.GONE
+                    }
+
                     groupCheckBox.setOnClickListener {
 
                         if (groupCheckBox.isChecked) {
