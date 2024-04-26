@@ -177,7 +177,7 @@ data class TaskMemberDetail(
     @SerializedName("companyName") val companyName: String?,
     @SerializedName("_id") val id: String,
     @SerializedName("jobTitle")
-    var jobTitle: String = "",
+    var jobTitle: String? = "",
     @Transient
     var isChecked: Boolean = false,
     ) : Parcelable
