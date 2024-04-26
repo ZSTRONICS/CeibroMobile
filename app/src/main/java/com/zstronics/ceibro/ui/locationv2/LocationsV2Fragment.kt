@@ -127,15 +127,17 @@ class LocationsV2Fragment :
 
             R.id.tagFilter -> {
 
-                chooseTagsType(viewModel) {
-                    mViewDataBinding.tagFilterCounter.text = it
-                    viewModel.tagFilterCounter = it
-                    viewModel._applyFilter.value = true
-                }
+                shortToastNow("Coming soon")
+                /* chooseTagsType(viewModel) {
+                     mViewDataBinding.tagFilterCounter.text = it
+                     viewModel.tagFilterCounter = it
+                     viewModel._applyFilter.value = true
+                 }*/
             }
 
             R.id.userFilter -> {
-             chooseUserType(
+                shortToastNow("Coming soon")
+                /*chooseUserType(
                     viewModel,
                     { userConnectionAndRoleList ->
                         viewModel.userConnectionAndRoleList = userConnectionAndRoleList
@@ -157,13 +159,13 @@ class LocationsV2Fragment :
 
 
                     viewModel._applyFilter.value = true
-                }
+                }*/
             }
 
             R.id.taskType -> {
                 chooseTaskType(viewModel.selectedTaskTypeOngoingState.value ?: "") { type ->
+
                     if (viewModel.selectedTaskTypeOngoingState.value != type) {
-                        viewModel._selectedTaskTypeOngoingState.value = type
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             viewModel.typeToShowOngoing = "All"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
@@ -171,8 +173,10 @@ class LocationsV2Fragment :
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
                             viewModel.typeToShowOngoing = "To Me"
                         }
+                        viewModel._selectedTaskTypeOngoingState.value = type
                         mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
                     }
+
                 }
             }
 
@@ -182,6 +186,10 @@ class LocationsV2Fragment :
                 } else {
                     EventBus.getDefault().post(LocalEvents.LoadDrawingFragmentInLocation())
                 }
+            }
+
+            R.id.iv_filter_icon -> {
+                viewState.isTopFilterVisible.value = !(viewState.isTopFilterVisible.value!!)
             }
 
             R.id.projectFilterBtn -> {
@@ -199,25 +207,34 @@ class LocationsV2Fragment :
             R.id.ongoingStateText -> {
                 layoutPressed = ongoing
                 manageLayoutsVisibility()
-                viewModel.checkFilter(filtersList)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    viewModel.checkFilter(filtersList)
+                }, 50)
+
             }
 
             R.id.approvalStateText -> {
                 layoutPressed = approval
                 manageLayoutsVisibility()
-                viewModel.checkFilter(filtersList)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    viewModel.checkFilter(filtersList)
+                }, 50)
             }
 
             R.id.closedStateText -> {
                 layoutPressed = closed
                 manageLayoutsVisibility()
-                viewModel.checkFilter(filtersList)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    viewModel.checkFilter(filtersList)
+                }, 50)
             }
 
             R.id.allStateText -> {
                 layoutPressed = all
                 manageLayoutsVisibility()
-                viewModel.checkFilter(filtersList)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    viewModel.checkFilter(filtersList)
+                }, 50)
             }
 
             R.id.tvHidden -> {
@@ -249,6 +266,7 @@ class LocationsV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addFiltersToList()
         if (pdfFileLoaded) {
             println("ReloadFragment: onViewCreated")
             pdfFileLoaded = false
@@ -257,8 +275,6 @@ class LocationsV2Fragment :
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-
-        addFiltersToList()
 
         val adapter = SpinnerAdapter(viewModel.downloadedDrawingV2Dao, networkConnectivityObserver)
         adapter.spinner = mViewDataBinding.locationSpinner
@@ -378,26 +394,15 @@ class LocationsV2Fragment :
         }
 
         viewModel.existingDrawingPins.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                try {
-//                    val dummyJson =
-//                        "{\"points\": [{\"type\": \"task\", \"xPoint\": 64.797615, \"yPoint\": 108.57685, \"width\": 1080, \"height\": 657}, {\"type\": \"task\", \"xPoint\": 133.198, \"yPoint\": 182.58434, \"width\": 1080, \"height\": 657}, {\"type\": \"task\", \"xPoint\": 858.5824, \"yPoint\": 437.82886, \"width\": 1080, \"height\": 657}]}"
-//                    val data = Gson().fromJson(dummyJson, PinPointsData::class.java)
-                    inViewPinsList.clear()
-                    inViewPinsList = mutableListOf()
-                    loadExistingMarkerPoints.addAll(it)
-                    if (pdfFileLoaded) {
-                        mViewDataBinding.pdfView.invalidate()
-                    }
+            Handler(Looper.getMainLooper()).postDelayed({
+                viewModel.checkFilter(filtersList)
+            }, 50)
 
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            } else {
-                inViewPinsList.clear()
-                inViewPinsList = mutableListOf()
-                loadExistingMarkerPoints.addAll(it)
-            }
+        }
+        viewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                viewModel.checkFilter(filtersList)
+            }, 50)
         }
         viewModel.existingGroup.observe(viewLifecycleOwner) {
 
@@ -423,13 +428,42 @@ class LocationsV2Fragment :
         viewModel.filterExistingDrawingPins.observe(viewLifecycleOwner) {
 //            if (it.isNotEmpty()) {
             try {
-                inViewPinsList.clear()
-                loadExistingMarkerPoints.clear()
-                inViewPinsList = mutableListOf()
-                loadExistingMarkerPoints.addAll(it)
-                if (pdfFileLoaded) {
-                    mViewDataBinding.pdfView.invalidate()
+                if (it.isNotEmpty()) {
+                    try {
+                        inViewPinsList.clear()
+                        loadExistingMarkerPoints.clear()
+                        inViewPinsList = mutableListOf()
+                        loadExistingMarkerPoints.addAll(it)
+                        if (pdfFileLoaded) {
+                            mViewDataBinding.pdfView.invalidate()
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                } else {
+                    try {
+                        inViewPinsList.clear()
+                        loadExistingMarkerPoints.clear()
+                        inViewPinsList = mutableListOf()
+                        loadExistingMarkerPoints.addAll(it)
+                        if (pdfFileLoaded) {
+                            mViewDataBinding.pdfView.invalidate()
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
+
+
+                /*   inViewPinsList.clear()
+                   loadExistingMarkerPoints.clear()
+                   inViewPinsList = mutableListOf()
+                   loadExistingMarkerPoints.addAll(it)
+                   if (pdfFileLoaded) {
+                       mViewDataBinding.pdfView.invalidate()
+                   }*/
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1272,7 +1306,7 @@ class LocationsV2Fragment :
     }
 
     private fun updateCompoundDrawable(filter: TextView, ivFilter: ImageView, flag: Boolean) {
-        val drawableResId = if (!flag) R.drawable.icon_filter_blue else R.drawable.ic_cross_blue
+        val drawableResId = if (!flag) R.drawable.state_machine else R.drawable.ic_cross_blue
         if (!flag) filter.visibility = View.VISIBLE else filter.visibility = View.GONE
         ivFilter.setImageResource(drawableResId)
     }

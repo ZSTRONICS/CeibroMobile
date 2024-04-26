@@ -8,6 +8,7 @@ class LocationsV2State @Inject constructor(
 ) : BaseState(), ILocationsV2.State {
 
     override var isFilterVisible: MutableLiveData<Boolean> = MutableLiveData(false)
+    override var isTopFilterVisible: MutableLiveData<Boolean> = MutableLiveData(true)
     override var groupName: MutableLiveData<String> = MutableLiveData("Drawing")
 
     override var isToNewClicked: MutableLiveData<Boolean> = MutableLiveData(true)

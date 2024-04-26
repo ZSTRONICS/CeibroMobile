@@ -78,7 +78,6 @@ class LocationsV2VM @Inject constructor(
     var cameFromProject: Boolean = true
 
 
-
     private val _allTopics: MutableLiveData<MutableList<TopicsResponse.TopicData>?> =
         MutableLiveData()
     val allTopics: MutableLiveData<MutableList<TopicsResponse.TopicData>?> = _allTopics
@@ -94,7 +93,6 @@ class LocationsV2VM @Inject constructor(
     val recentTopics: MutableLiveData<MutableList<TopicsResponse.TopicData>?> = _recentTopics
     var originalRecentTopics = listOf<TopicsResponse.TopicData>()
     var oldSelectedTags: MutableLiveData<MutableList<TopicsResponse.TopicData>> = MutableLiveData()
-
 
 
     fun getDrawingPins(drawingId: String) {
@@ -131,7 +129,42 @@ class LocationsV2VM @Inject constructor(
                     }
                 }
             }
-            _filterExistingDrawingPins.value = list
+            if (selectedTaskTypeOngoingState.value.equals(TaskRootStateTags.All.tagValue, true)) {
+                _filterExistingDrawingPins.value = list
+            } else if (selectedTaskTypeOngoingState.value.equals(
+                    TaskRootStateTags.FromMe.tagValue,
+                    true
+                )
+            ) {
+                val fromMeList: ArrayList<CeibroDrawingPins> = arrayListOf()
+
+                list.forEach { item ->
+                    if (item.taskData.rootState.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                        if (!fromMeList.contains(item)) {
+                            fromMeList.add(item)
+                        }
+                    }
+                }
+
+                _filterExistingDrawingPins.value = fromMeList
+            } else if (selectedTaskTypeOngoingState.value.equals(
+                    TaskRootStateTags.ToMe.tagValue,
+                    true
+                )
+            ) {
+
+                val toMeList: ArrayList<CeibroDrawingPins> = arrayListOf()
+
+                list.forEach { item ->
+                    if (item.taskData.rootState.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                        if (!toMeList.contains(item)) {
+                            toMeList.add(item)
+                        }
+                    }
+                }
+                _filterExistingDrawingPins.value = toMeList
+            }
+
         } else {
             _filterExistingDrawingPins.value = arrayListOf()
         }
@@ -166,6 +199,7 @@ class LocationsV2VM @Inject constructor(
         else
             _allTopics.postValue(mutableListOf())
     }
+
     fun getAllTopics(callBack: (allTopics: TopicsResponse?) -> Unit) {
         launch {
             taskRepository.getAllTopics { isSuccess, error, allTopics ->

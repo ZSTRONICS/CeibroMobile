@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:elevation="3dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

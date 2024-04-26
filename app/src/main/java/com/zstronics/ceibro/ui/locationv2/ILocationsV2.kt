@@ -7,6 +7,7 @@ interface ILocationsV2 {
     interface State : IBase.State {
 
         var isFilterVisible: MutableLiveData<Boolean>
+        var isTopFilterVisible: MutableLiveData<Boolean>
         var groupName: MutableLiveData<String>
         var isToNewClicked: MutableLiveData<Boolean>
         var isToOngoingClicked: MutableLiveData<Boolean>
