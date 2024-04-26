@@ -360,13 +360,26 @@ class GroupAssigneeFragment :
                             item1.id == currentUser.id
                         }
                         if (selectedItem != null) {       //if not null then current user contact is already part of selected contact list
-                            val combinedList = selectedContacts + currentContactList
-                            if (combinedList != null && currentContactList != null) {
-                                val distinctList = combinedList.distinct().toMutableList()
-                                selectedContacts.clear()
-                                selectedContacts.addAll(distinctList)
-                                viewModel.selectedContacts.postValue(distinctList)
+                            val combinedList = ArrayList<TaskMemberDetail>()
+                            selectedContacts.forEach { selectedContact ->
+                                val foundItem =
+                                    combinedList.find { it.phoneNumber == selectedContact.phoneNumber }
+                                if (foundItem == null) {
+                                    combinedList.add(selectedContact)
+                                }
                             }
+                            currentContactList.forEach { currentContact ->
+                                val foundItem =
+                                    combinedList.find { it.phoneNumber == currentContact.phoneNumber }
+                                if (foundItem == null) {
+                                    combinedList.add(currentContact)
+                                }
+                            }
+
+
+                            selectedContacts.clear()
+                            selectedContacts.addAll(combinedList)
+                            viewModel.selectedContacts.postValue(combinedList)
 
                         } else {
                             selectedContacts.addAll(currentContactList)
