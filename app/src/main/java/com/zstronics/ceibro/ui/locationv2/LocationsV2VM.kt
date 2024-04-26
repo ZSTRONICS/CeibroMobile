@@ -9,7 +9,11 @@ import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,6 +25,26 @@ class LocationsV2VM @Inject constructor(
     private val groupsV2Dao: GroupsV2Dao,
     val taskDao: TaskV2Dao,
 ) : HiltBaseViewModel<ILocationsV2.State>(), ILocationsV2.ViewModel {
+
+    var _selectedTaskTypeOngoingState: MutableLiveData<String> =
+        MutableLiveData(TaskRootStateTags.All.tagValue)
+    var selectedTaskTypeOngoingState: LiveData<String> = _selectedTaskTypeOngoingState
+    var typeToShowOngoing = "All"
+
+
+    //filters
+    var userConnectionAndRoleList =
+        Pair(ArrayList<AllCeibroConnections.CeibroConnection>(), ArrayList<String>())
+    var selectedGroups = ArrayList<CeibroConnectionGroupV2>()
+
+    var userFilterCounter = "0"
+    var tagFilterCounter = "0"
+
+
+    var _applyFilter: MutableLiveData<Boolean> = MutableLiveData(false)
+    var applyFilter: LiveData<Boolean> = _applyFilter
+
+    var selectedTagsForFilter = ArrayList<TopicsResponse.TopicData>()
 
     var index = -10
     var oldPosition = -11

@@ -47,6 +47,8 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.location.MarkerPointsData
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -56,6 +58,10 @@ import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeParentBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -119,6 +125,68 @@ class LocationsV2Fragment :
 
     override fun onClick(id: Int) {
         when (id) {
+
+            R.id.tagFilter -> {
+
+               /* chooseTagsType(viewModel) {
+                    mViewDataBinding.tagFilterCounter.text = it
+                    viewModel.tagFilterCounter = it
+                    viewModel._applyFilter.value = true
+                }*/
+            }
+
+            R.id.userFilter -> {
+          /*      chooseUserType(
+                    viewModel,
+                    { userConnectionAndRoleList ->
+                        viewModel.userConnectionAndRoleList = userConnectionAndRoleList
+
+                        val size =
+                            viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
+                        mViewDataBinding.userFilterCounter.text = size.toString()
+                        viewModel.userFilterCounter = size.toString()
+
+                        viewModel._applyFilter.value = true
+                    }
+                ) { groupsList ->
+                    viewModel.selectedGroups = groupsList
+
+                    val size =
+                        viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
+                    mViewDataBinding.userFilterCounter.text = size.toString()
+                    viewModel.userFilterCounter = size.toString()
+
+
+                    viewModel._applyFilter.value = true
+                }*/
+            }
+
+            R.id.taskType -> {
+                chooseTaskType(viewModel.selectedTaskTypeOngoingState.value ?: "") { type ->
+                    if (viewModel.selectedTaskTypeOngoingState.value != type) {
+                        viewModel._selectedTaskTypeOngoingState.value = type
+                        if (type.equals(TaskRootStateTags.All.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "All"
+                        } else if (type.equals(
+                                TaskRootStateTags.AllWithoutViewOnly.tagValue,
+                                true
+                            )
+                        ) {
+                            viewModel.typeToShowOngoing = "All - Without Viewer"
+                        } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "From Me"
+                        } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "To Me"
+                        } else if (type.equals(TaskRootStateTags.ViewOnly.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "View Only"
+                        } else if (type.equals(TaskRootStateTags.Approver.tagValue, true)) {
+                            viewModel.typeToShowOngoing = "Approver"
+                        }
+                        mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
+                    }
+                }
+            }
+
             R.id.backBtn -> {
                 if (viewModel.cameFromProject) {
                     EventBus.getDefault().post(LocalEvents.LoadLocationProjectFragmentInLocation())
@@ -390,7 +458,7 @@ class LocationsV2Fragment :
                 }
 
                 mViewDataBinding.progressBar.visibility = View.VISIBLE
-                mViewDataBinding.tvFloorName.text = "${it.floor.floorName} Floor"
+                mViewDataBinding.tvFloorName.text = "${it.floor.floorName} F."
                 mViewDataBinding.tvFileName.text = "${it.fileName}"
 //            mViewDataBinding.progressBar.isIndeterminate = true
 
@@ -1607,5 +1675,39 @@ class LocationsV2Fragment :
         viewState.isAllClicked.value = isAllTrue
 
         return isAllTrue
+    }
+
+    private fun chooseTaskType(type: String, callback: (String) -> Unit) {
+        val sheet = TaskTypeParentBottomSheet(type) {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "TaskTypeParentBottomSheet")
+    }
+
+    private fun chooseUserType(
+        viewModel: TasksParentTabV3VM,
+        userConnectionAndRoleCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>) -> Unit,
+        groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
+    ) {
+        val sheet = UsersBottomSheet(viewModel, {
+            userConnectionAndRoleCallBack.invoke(it)
+        }) {
+            groupsCallBack.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "UsersBottomSheet")
+    }
+
+    private fun chooseTagsType(model: TasksParentTabV3VM, callback: (String) -> Unit) {
+        val sheet = TagsBottomSheet(model) {
+
+            callback.invoke(viewModel.selectedTagsForFilter.size.toString())
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "TagsBottomSheet")
     }
 }

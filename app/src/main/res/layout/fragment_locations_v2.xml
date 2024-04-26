@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -137,15 +138,276 @@
                     android:maxLines="1"
                     android:paddingStart="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_5sdp"
-                    android:text="Floor"
+                    android:text="F."
                     android:textColor="@color/appGrey3"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/saperaterthree"
                     app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat" />
 
+                <View
+                    android:id="@+id/saperaterthree"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/backBtn"
+                    app:layout_constraintEnd_toStartOf="@id/iv_filter_icon"
+                    app:layout_constraintTop_toTopOf="@+id/backBtn" />
+
+                <ImageView
+                    android:id="@+id/iv_filter_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:src="@drawable/icon_filter_blue"
+                    app:layout_constraintBottom_toBottomOf="@id/backBtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/backBtn" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/filterAndSearchLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/LocationHeader">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/filtersBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/_4sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_tab">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgSearchFilter"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="3dp"
+                        android:src="@drawable/icon_search"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/appBlue" />
+
+
+                    <HorizontalScrollView
+                        android:id="@+id/scrollView"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/_2sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:scrollbars="none"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvClear"
+                        app:layout_constraintStart_toEndOf="@+id/imgSearchFilter"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_2sdp"
+                            android:paddingVertical="@dimen/_3sdp">
+
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/taskType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:background="@drawable/round_grey_btn"
+                                android:backgroundTint="@color/appBlue"
+                                android:gravity="center"
+                                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                                android:orientation="horizontal"
+                                android:paddingVertical="@dimen/_5sdp"
+                                android:paddingStart="@dimen/_7sdp"
+                                android:paddingEnd="@dimen/_6sdp"
+                                android:visibility="visible">
+
+                                <TextView
+                                    android:id="@+id/taskTypeText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/inter_medium"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/_2sdp"
+                                    android:text="@string/all"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@id/ivAll"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/ivAll"
+                                    android:layout_width="21dp"
+                                    android:layout_height="21dp"
+                                    android:layout_marginStart="@dimen/_3sdp"
+                                    android:src="@drawable/icon_drop_down"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@id/tvAll"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:tint="@color/white" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginVertical="@dimen/_2sdp"
+                                android:layout_marginStart="@dimen/_6sdp"
+                                android:background="@color/appGrey2" />
+
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/userFilter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_5sdp"
+                                android:background="@drawable/round_grey_btn"
+                                android:backgroundTint="@color/appGrey1"
+                                android:gravity="center"
+                                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                                android:orientation="horizontal"
+                                android:paddingVertical="@dimen/_5sdp"
+                                android:paddingStart="@dimen/_7sdp"
+                                android:paddingEnd="@dimen/_6sdp">
+
+                                <TextView
+                                    android:id="@+id/userFilterText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/inter_medium"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/_2sdp"
+                                    android:text="@string/users_heading"
+                                    android:textColor="@color/appGrey3"
+                                    android:textSize="@dimen/_10sdp" />
+
+                                <TextView
+                                    android:id="@+id/userFilterCounter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_2sdp"
+                                    android:background="@drawable/round_grey"
+                                    android:backgroundTint="@color/appGrey3"
+                                    android:elevation="12dp"
+                                    android:fontFamily="@font/inter_medium"
+                                    android:gravity="center"
+                                    android:maxLength="3"
+                                    android:outlineSpotShadowColor="@color/white"
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_9sdp"
+                                    android:visibility="visible"
+                                    tools:ignore="HardcodedText,SmallSp,UnusedAttribute" />
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/userFilterDownIcon"
+                                    android:layout_width="21dp"
+                                    android:layout_height="21dp"
+                                    android:layout_marginStart="@dimen/_1sdp"
+                                    android:src="@drawable/icon_drop_down"
+                                    app:tint="@color/appGrey3" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/tagFilter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_5sdp"
+                                android:background="@drawable/round_grey_btn"
+                                android:backgroundTint="@color/appGrey1"
+                                android:gravity="center"
+                                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                                android:orientation="horizontal"
+                                android:paddingVertical="@dimen/_5sdp"
+                                android:paddingStart="@dimen/_7sdp"
+                                android:paddingEnd="@dimen/_6sdp">
+
+                                <TextView
+                                    android:id="@+id/tagFilterText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/inter_medium"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/_2sdp"
+                                    android:text="@string/tags"
+                                    android:textColor="@color/appGrey3"
+                                    android:textSize="@dimen/_10sdp" />
+
+                                <TextView
+                                    android:id="@+id/tagFilterCounter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_2sdp"
+                                    android:background="@drawable/round_grey"
+                                    android:backgroundTint="@color/appGrey3"
+                                    android:elevation="12dp"
+                                    android:fontFamily="@font/inter_medium"
+                                    android:gravity="center"
+                                    android:maxLength="3"
+                                    android:outlineSpotShadowColor="@color/white"
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="0"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_9sdp"
+                                    android:visibility="visible"
+                                    tools:ignore="HardcodedText,SmallSp,UnusedAttribute" />
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/tagFilterDownIcon"
+                                    android:layout_width="21dp"
+                                    android:layout_height="21dp"
+                                    android:layout_marginStart="@dimen/_1sdp"
+                                    android:src="@drawable/icon_drop_down"
+                                    app:tint="@color/appGrey3" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+                    <TextView
+                        android:id="@+id/tvClear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:gravity="center_vertical"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="4dp"
+                        android:text="@string/clear"
+                        android:textColor="@color/appBlue"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             <RelativeLayout
                 android:id="@+id/cl_main"
@@ -291,7 +553,7 @@
                     android:id="@+id/iv_filter"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/icon_filter_blue"
+                    android:src="@drawable/state_machine"
                     app:layout_constraintBottom_toTopOf="@id/filter"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -304,7 +566,7 @@
                     android:clickable="false"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
-                    android:text="@string/filter"
+                    android:text="@string/state"
                     android:textColor="@color/appBlue"
                     android:textSize="@dimen/_10sdp"
                     android:visibility="visible"
@@ -440,6 +702,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/ongoingStateText"
                     android:layout_width="match_parent"

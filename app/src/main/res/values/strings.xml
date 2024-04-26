@@ -718,4 +718,6 @@
     <string name="russian">Russian</string>
     <string name="feedback_form">Feedback Form</string>
     <string name="share_with">Share with</string>
+    <string name="state">State</string>
+    <string name="clear">Clear</string>
 </resources>
