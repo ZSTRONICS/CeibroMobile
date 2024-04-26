@@ -81,7 +81,9 @@ class GroupAssigneeVM @Inject constructor(
         if (existingContacts != null) {
             for (contact in existingContacts) {
                 if (contact is TaskMemberDetail) {
-                    contact.isChecked=true
+                    selectedContactList?.find { it.phoneNumber == contact.phoneNumber }?.let {
+                        contact.isChecked = true
+                    }
                     contactsToRemoveFromAll.add(contact)
                 }
             }
@@ -127,7 +129,7 @@ class GroupAssigneeVM @Inject constructor(
         if (!oldSelectedContacts.isNullOrEmpty()) {
             oldSelectedContacts.forEach { oldContact ->
                 val matchingContact = allContacts.find { it.id == oldContact.id }
-                    matchingContact?.isChecked = true
+                matchingContact?.isChecked = true
             }
             _allConnections.value = allContacts
             originalConnections = allContacts
@@ -288,9 +290,9 @@ class GroupAssigneeVM @Inject constructor(
 
         // Remove the connections after the iteration is complete
         allConnections.removeAll(connectionsToRemove)
-        if (allConnections.isNullOrEmpty()){
+        if (allConnections.isNullOrEmpty()) {
             _allConnections.value = mutableListOf()
-        }else{
+        } else {
             _allConnections.value = allConnections!!
         }
 
