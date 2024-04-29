@@ -832,7 +832,7 @@ class DashboardFragment :
         socketEventsInitiated = true
 
         SocketHandler.emitIsSyncRequired()
-        startPeriodicContactSyncWorker(requireContext())
+//        startPeriodicContactSyncWorker(requireContext())
     }
 
     private fun handleFileUploaderSocketEvents() {

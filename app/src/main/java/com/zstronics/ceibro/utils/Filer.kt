@@ -3,8 +3,10 @@ package com.zstronics.ceibro.utils
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -65,6 +67,59 @@ object Filer{
         }
         return output.path
     }
+
+    fun copyFileToInternalStorageExtension(mContext: Context, uri: Uri, newDirName: String, fileName: String): String? {
+
+        val outputFile: File
+        if (newDirName != "") {
+            val dir = File(
+                mContext.filesDir.toString()
+                        + "/" + newDirName
+            )
+            if (!dir.exists()) {
+                dir.mkdir()
+            }
+            outputFile = File(
+                mContext.filesDir.toString()
+                        + "/" + newDirName + "/"
+                        + URLEncoder.encode(fileName, "utf-8")
+            )
+        } else {
+//            outputFile = File(
+//                mContext.filesDir.toString()
+//                        + "/" + URLEncoder.encode(fileName, "utf-8")
+//            )
+            outputFile = File(mContext.filesDir, fileName)
+        }
+        try {
+            val inputStream: InputStream? =
+                mContext.contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(outputFile)
+
+            //option 1 to copy file
+            var read = 0
+            val bufferSize = 1024
+            val buffers = ByteArray(bufferSize)
+            while (inputStream!!.read(buffers).also { read = it } != -1) {
+                outputStream.write(buffers, 0, read)
+            }
+
+            //option2 to copy file
+            // Copy the content of the input stream to the output stream
+//            inputStream?.copyTo(outputStream)
+
+
+            inputStream.close()
+            outputStream.close()
+
+            return outputFile.absolutePath
+        } catch (e: java.lang.Exception) {
+            Log.e("Exception", e.message!!)
+        }
+        return null
+    }
+
+
     val fileMimeType = arrayOf(
         "text/plain",
         "text/csv",

@@ -74,12 +74,16 @@ class SignUpVM @Inject constructor(
             }
         }.addOnFailureListener { e: Exception? -> }.addOnCanceledListener {}
             .addOnCompleteListener { task: Task<String> ->
-                Log.v(
-                    "FirebaseToken-SignUp",
-                    "This is the token : " + task.result
-                )
-                firebaseToken = task.result
-                sessionManager.saveStringValue(KEY_Firebase_Token, task.result)
+                if (task.isSuccessful) {
+                    Log.v(
+                        "FirebaseToken-SignUp",
+                        "This is the token : " + task.result
+                    )
+                    firebaseToken = task.result
+                    sessionManager.saveStringValue(KEY_Firebase_Token, task.result)
+                } else {
+                    Log.w("FirebaseToken-SignUp", "token should not be null...addOnCompleteListener")
+                }
             }
 
         val request = SignUpRequest(

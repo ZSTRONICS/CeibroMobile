@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -86,23 +87,71 @@ class TaskDetailParentV2VM @Inject constructor(
             if (parentSelectedState != null) {
                 selectedState = parentSelectedState
             }
+            val notificationData: NotificationTaskData? =
+                bundle?.getParcelable("notificationTaskData")
 
+            if (taskDataFromNotification != null || notificationData != null) {         //It means detail is opened via notification if not null
 
-            if (taskDataFromNotification != null) {         //It means detail is opened via notification if not null
+                if (taskDataFromNotification != null) {
+                    if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+                        sessionManager.setUser()
+                        sessionManager.setToken()
+                    }
 
-                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
-                    sessionManager.setUser()
-                    sessionManager.setToken()
+                    taskId = taskDataFromNotification.id
+                    isTaskBeingDone.postValue(taskDataFromNotification.isBeingDoneByAPI)
+                    rootState = TaskRootStateTags.ToMe.tagValue
+                    originalTask.postValue(taskDataFromNotification!!)
+                    _taskDetail.postValue(taskDataFromNotification!!)
+
+                    taskSeen(taskDataFromNotification.id) { }
+                    getPinnedEvents(taskId, true)
+
+                } else if (notificationData != null) {
+                    //This else if is a safe check for notification because sometimes data is set afterwards but UI loads first
+                    if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+                        sessionManager.setUser()
+                        sessionManager.setToken()
+                    }
+
+                    taskId = notificationData.taskId
+                    launch {
+                        val task = taskDao.getTaskByID(notificationData.taskId)
+                        task?.let { task1 ->
+                            isTaskBeingDone.postValue(task.isBeingDoneByAPI)
+                            rootState = TaskRootStateTags.ToMe.tagValue
+                            originalTask.postValue(task1)
+                            _taskDetail.postValue(task1)
+                            CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = task1
+                            CeibroApplication.CookiesManager.taskDataForDetails = task1
+
+                            taskSeen(taskId) { }
+                            getPinnedEvents(taskId, true)
+
+                        } ?: run {
+                            // run API call because task not found in DB
+                            getTaskById(taskId) { isSuccess, task, events ->
+                                if (isSuccess) {
+                                    isTaskBeingDone.postValue(false)
+                                    rootState = TaskRootStateTags.ToMe.tagValue
+                                    if (task != null) {
+                                        originalTask.postValue(task!!)
+                                        _taskDetail.postValue(task!!)
+                                    }
+                                    CeibroApplication.CookiesManager.taskDataForDetailsFromNotification =
+                                        task
+                                    CeibroApplication.CookiesManager.taskDataForDetails = task
+
+                                    taskSeen(taskId) { }
+                                    getPinnedEvents(taskId, true)
+                                } else {
+                                    loading(false, "No task details to show")
+                                }
+                            }
+                        }
+                    }
                 }
 
-                taskId = taskDataFromNotification.id
-                isTaskBeingDone.postValue(taskDataFromNotification.isBeingDoneByAPI)
-                rootState = TaskRootStateTags.ToMe.tagValue
-                originalTask.postValue(taskDataFromNotification!!)
-                _taskDetail.postValue(taskDataFromNotification!!)
-
-                taskSeen(taskDataFromNotification.id) { }
-                getPinnedEvents(taskId, true)
             } else {
                 taskData?.let { task ->
                     taskId = task.id
@@ -112,12 +161,34 @@ class TaskDetailParentV2VM @Inject constructor(
                     _taskDetail.postValue(task)
 
                     taskSeen(task.id) { }
-                    getPinnedEvents(taskId, true)
+                    getPinnedEvents(task.id, true)
                 } ?: run {
                     alert("No details to display")
                 }
             }
 
+        }
+    }
+
+    private fun getTaskById(
+        taskId: String,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, taskEvents: List<Events>) -> Unit
+    ) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.getTaskById(taskId)) {
+                is ApiResponse.Success -> {
+                    taskDao.insertTaskData(response.data.task)
+                    taskDao.insertMultipleEvents(response.data.taskEvents)
+                    loading(false, "")
+                    callBack.invoke(true, response.data.task, response.data.taskEvents)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false, null, emptyList())
+                }
+            }
         }
     }
 

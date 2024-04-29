@@ -38,6 +38,7 @@ import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.utils.Filer
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
@@ -713,7 +714,8 @@ class LocationDrawingV2Fragment :
                                 "$fileName.$fileExtension"
                             }
                         }
-                        val pdfFilePath = copyFileToInternalStorage(fileUri, fileName)
+                        val pdfFilePath =
+                            Filer.copyFileToInternalStorageExtension(requireContext(), fileUri, "", fileName)
 //                        val pdfFileUri = pdfFilePath?.let { it1 -> getFileUri(it1) }
                         println("pdfFilePath1 ${pdfFilePath}")
                         val bundle = Bundle()
@@ -741,7 +743,8 @@ class LocationDrawingV2Fragment :
                             }
                         }
 //                        val selectedDocDetail = getPickedFileDetail(requireContext(), it)
-                        val pdfFilePath = copyFileToInternalStorage(it, fileName!!)
+                        val pdfFilePath =
+                            Filer.copyFileToInternalStorageExtension(requireContext(), it, "", fileName!!)
 //                        val pdfFileUri= pdfFilePath?.let { it1 -> getFileUri(it1) }
                         println("pdfFilePath ${pdfFilePath} fileName: $fileName")
                         val bundle = Bundle()
@@ -756,28 +759,28 @@ class LocationDrawingV2Fragment :
         }
     }
 
-    private fun copyFileToInternalStorage(uri: Uri, fileName: String): String? {
-        val inputStream: InputStream? = requireContext().contentResolver.openInputStream(uri)
-        val outputStream: FileOutputStream
-
-        try {
-            // Create a file in the internal storage
-            val file = File(requireContext().filesDir, fileName)
-            outputStream = FileOutputStream(file)
-
-            // Copy the content of the input stream to the output stream
-            inputStream?.copyTo(outputStream)
-
-            inputStream?.close()
-            outputStream.close()
-
-            return file.absolutePath
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return null
-    }
+//    private fun copyFileToInternalStorage(uri: Uri, fileName: String): String? {
+//        val inputStream: InputStream? = requireContext().contentResolver.openInputStream(uri)
+//        val outputStream: FileOutputStream
+//
+//        try {
+//            // Create a file in the internal storage
+//            val file = File(requireContext().filesDir, fileName)
+//            outputStream = FileOutputStream(file)
+//
+//            // Copy the content of the input stream to the output stream
+//            inputStream?.copyTo(outputStream)
+//
+//            inputStream?.close()
+//            outputStream.close()
+//
+//            return file.absolutePath
+//        } catch (e: IOException) {
+//            e.printStackTrace()
+//        }
+//
+//        return null
+//    }
 
     private fun getFileUri(filePath: String): Uri? {
         val file = File(filePath)

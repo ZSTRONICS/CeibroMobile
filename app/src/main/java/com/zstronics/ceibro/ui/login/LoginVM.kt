@@ -57,7 +57,7 @@ class LoginVM @Inject constructor(
         val model = Build.MODEL
         deviceInfo.append("$model")
 
-        val androidId =  Settings.Secure.getString(
+        val androidId = Settings.Secure.getString(
             context.contentResolver,
             Settings.Secure.ANDROID_ID
         )
@@ -69,16 +69,20 @@ class LoginVM @Inject constructor(
                 firebaseToken = token
                 sessionManager.saveStringValue(KEY_Firebase_Token, token)
             } else {
-                Log.w("FirebaseToken-Login", "token should not be null...")
+                Log.w("FirebaseToken-Login", "token should not be null...addOnSuccessListener")
             }
         }.addOnFailureListener { e: Exception? -> }.addOnCanceledListener {}
             .addOnCompleteListener { task: Task<String> ->
-                Log.v(
-                    "FirebaseToken-Login",
-                    "This is the token : " + task.result
-                )
-                firebaseToken = task.result
-                sessionManager.saveStringValue(KEY_Firebase_Token, task.result)
+                if (task.isSuccessful) {
+                    Log.v(
+                        "FirebaseToken-Login",
+                        "This is the token : " + task.result
+                    )
+                    firebaseToken = task.result
+                    sessionManager.saveStringValue(KEY_Firebase_Token, task.result)
+                } else {
+                    Log.w("FirebaseToken-Login", "token should not be null...addOnCompleteListener")
+                }
             }
 
 

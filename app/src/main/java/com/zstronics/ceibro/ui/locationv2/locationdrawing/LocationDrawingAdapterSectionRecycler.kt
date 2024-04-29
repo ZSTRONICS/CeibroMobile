@@ -33,6 +33,7 @@ import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
 import com.zstronics.ceibro.databinding.LayoutlocationdrawinglistBinding
 import com.zstronics.ceibro.ui.locationv2.locationdrawing.adapter.LocationDrawingAdapter
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.utils.Filer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -395,7 +396,8 @@ class LocationDrawingAdapterSectionRecycler constructor(
                             Uri.parse(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)))
                         val fileName = getFileNameFromUri(uri)
                         fileName?.let {
-                            val fileAbsolutePath = copyFileToInternalStorage(it, uri, context)
+                            val fileAbsolutePath =
+                                Filer.copyFileToInternalStorageExtension(context, uri, "", it)
                             GlobalScope.launch {
                                 val downloadedDrawing =
                                     downloadedDrawingV2Dao.getDownloadedDrawingByDownloadId(
@@ -492,32 +494,32 @@ class LocationDrawingAdapterSectionRecycler constructor(
     }
 
 
-    private fun copyFileToInternalStorage(
-        fileName: String,
-        uri: Uri,
-        context: Context
-    ): String? {
-        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        val outputStream: FileOutputStream
-
-        try {
-            // Create a file in the internal storage
-            val file = File(context.filesDir, fileName)
-            outputStream = FileOutputStream(file)
-
-            // Copy the content of the input stream to the output stream
-            inputStream?.copyTo(outputStream)
-
-            inputStream?.close()
-            outputStream.close()
-
-            return file.absolutePath
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return null
-    }
+//    private fun copyFileToInternalStorage(
+//        fileName: String,
+//        uri: Uri,
+//        context: Context
+//    ): String? {
+//        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+//        val outputStream: FileOutputStream
+//
+//        try {
+//            // Create a file in the internal storage
+//            val file = File(context.filesDir, fileName)
+//            outputStream = FileOutputStream(file)
+//
+//            // Copy the content of the input stream to the output stream
+//            inputStream?.copyTo(outputStream)
+//
+//            inputStream?.close()
+//            outputStream.close()
+//
+//            return file.absolutePath
+//        } catch (e: IOException) {
+//            e.printStackTrace()
+//        }
+//
+//        return null
+//    }
 
     private fun getFileNameFromUri(uri: Uri): String? {
         val file = File(uri.path ?: "")
