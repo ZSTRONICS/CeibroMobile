@@ -17,19 +17,24 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.CeibroDatabase
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.inbox.ActionFilesData
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.ApproveOrRejectTaskRequest
@@ -110,6 +115,9 @@ class CreateNewTaskService : Service() {
     @Inject
     lateinit var networkConnectivityObserver: NetworkConnectivityObserver
 
+    @Inject
+    lateinit var downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+
     override fun onCreate() {
 
         super.onCreate()
@@ -127,6 +135,11 @@ class CreateNewTaskService : Service() {
         val request = intent?.getStringExtra("ServiceRequest")
         val taskId = intent?.getStringExtra("taskId")
         val event = intent?.getStringExtra("event")
+        val uploadingFileBundle = intent?.getBundleExtra("uploadingFileBundle")
+        val uploadingFileList = uploadingFileBundle?.getParcelableArray("uploadingFileList")
+        val uploadedFilesList =
+            uploadingFileList?.map { it as PickedImages }
+                ?.toMutableList()
 
         when (request) {
             "commentRequest" -> {
@@ -146,7 +159,7 @@ class CreateNewTaskService : Service() {
                                         notificationID = commentNotificationID
                                     )
                                 )
-                                uploadComment(it, taskId, event, sessionManager, this)
+                                uploadComment(it, taskId, event, sessionManager, this, uploadedFilesList)
 
                             }
                         }
@@ -242,7 +255,7 @@ class CreateNewTaskService : Service() {
                                         notificationID = doneNotificationID
                                     )
                                 )
-                                uploadComment(it, taskId, event, sessionManager, this)
+                                uploadComment(it, taskId, event, sessionManager, this, uploadedFilesList)
 
                             }
                         }
@@ -723,7 +736,8 @@ class CreateNewTaskService : Service() {
         taskId: String,
         event: String,
         sessionManager: SessionManager,
-        context: CreateNewTaskService
+        context: CreateNewTaskService,
+        uploadedFilesList: MutableList<PickedImages>?
     ) {
         GlobalScope.launch {
             apiCounter++
@@ -737,6 +751,42 @@ class CreateNewTaskService : Service() {
 
                     val room = providesAppDatabase(context)
                     val taskDao = room.getTaskV2sDao()
+                    val responseEventData = response.data.data
+//                    println("uploadCommentService == uploadedFilesList -> ${uploadedFilesList}")
+//                    println("uploadCommentService == response -> ${responseEventData}")
+
+                    if (responseEventData.commentData != null) {
+                        if (responseEventData.commentData.files.isNotEmpty()) {
+//                            println("uploadCommentService == response-files -> ${responseEventData.commentData.files}")
+                            responseEventData.commentData.files.map { eventFiles ->
+                                if (eventFiles.fileTag.equals(AttachmentTags.File.tagValue, true) ||
+                                    eventFiles.fileTag.equals(AttachmentTags.Drawing.tagValue, true)) {
+
+                                    val foundItem = uploadedFilesList?.find { it.fileName.equals(eventFiles.fileName, true) }
+                                    if (foundItem != null) {
+//                                        println("uploadCommentService == response-files-fileName-foundItem -> ${foundItem}")
+//                                        println("uploadCommentService == response-files-fileName-foundItem.file.absolutePath -> ${foundItem.file.absolutePath}  - foundItem.fileUri -> ${foundItem.fileUri}")
+                                        val ceibroDownloadDrawingV2 =
+                                            CeibroDownloadDrawingV2(
+                                                fileName = eventFiles.fileName,
+                                                downloading = false,
+                                                isDownloaded = true,
+                                                downloadId = 1L,
+                                                drawing = null,
+                                                drawingId = eventFiles.id,
+                                                groupId = "",
+                                                localUri = foundItem.file.absolutePath
+                                            )
+
+                                        downloadedDrawingV2Dao.insertDownloadDrawing(
+                                            ceibroDownloadDrawingV2
+                                        )
+                                    }
+
+                                }
+                            }
+                        }
+                    }
 
                     if (event == "comment") {
                         println("Service Status...:Upload comment with success")
@@ -1003,8 +1053,8 @@ class CreateNewTaskService : Service() {
         task: CeibroTaskV2
     ): Boolean {
         GlobalScope.launch {
-            if (!eventData.oldTaskData.hiddenState.equals(
-                    TaskStatus.CANCELED.name.lowercase(),
+            if (!eventData.oldTaskData.taskRootState.equals(
+                    TaskRootStateTags.Canceled.tagValue.toCamelCase(),
                     true
                 )
             ) {

@@ -310,6 +310,9 @@ class TaskDetailCommentsV2VM @Inject constructor(
                     serviceIntent.putExtra("ServiceRequest", "commentRequest")
                     serviceIntent.putExtra("taskId", taskId)
                     serviceIntent.putExtra("event", TaskDetailEvents.Comment.eventValue)
+                    val bundle = Bundle()
+                    bundle.putParcelableArray("uploadingFileList", list.toTypedArray())
+                    serviceIntent.putExtra("uploadingFileBundle", bundle)
                     context.startService(serviceIntent)
 
                     loading(false, "")
