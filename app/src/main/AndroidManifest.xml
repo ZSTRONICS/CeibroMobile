@@ -18,7 +18,7 @@
         tools:replace="android:maxSdkVersion" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <queries>
         <intent>
@@ -80,7 +80,7 @@
         </provider>
         <service
             android:name=".data.base.BaseMessagingService"
-            android:foregroundServiceType="specialUse"
+            android:foregroundServiceType="dataSync"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -108,12 +108,12 @@
 
         <service
             android:name=".ui.tasks.v2.newtask.CreateNewTaskService"
-            android:foregroundServiceType="specialUse"
+            android:foregroundServiceType="dataSync"
             android:enabled="true"
             android:exported="false" />
         <service
             android:name=".ui.projectv2.projectdetailv2.newdrawing.UploadDrawingService"
-            android:foregroundServiceType="specialUse"
+            android:foregroundServiceType="dataSync"
             android:enabled="true"
             android:exported="false" />
 
